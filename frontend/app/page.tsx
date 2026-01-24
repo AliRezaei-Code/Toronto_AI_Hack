@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import dynamic from 'next/dynamic'
-import UploadZone from '@/components/UploadZone'
-import VideoPreview from '@/components/VideoPreview'
+import { UploadZone } from '@/components/UploadZone'
+import { VideoPreview } from '@/components/VideoPreview'
 import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
+import { WaveformTimeline } from '@/components/WaveformTimeline'
 import { uploadVideos, getJobStatus, processEdit } from '@/lib/api-client'
 
 const LoadingSpinner = () => (
@@ -32,6 +32,14 @@ export default function Home() {
   const [statusMessage, setStatusMessage] = useState('')
   const [uploadProgress, setUploadProgress] = useState(0)
   const [processingStep, setProcessingStep] = useState('')
+
+  const statusMessageLower = statusMessage.toLowerCase()
+  const isErrorMessage =
+    statusMessageLower.includes('failed') || statusMessageLower.includes('error')
+  const isWarningMessage =
+    statusMessageLower.includes('warning') ||
+    statusMessageLower.includes('transcription') ||
+    statusMessageLower.includes('disabled')
   
   const pollingRef = useRef<NodeJS.Timeout>()
 
@@ -74,7 +82,7 @@ export default function Home() {
           setVideoUrl(status.video_url || null)
           setTranscript(status.transcript?.words || [])
           setIsProcessing(false)
-          setStatusMessage('')
+          setStatusMessage(status.warning || '')
           setUploadProgress(100)
           setProcessingStep('')
           if (pollingRef.current) clearInterval(pollingRef.current)
@@ -164,8 +172,10 @@ export default function Home() {
 
       {statusMessage && (
         <div className={`px-6 py-2 text-sm text-center border-b ${
-          statusMessage.includes('failed') || statusMessage.includes('error')
+          isErrorMessage
             ? 'bg-red-600/20 text-red-400 border-red-600/30'
+            : isWarningMessage
+            ? 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30'
             : 'bg-blue-600/20 text-blue-400 border-blue-600/30'
         }`}>
           {statusMessage}
@@ -188,7 +198,7 @@ export default function Home() {
                   transcript={transcript}
                   currentTime={currentTime}
                   onWordClick={handleWordClick}
-                  jobId={currentJobId}
+                  jobId={jobId ?? ''}
                   isProcessing={isProcessing}
                   onTranscriptUpdate={(newTranscript) => {
                     setTranscript(newTranscript)
@@ -203,12 +213,21 @@ export default function Home() {
 
             <div className="w-1/2 flex flex-col">
               {showEditor ? (
-                <VideoPreview
-                  videoUrl={videoUrl}
-                  currentTime={currentTime}
-                  onTimeUpdate={setCurrentTime}
-                  onSeek={setCurrentTime}
-                />
+                <>
+                  <div className="flex-1">
+                    <VideoPreview
+                      videoUrl={videoUrl}
+                      currentTime={currentTime}
+                      onTimeUpdate={setCurrentTime}
+                      onSeek={setCurrentTime}
+                    />
+                  </div>
+                  <WaveformTimeline
+                    transcript={transcript}
+                    currentTime={currentTime}
+                    onSeek={setCurrentTime}
+                  />
+                </>
               ) : (
                 <div className="flex items-center justify-center flex-1">
                   <p className="text-gray-400">Loading video...</p>
