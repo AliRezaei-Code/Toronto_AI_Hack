@@ -2,3 +2,4 @@
 -it suggests changes based on the SOTA best pracrticdes in short form cvontent retention editing from a json databse 
 - test content https://drive.google.com/drive/folders/1ptJdoCLkHCmZnNUHn_5sIVc5FfTEGWQF?referrer=luma
 https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP
+https://mcpservers.org/servers/video-db/agent-toolkit
