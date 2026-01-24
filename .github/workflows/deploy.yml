@@ -105,12 +105,16 @@ jobs:
             # Configure git
             export GIT_TERMINAL_PROMPT=0
 
+            # Lowercase repository name for consistency
+            REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+
             # Use PAT if available (for private repos), otherwise use public URL
             PAT="${{ secrets.PAT }}"
             if [ -n "$PAT" ]; then
-              REPO_URL="https://${PAT}@github.com/${{ github.repository }}.git"
+              REPO_URL="https://${PAT}@github.com/${REPO}.git"
             else
-              REPO_URL="https://github.com/${{ github.repository }}.git"
+              REPO_URL="https://github.com/${REPO}.git"
             fi
             
             REPO_DIR="/opt/toronto-ai-hack"
@@ -153,7 +157,7 @@ jobs:
             NEXT_PUBLIC_API_URL=http://localhost:8000
             SHARED_DATA_DIR=/shared-data
             MCP_SERVER_URL=http://mcp-server:9000
-            IMAGE_PREFIX=${{ github.repository_owner }}
+            IMAGE_PREFIX=${OWNER}
             IMAGE_TAG=latest
             FRONTEND_PORT=3010
             EOF

@@ -152,7 +152,7 @@ export function UploadZone({
             <div>
               <h3 className="text-xl font-semibold mb-2">Drop videos here</h3>
               <p className="text-gray-400">
-                Drag and drop 3-5 clips, or click to browse
+                Drag and drop up to 10 clips, or click to browse
               </p>
             </div>
             
