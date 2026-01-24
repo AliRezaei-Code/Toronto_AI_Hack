@@ -30,15 +30,30 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
   const [statusMessage, setStatusMessage] = useState('')
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [processingStep, setProcessingStep] = useState('')
   
   const pollingRef = useRef<NodeJS.Timeout>()
 
   const handleUpload = async (files: File[]) => {
     setIsProcessing(true)
+    setUploadProgress(0)
+    setProcessingStep('Uploading videos...')
     setStatusMessage('Uploading and processing videos...')
     
     try {
-      const result = await uploadVideos(files)
+      const result = await uploadVideos(files, (progress) => {
+        setUploadProgress(progress)
+        if (progress < 30) {
+          setProcessingStep('Uploading videos...')
+        } else if (progress < 60) {
+          setProcessingStep('Stitching clips together...')
+        } else if (progress < 90) {
+          setProcessingStep('Generating transcript with AI...')
+        } else {
+          setProcessingStep('Finalizing...')
+        }
+      })
       setJobId(result.job_id)
       
       pollJobStatus(result.job_id)
@@ -46,6 +61,7 @@ export default function Home() {
       console.error('Upload failed:', error)
       setStatusMessage('Upload failed. Please try again.')
       setIsProcessing(false)
+      setProcessingStep('')
     }
   }
 
@@ -59,13 +75,18 @@ export default function Home() {
           setTranscript(status.transcript?.words || [])
           setIsProcessing(false)
           setStatusMessage('')
+          setUploadProgress(100)
+          setProcessingStep('')
           if (pollingRef.current) clearInterval(pollingRef.current)
         } else if (status.status === 'error') {
           setStatusMessage(status.error || 'An error occurred')
           setIsProcessing(false)
+          setUploadProgress(0)
+          setProcessingStep('')
           if (pollingRef.current) clearInterval(pollingRef.current)
         } else {
-          setStatusMessage('Processing videos and generating transcript...')
+          setUploadProgress(Math.min(85, uploadProgress + 5))
+          setProcessingStep(status.video_url ? 'Almost done...' : 'Processing videos and generating transcript...')
         }
       } catch (error) {
         console.error('Polling failed:', error)
@@ -90,16 +111,29 @@ export default function Home() {
     if (!jobId) return
     
     setIsProcessing(true)
+    setProcessingStep('Processing your edit...')
     setStatusMessage(`Processing: "${message}"`)
 
     try {
+      setUploadProgress(0)
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(90, prev + 10))
+      }, 500)
+      
       const response = await processEdit(jobId, message)
+      
+      clearInterval(progressInterval)
       setVideoUrl(response.video_url)
       setTranscript(response.transcript.words)
       setStatusMessage('')
+      setUploadProgress(100)
+      setProcessingStep('')
     } catch (error) {
       console.error('Edit processing failed:', error)
       setStatusMessage('Edit failed. Please try again.')
+      setIsProcessing(false)
+      setUploadProgress(0)
+      setProcessingStep('')
     } finally {
       setIsProcessing(false)
     }
@@ -121,22 +155,31 @@ export default function Home() {
           </div>
           <h1 className="text-xl font-semibold">Script-Based Video Editor</h1>
         </div>
-        <button className="text-gray-400 hover:text-white transition-colors">
+        <button className="text-gray-400 hover:text-white transition-colors" title="Help coming soon!">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12 a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </button>
       </header>
 
       {statusMessage && (
-        <div className="px-6 py-2 bg-blue-600/20 text-blue-400 text-sm text-center border-b border-blue-600/30">
+        <div className={`px-6 py-2 text-sm text-center border-b ${
+          statusMessage.includes('failed') || statusMessage.includes('error')
+            ? 'bg-red-600/20 text-red-400 border-red-600/30'
+            : 'bg-blue-600/20 text-blue-400 border-blue-600/30'
+        }`}>
           {statusMessage}
         </div>
       )}
 
       <main className="flex-1 overflow-hidden">
         {showUpload && !showEditor ? (
-          <UploadZone onUpload={handleUpload} />
+          <UploadZone 
+            onUpload={handleUpload}
+            isUploading={isProcessing}
+            uploadProgress={uploadProgress}
+            uploadStatus={processingStep}
+          />
         ) : (
           <div className="flex h-full">
             <div className="w-1/2 border-r border-gray-800">
