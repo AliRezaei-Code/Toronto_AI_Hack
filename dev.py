@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 
 # Ports used by our services
-PORTS_TO_CLEAR = [8000, 9000]  # backend, mcp-server
+PORTS_TO_CLEAR = [3000, 8000, 9000]  # frontend, backend, mcp-server
 
 # Use explicit Python path to avoid MSYS2/Windows Store conflicts
 PYTHON = r"C:\Users\Chris\AppData\Local\Python\bin\python.exe"
@@ -46,6 +46,10 @@ SERVICES = [
 
 RESET = "\033[0m"
 processes = []
+# Track PIDs we've started to avoid killing our own processes
+our_pids = set()
+# Store dev.py's own PID to never kill it
+DEV_PY_PID = os.getpid()
 
 
 def is_port_in_use(port: int) -> bool:
@@ -54,8 +58,14 @@ def is_port_in_use(port: int) -> bool:
         return s.connect_ex(('localhost', port)) == 0
 
 
-def kill_process_on_port(port: int) -> bool:
-    """Kill any process using the specified port. Returns True if a process was killed."""
+def kill_process_on_port(port: int, skip_our_pids: bool = True) -> bool:
+    """
+    Kill any process using the specified port. Returns True if a process was killed.
+    
+    Args:
+        port: Port number to check
+        skip_our_pids: If True, skip killing processes we started (safe for runtime)
+    """
     if os.name == 'nt':  # Windows
         try:
             # Find PID using the port
@@ -68,12 +78,19 @@ def kill_process_on_port(port: int) -> bool:
             
             pids_to_kill = set()
             for line in result.stdout.split('\n'):
-                # Look for lines with our port in LISTENING or ESTABLISHED state
-                if f':{port}' in line and ('LISTENING' in line or 'ESTABLISHED' in line):
+                # Look for lines with our port in LISTENING state (not ESTABLISHED - those are clients)
+                if f':{port}' in line and 'LISTENING' in line:
                     parts = line.split()
                     if len(parts) >= 5:
                         pid = parts[-1]
                         if pid.isdigit() and pid != '0':
+                            pid_int = int(pid)
+                            # Never kill dev.py itself
+                            if pid_int == DEV_PY_PID:
+                                continue
+                            # Skip our own processes if requested
+                            if skip_our_pids and pid_int in our_pids:
+                                continue
                             pids_to_kill.add(pid)
             
             for pid in pids_to_kill:
@@ -99,11 +116,20 @@ def kill_process_on_port(port: int) -> bool:
             )
             if result.stdout.strip():
                 pids = result.stdout.strip().split('\n')
-                for pid in pids:
-                    if pid.isdigit():
-                        print(f"  Killing process {pid} on port {port}")
-                        os.kill(int(pid), signal.SIGKILL)
-                return True
+                killed_any = False
+                for pid_str in pids:
+                    if pid_str.isdigit():
+                        pid_int = int(pid_str)
+                        # Never kill dev.py itself
+                        if pid_int == DEV_PY_PID:
+                            continue
+                        # Skip our own processes if requested
+                        if skip_our_pids and pid_int in our_pids:
+                            continue
+                        print(f"  Killing process {pid_int} on port {port}")
+                        os.kill(pid_int, signal.SIGKILL)
+                        killed_any = True
+                return killed_any
             return False
         except Exception as e:
             print(f"  Warning: Could not kill process on port {port}: {e}")
@@ -150,14 +176,19 @@ def check_ports_warning():
 
 
 def clear_ports():
-    """Clear any processes using our required ports."""
+    """
+    Clear any processes using our required ports.
+    Only runs at startup - never kills our own processes.
+    """
     print("\n=== Clearing blocked ports ===\n")
     
     any_killed = False
     for port in PORTS_TO_CLEAR:
         if is_port_in_use(port):
             print(f"Port {port} is in use, attempting to free it...")
-            if kill_process_on_port(port):
+            # skip_our_pids=True means we won't kill processes we started
+            # This is safe because we haven't started services yet at this point
+            if kill_process_on_port(port, skip_our_pids=True):
                 any_killed = True
                 # Give the OS a moment to release the port
                 import time
@@ -226,6 +257,8 @@ def start_services():
             shell=(os.name == "nt"),
         )
         processes.append(proc)
+        # Track this PID so we never kill it during reloads
+        our_pids.add(proc.pid)
 
         # Stream output in a thread
         thread = threading.Thread(
@@ -255,11 +288,12 @@ def shutdown(signum=None, frame=None):
                 print(f"Warning: Failed to kill process {proc.pid}: {e}")
         
         # Also clear the ports to catch any stragglers
+        # Use skip_our_pids=False here because we want to kill everything on shutdown
         import time
         time.sleep(0.5)
         for port in PORTS_TO_CLEAR:
             if is_port_in_use(port):
-                kill_process_on_port(port)
+                kill_process_on_port(port, skip_our_pids=False)
     else:  # Unix - terminate then kill
         for proc in processes:
             proc.terminate()
@@ -301,10 +335,13 @@ def main():
         signal.signal(signal.SIGTERM, shutdown)
 
     # Check for ghost processes and warn user
+    # NOTE: Port clearing only happens ONCE at startup, never during runtime.
+    # This prevents killing our own services when they reload.
     if not check_ports_warning():
         sys.exit(1)
     
     # Clear any ghost processes holding our ports (user approved)
+    # This only runs at startup - services haven't started yet, so it's safe
     clear_ports()
 
     # Clear shared-data directory
