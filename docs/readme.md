@@ -105,3 +105,8 @@ Build an Agent MCP that proactively guides users through short-form content edit
 ### 12) Open questions
 - What is the schema of the JSON best-practices database?
 - Which platforms/retention metrics are considered "success"?
+- test content https://drive.google.com/drive/folders/1ptJdoCLkHCmZnNUHn_5sIVc5FfTEGWQF?referrer=luma
+https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP
+https://mcpservers.org/servers/video-db/agent-toolkit
+https://mcpservers.org/servers/TSavo/creatify-mcp
+https://github.com/video-creator/ffmpeg-mcp
