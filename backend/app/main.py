@@ -110,6 +110,7 @@ app.add_middleware(
 )
 
 _shared_data_env = os.getenv('SHARED_DATA_DIR')
+server_url = os.getenv('SERVER_URL', "http://localhost:8000")
 if _shared_data_env:
     SHARED_DATA_DIR = os.path.abspath(_shared_data_env)
 else:
@@ -118,6 +119,13 @@ UPLOADS_DIR = os.path.join(SHARED_DATA_DIR, 'uploads')
 PROCESSED_DIR = os.path.join(SHARED_DATA_DIR, 'processed')
 TRANSCRIPTS_DIR = os.path.join(SHARED_DATA_DIR, 'transcripts')
 MCP_SERVER_URL = os.getenv('MCP_SERVER_URL', 'http://localhost:9000')
+
+# Log configuration at startup
+logger.info(f"[CONFIG] SHARED_DATA_DIR: {SHARED_DATA_DIR}")
+logger.info(f"[CONFIG] UPLOADS_DIR: {UPLOADS_DIR}")
+logger.info(f"[CONFIG] PROCESSED_DIR: {PROCESSED_DIR}")
+logger.info(f"[CONFIG] TRANSCRIPTS_DIR: {TRANSCRIPTS_DIR}")
+logger.info(f"[CONFIG] MCP_SERVER_URL: {MCP_SERVER_URL}")
 
 for dir_path in [UPLOADS_DIR, PROCESSED_DIR, TRANSCRIPTS_DIR]:
     Path(dir_path).mkdir(parents=True, exist_ok=True)
@@ -244,7 +252,7 @@ async def upload_videos(
     
     The clips will be:
     1. Validated for format and duration
-    2. Stitched together with crossfade transitions
+    2. Concatenated together
     3. Transcribed using AI speech-to-text
     
     Use the returned `job_id` to check status and retrieve results.
@@ -300,11 +308,13 @@ async def upload_videos(
         
         processing_jobs[job_id] = True
         
+        logger.info(f"[upload_videos] Scheduling background task for job_id={job_id}")
         background_tasks.add_task(
             process_uploads,
             job_id,
             uploaded_files
         )
+        logger.info(f"[upload_videos] Background task scheduled, returning response")
         
         return UploadResponse(
             job_id=job_id,
@@ -330,32 +340,36 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
     """
     Process uploaded clips: stitch and generate transcript.
     """
+    logger.info(f"[process_uploads] START - job_id={job_id}, clips={clip_paths}")
     try:
+        logger.info(f"[process_uploads] Connecting to MCP server at {MCP_SERVER_URL}")
         async with httpx.AsyncClient(timeout=300) as client:
+            logger.info(f"[process_uploads] Calling /tool/stitch_clips with {len(clip_paths)} clips")
             stitch_response = await client.post(
                 f'{MCP_SERVER_URL}/tool/stitch_clips',
-                json={
-                    'clip_paths': clip_paths,
-                    'transition_type': 'crossfade',
-                    'transition_duration': 0.5
-                }
+                json={'clip_paths': clip_paths}
             )
+            logger.info(f"[process_uploads] Stitch response status: {stitch_response.status_code}")
             
             if stitch_response.status_code != 200:
+                logger.error(f"[process_uploads] Stitch failed: {stitch_response.text}")
                 raise Exception(f"Stitching failed: {stitch_response.text}")
             
             stitch_result = stitch_response.json()
             stitched_video_path = stitch_result['data']['output_path']
+            logger.info(f"[process_uploads] Stitch complete, output: {stitched_video_path}")
             
             transcript = None
             transcript_warning = None
             
             try:
+                logger.info(f"[process_uploads] Calling /tool/generate_transcript")
                 transcript_response = await client.post(
                     f'{MCP_SERVER_URL}/tool/generate_transcript',
                     json={'video_path': stitched_video_path},
                     timeout=180
                 )
+                logger.info(f"[process_uploads] Transcript response status: {transcript_response.status_code}")
                 
                 if transcript_response.status_code == 200:
                     transcript_result = transcript_response.json()
@@ -378,6 +392,7 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
                 transcript_warning = f"Transcription failed: {str(e)}. Script-based editing will be disabled."
                 logger.warning(f"Transcription error for job {job_id}: {str(e)}")
             
+            logger.info(f"[process_uploads] Updating job status to completed")
             job_data = await state_manager.load_job(job_id)
             if job_data:
                 new_job_data = job_data.copy()
@@ -386,13 +401,16 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
                 if transcript_warning:
                     new_job_data['warning'] = transcript_warning
                 await state_manager.save_job(job_id, new_job_data)
+                logger.info(f"[process_uploads] Job {job_id} marked as completed")
             
             for clip_path in clip_paths:
                 if os.path.exists(clip_path):
                     os.remove(clip_path)
             
+            logger.info(f"[process_uploads] SUCCESS - job_id={job_id}")
+            
     except Exception as e:
-        logger.error(f"Error processing job {job_id}: {str(e)}", exc_info=True)
+        logger.error(f"[process_uploads] FAILED - job_id={job_id}, error: {str(e)}", exc_info=True)
         job_data = await state_manager.load_job(job_id)
         if job_data:
             new_job_data = job_data.copy()
@@ -438,12 +456,12 @@ async def get_job_status(job_id: str):
     
     if not job_data:
         raise HTTPException(status_code=404, detail="Job not found")
-    
+    logger.info(f"job_data: server_url={server_url}")
     video_url = None
     transcript = None
-    
+    print("server_url", server_url)
     if job_data['status'] == 'completed' and 'current_video_path' in job_data:
-        video_url = f"/api/video/{job_id}"
+        video_url = f"{server_url}/api/video/{job_id}"
         transcript = await state_manager.load_transcript(job_id)
     
     return JobStatus(
@@ -470,7 +488,7 @@ async def get_video(job_id: str):
     Returns the video file as an MP4 stream.
     """
     job_data = await state_manager.load_job(job_id)
-    
+    print("job_data", job_data)
     if not job_data or job_data['status'] != 'completed':
         raise HTTPException(status_code=404, detail="Video not found")
     

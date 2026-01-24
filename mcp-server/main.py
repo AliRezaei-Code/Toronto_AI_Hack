@@ -36,8 +36,6 @@ class GenericToolRequest(BaseModel):
 
 class StitchClipRequest(BaseModel):
     clip_paths: List[str]
-    transition_type: str = "crossfade"
-    transition_duration: float = 0.5
 
 
 class CutSegmentRequest(BaseModel):

@@ -95,7 +95,7 @@ class CuttingTool:
         duration: float
     ) -> Dict[str, Any]:
         """
-        Cut with re-encoding for precision.
+        Cut with re-encoding for precision and universal playback compatibility.
         """
         command = [
             'ffmpeg',
@@ -103,9 +103,12 @@ class CuttingTool:
             '-i', video_path,
             '-t', str(duration),
             '-c:v', 'libx264',
-            '-preset', 'ultrafast',
+            '-pix_fmt', 'yuv420p',    # Force 8-bit 4:2:0 for universal playback
+            '-preset', 'medium',      # Good balance of speed and compression
+            '-crf', '23',             # Constant quality
             '-c:a', 'aac',
-            '-strict', 'experimental',
+            '-b:a', '192k',           # Audio bitrate
+            '-movflags', '+faststart', # Enable streaming
             '-y',
             output_path
         ]

@@ -67,18 +67,12 @@ async def handle_generate_transcript(params: Dict[str, Any]) -> Dict[str, Any]:
 async def handle_stitch_clips(params: Dict[str, Any]) -> Dict[str, Any]:
     """Handle stitch_clips tool call"""
     clip_paths = params.get('clip_paths', [])
-    transition_type = params.get('transition_type', 'crossfade')
-    transition_duration = params.get('transition_duration', 0.5)
     
     if not clip_paths:
         return {'status': 'error', 'error': 'Missing clip_paths parameter'}
     
     try:
-        result = await stitching_tool.stitch_clips(
-            clip_paths,
-            transition_type,
-            transition_duration
-        )
+        result = await stitching_tool.stitch_clips(clip_paths)
         return {'status': 'success', 'data': result}
     except Exception as e:
         return {'status': 'error', 'error': str(e)}
@@ -194,7 +188,7 @@ def get_available_tools() -> List[Dict[str, Any]]:
         },
         {
             'name': 'stitch_clips',
-            'description': 'Stitch multiple video clips together with transitions',
+            'description': 'Concatenate multiple video clips together',
             'parameters': {
                 'type': 'object',
                 'properties': {
@@ -202,16 +196,6 @@ def get_available_tools() -> List[Dict[str, Any]]:
                         'type': 'array',
                         'items': {'type': 'string'},
                         'description': 'List of video file paths'
-                    },
-                    'transition_type': {
-                        'type': 'string',
-                        'enum': ['crossfade', 'cut'],
-                        'default': 'crossfade'
-                    },
-                    'transition_duration': {
-                        'type': 'number',
-                        'default': 0.5,
-                        'description': 'Transition duration in seconds'
                     }
                 },
                 'required': ['clip_paths']

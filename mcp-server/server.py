@@ -39,6 +39,11 @@ else:
 PROCESSED_DIR = os.path.join(SHARED_DATA_DIR, 'processed')
 TRANSCRIPTS_DIR = os.path.join(SHARED_DATA_DIR, 'transcripts')
 
+# Log configuration at startup
+logger.info(f"[CONFIG] SHARED_DATA_DIR: {SHARED_DATA_DIR}")
+logger.info(f"[CONFIG] PROCESSED_DIR: {PROCESSED_DIR}")
+logger.info(f"[CONFIG] TRANSCRIPTS_DIR: {TRANSCRIPTS_DIR}")
+
 os.makedirs(PROCESSED_DIR, exist_ok=True)
 os.makedirs(TRANSCRIPTS_DIR, exist_ok=True)
 
@@ -63,8 +68,6 @@ class TranscriptRequest(BaseModel):
 
 class StitchRequest(BaseModel):
     clip_paths: List[str]
-    transition_type: str = "crossfade"
-    transition_duration: float = 0.5
 
 class CutSegmentRequest(BaseModel):
     video_path: str
@@ -104,16 +107,14 @@ async def generate_transcript(request: TranscriptRequest):
 
 @app.post("/tool/stitch_clips")
 async def stitch_clips(request: StitchRequest):
-    """Stitch multiple video clips together with transitions."""
-    print("starting stitch_clips")
+    """Stitch multiple video clips together."""
+    logger.info(f"[stitch_clips] START - clips: {request.clip_paths}")
     try:
-        result = await stitching_tool.stitch_clips(
-            request.clip_paths,
-            request.transition_type,
-            request.transition_duration
-        )
+        result = await stitching_tool.stitch_clips(request.clip_paths)
+        logger.info(f"[stitch_clips] SUCCESS - output: {result.get('output_path')}")
         return {"status": "success", "data": result}
     except Exception as e:
+        logger.error(f"[stitch_clips] FAILED - error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/cut_segment")
