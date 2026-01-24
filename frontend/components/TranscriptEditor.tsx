@@ -51,6 +51,10 @@ export function TranscriptEditor({
   }, [currentTime, transcript])
 
   useEffect(() => {
+    historyIndexRef.current = historyIndex
+  }, [historyIndex])
+
+  useEffect(() => {
     if (!isEditing) {
       setInlineEditedWords([])
       setEditedWordIndex(null)
@@ -72,6 +76,26 @@ export function TranscriptEditor({
       baselineWordsRef.current = transcript
     }
   }, [isEditing, transcript])
+
+  useEffect(() => {
+    if (!transcript.length) {
+      return
+    }
+
+    const text = transcript.map(word => word.word).join(' ')
+    setHistory((prev) => {
+      const currentIndex = historyIndexRef.current
+      if (currentIndex >= 0 && prev[currentIndex] === text) {
+        return prev
+      }
+
+      const next = prev.slice(0, currentIndex + 1)
+      next.push(text)
+      historyIndexRef.current = next.length - 1
+      setHistoryIndex(next.length - 1)
+      return next
+    })
+  }, [transcript])
 
   const queueInlineSave = useCallback(
     (words: Word[], immediate = false) => {
