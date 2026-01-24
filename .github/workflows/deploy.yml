@@ -17,7 +17,7 @@
 #       For VM deployment, PAT is only needed if repo/packages are private.
 #
 # Triggers:
-#   - Push to main branch
+#   - Push to production branch
 #   - Manual workflow dispatch
 # ===========================================
 
@@ -130,21 +130,20 @@ jobs:
 
             # Clone or pull repository
             if [ -d "$REPO_DIR/.git" ]; then
-              echo "Repository exists, pulling latest code..."
+              echo "Repository exists, resetting to production..."
               cd "$REPO_DIR"
               git remote set-url origin "$REPO_URL"
-              git fetch origin main
-              git checkout main
-              git pull origin main
+              git fetch origin production
+              git checkout production
+              git reset --hard origin/production
             else
               echo "Repository not found, cloning..."
               if [ -d "$REPO_DIR" ] && [ -w "$REPO_DIR" ]; then
                 rm -rf "$REPO_DIR"
                 mkdir -p "$REPO_DIR"
               fi
-              git clone "$REPO_URL" "$REPO_DIR"
+              git clone -b production "$REPO_URL" "$REPO_DIR"
               cd "$REPO_DIR"
-              git checkout main
             fi
 
             # Create .env file from secrets
