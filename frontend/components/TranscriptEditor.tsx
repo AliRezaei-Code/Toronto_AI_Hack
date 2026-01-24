@@ -330,22 +330,40 @@ export function TranscriptEditor({
               : 'Click any word to jump to that moment'}
           </p>
         </div>
-        {!isEditing && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={handleStartEdit}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            type="button"
+            onClick={handleUndo}
+            disabled={!canUndo || disableHistoryControls}
+            className="px-3 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
           >
-            Edit Text
+            Undo
           </button>
-        )}
-        {isEditing && !isSidebarEdit && (
           <button
-            onClick={handleStartEdit}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            type="button"
+            onClick={handleRedo}
+            disabled={!canRedo || disableHistoryControls}
+            className="px-3 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
           >
-            Full Text Edit
+            Redo
           </button>
-        )}
+          {!isEditing && (
+            <button
+              onClick={handleStartEdit}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Edit Text
+            </button>
+          )}
+          {isEditing && !isSidebarEdit && (
+            <button
+              onClick={handleStartEdit}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Full Text Edit
+            </button>
+          )}
+        </div>
       </div>
 
       {isEditing && isSidebarEdit ? (
