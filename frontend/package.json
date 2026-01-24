@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "remotion:preview": "remotion preview src/remotion/index.ts",
+    "remotion:render": "remotion render src/remotion/index.ts VideoEditor out/video.mp4",
+    "remotion:upgrade": "remotion upgrade",
+    "remotion:studio": "remotion studio src/remotion/index.ts"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.409",
