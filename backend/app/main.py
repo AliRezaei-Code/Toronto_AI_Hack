@@ -2,9 +2,11 @@ import os
 import uuid
 import shutil
 import logging
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import List
+from glob import glob
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,6 +38,9 @@ SHARED_DATA_DIR = os.getenv(
 UPLOADS_DIR = os.path.join(SHARED_DATA_DIR, 'uploads')
 PROCESSED_DIR = os.path.join(SHARED_DATA_DIR, 'processed')
 TRANSCRIPTS_DIR = os.path.join(SHARED_DATA_DIR, 'transcripts')
+SAMPLE_VIDEOS_DIR = os.path.join(SHARED_DATA_DIR, 'sample-videos')
+SAMPLE_CLIPS_DIR = os.path.join(SAMPLE_VIDEOS_DIR, 'clips')
+SAMPLE_TRANSCRIPTS_DIR = os.path.join(SAMPLE_VIDEOS_DIR, 'transcripts')
 MCP_SERVER_URL = os.getenv('MCP_SERVER_URL', 'http://localhost:9000')
 
 for dir_path in [UPLOADS_DIR, PROCESSED_DIR, TRANSCRIPTS_DIR]:
@@ -44,6 +49,15 @@ for dir_path in [UPLOADS_DIR, PROCESSED_DIR, TRANSCRIPTS_DIR]:
 state_manager = StateManager(TRANSCRIPTS_DIR)
 
 processing_jobs = {}
+
+def _get_demo_clips() -> List[str]:
+    supported_extensions = ['.mp4', '.mov', '.webm', '.avi']
+    clip_files = []
+    
+    for ext in supported_extensions:
+        clip_files.extend(glob(os.path.join(SAMPLE_CLIPS_DIR, f'clip_*{ext}')))
+    
+    return sorted(set(clip_files))
 
 @app.get("/")
 async def root():
@@ -57,6 +71,7 @@ async def root():
             "transcript": "/api/transcript/{job_id}",
             "query": "/api/agent/query",
             "recommendations": "/api/recommendations",
+            "demo": "/api/demo",
         }
     }
 
@@ -148,7 +163,8 @@ async def upload_videos(
         background_tasks.add_task(
             process_uploads,
             job_id,
-            uploaded_files
+            uploaded_files,
+            None
         )
         
         return UploadResponse(
@@ -171,7 +187,7 @@ async def upload_videos(
             detail=f"Upload failed due to server error. Please try again."
         )
 
-async def process_uploads(job_id: str, clip_paths: List[str]):
+async def process_uploads(job_id: str, clip_paths: List[str], preset_transcript_path: str | None = None):
     """
     Process uploaded clips: stitch and generate transcript.
     """
@@ -195,16 +211,10 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
             transcript = None
             transcript_warning = None
             
-            try:
-                transcript_response = await client.post(
-                    f'{MCP_SERVER_URL}/tool/generate_transcript',
-                    json={'video_path': stitched_video_path},
-                    timeout=180
-                )
-                
-                if transcript_response.status_code == 200:
-                    transcript_result = transcript_response.json()
-                    transcript_data = transcript_result['data']
+            if preset_transcript_path and os.path.exists(preset_transcript_path):
+                try:
+                    with open(preset_transcript_path, 'r') as f:
+                        transcript_data = json.load(f)
                     
                     transcript = Transcript(
                         text=transcript_data.get('text'),
@@ -213,14 +223,38 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
                     )
                     
                     await state_manager.save_transcript(job_id, transcript)
-                    logger.info(f"Transcript generated successfully for job {job_id}")
-                else:
-                    transcript_warning = "Transcription service unavailable. Script-based editing will be disabled."
-                    logger.warning(f"Transcription failed for job {job_id}: {transcript_response.text}")
+                    logger.info(f"Preset transcript loaded for job {job_id}")
+                except Exception as e:
+                    logger.warning(f"Preset transcript load failed for job {job_id}: {str(e)}")
+                    transcript_warning = "Preset transcript unavailable. Falling back to AI transcription."
+            
+            if transcript is None:
+                try:
+                    transcript_response = await client.post(
+                        f'{MCP_SERVER_URL}/tool/generate_transcript',
+                        json={'video_path': stitched_video_path},
+                        timeout=180
+                    )
                     
-            except Exception as e:
-                transcript_warning = f"Transcription failed: {str(e)}. Script-based editing will be disabled."
-                logger.warning(f"Transcription error for job {job_id}: {str(e)}")
+                    if transcript_response.status_code == 200:
+                        transcript_result = transcript_response.json()
+                        transcript_data = transcript_result['data']
+                        
+                        transcript = Transcript(
+                            text=transcript_data.get('text'),
+                            words=[Word(**w) for w in transcript_data.get('words', [])],
+                            duration=transcript_data.get('duration')
+                        )
+                        
+                        await state_manager.save_transcript(job_id, transcript)
+                        logger.info(f"Transcript generated successfully for job {job_id}")
+                    else:
+                        transcript_warning = "Transcription service unavailable. Script-based editing will be disabled."
+                        logger.warning(f"Transcription failed for job {job_id}: {transcript_response.text}")
+                        
+                except Exception as e:
+                    transcript_warning = f"Transcription failed: {str(e)}. Script-based editing will be disabled."
+                    logger.warning(f"Transcription error for job {job_id}: {str(e)}")
             
             job_data = await state_manager.load_job(job_id)
             if job_data:
