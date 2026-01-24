@@ -1,6 +1,7 @@
 import os
 import uuid
 import shutil
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import List
@@ -13,6 +14,10 @@ import httpx
 from app.models import UploadResponse, EditResponse, JobStatus, Transcript, Word
 from app.state_manager import StateManager
 from app.agent import run_agent
+from utils.validator import VideoValidator
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Video Editor Backend API")
 
@@ -42,7 +47,37 @@ processing_jobs = {}
 
 @app.get("/")
 async def root():
-    return {"message": "Video Editor Backend API", "version": "1.0.0"}
+    return {
+        "message": "Video Editor Backend API",
+        "version": "2.0.0",
+        "endpoints": {
+            "upload": "/api/upload",
+            "status": "/api/job/{job_id}/status",
+            "video": "/api/video/{job_id}",
+            "transcript": "/api/transcript/{job_id}",
+            "query": "/api/agent/query",
+            "recommendations": "/api/recommendations",
+        }
+    }
+
+@app.get("/api/recommendations")
+async def get_recommendations():
+    """Get upload recommendations and guidelines."""
+    from utils.validator import VideoValidator
+    
+    validator = VideoValidator()
+    
+    return {
+        "recommendations": validator.get_validation_recommendations(),
+        "limits": {
+            "max_file_size_mb": validator.MAX_FILE_SIZE / (1024 * 1024),
+            "max_duration_seconds": validator.MAX_DURATION,
+            "recommended_duration_seconds": validator.RECOMMENDED_DURATION,
+            "min_clips": 3,
+            "max_clips": 5,
+        },
+        "supported_formats": list(validator.SUPPORTED_FORMATS)
+    }
 
 @app.get("/health")
 async def health():
@@ -58,8 +93,9 @@ async def upload_videos(
     clip_4: UploadFile | None = None,
 ):
     """
-    Upload 3-5 video clips for processing.
+    Upload 3-5 video clips for processing with validation.
     """
+    validator = VideoValidator()
     clips = [clip_0, clip_1, clip_2, clip_3, clip_4]
     files = [f for f in clips if f is not None]
     
@@ -75,10 +111,12 @@ async def upload_videos(
     try:
         for i, file in enumerate(files):
             file_extension = Path(file.filename or '').suffix
-            if file_extension not in ['.mp4', '.mov', '.webm', '.avi']:
+            
+            # Validate file extension
+            if file_extension not in validator.SUPPORTED_FORMATS:
                 raise HTTPException(
                     status_code=400,
-                    detail=f"Unsupported file format: {file.filename}"
+                    detail=f"Unsupported file format: {file_extension}. Supported formats: {', '.join(validator.SUPPORTED_FORMATS)}"
                 )
             
             filename = f"{job_id}_clip_{i}{file_extension}"
@@ -86,6 +124,15 @@ async def upload_videos(
             
             with open(file_path, 'wb') as f:
                 shutil.copyfileobj(file.file, f)
+            
+            # Validate the saved file
+            is_valid, error_msg = validator.validate_file(file_path, check_duration=True)
+            if not is_valid:
+                os.remove(file_path)
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Validation failed for {file.filename}: {error_msg}"
+                )
             
             uploaded_files.append(file_path)
         
@@ -109,11 +156,20 @@ async def upload_videos(
             message="Videos uploaded and processing started"
         )
     
+    except HTTPException:
+        for file_path in uploaded_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        raise
     except Exception as e:
         for file_path in uploaded_files:
             if os.path.exists(file_path):
                 os.remove(file_path)
-        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+        logger.error(f"Upload processing error: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Upload failed due to server error. Please try again."
+        )
 
 async def process_uploads(job_id: str, clip_paths: List[str]):
     """
@@ -168,11 +224,23 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
                     os.remove(clip_path)
             
     except Exception as e:
+        logger.error(f"Error processing job {job_id}: {str(e)}", exc_info=True)
         job_data = await state_manager.load_job(job_id)
         if job_data:
             new_job_data = job_data.copy()
             new_job_data['status'] = 'error'
-            new_job_data['error'] = str(e)
+            
+            # User-friendly error messages
+            error_msg = str(e)
+            if 'rate limit' in error_msg.lower():
+                new_job_data['error'] = "API rate limit exceeded. Please try again in a few minutes."
+            elif 'timeout' in error_msg.lower():
+                new_job_data['error'] = "Processing timed out. Try shorter videos or fewer clips."
+            elif 'file not found' in error_msg.lower():
+                new_job_data['error'] = "Video file could not be processed. Please check the file format."
+            else:
+                new_job_data['error'] = "Processing failed. Please try uploading again."
+                
             await state_manager.save_job(job_id, new_job_data)
     
     finally:

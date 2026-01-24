@@ -1,15 +1,19 @@
 import os
 import json
 import asyncio
+import logging
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 
 from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_core.exceptions import LangChainException
 
 from app.models import AgentState, Word, EditInstruction, Transcript
 from app.state_manager import StateManager
+
+logger = logging.getLogger(__name__)
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 SHARED_DATA_DIR = os.getenv(
@@ -25,8 +29,59 @@ state_manager = StateManager(TRANSCRIPTS_DIR)
 llm = ChatOpenAI(
     model='gpt-4o',
     temperature=0.3,
-    api_key=OPENAI_API_KEY
+    api_key=OPENAI_API_KEY,
+    timeout=60,
+    max_retries=3,
 )
+
+
+async def call_llm_with_retry(messages: List[any], max_retries: int = 3) -> any:
+    """
+    Call LLM with retry logic for transient failures.
+    
+    Args:
+        messages: List of messages to send to LLM
+        max_retries: Maximum number of retry attempts
+    
+    Returns:
+        LLM response
+    
+    Raises:
+        Exception if all retries are exhausted
+    """
+    last_error = None
+    
+    for attempt in range(max_retries):
+        try:
+            result = await asyncio.wait_for(
+                llm.ainvoke(messages),
+                timeout=90
+            )
+            logger.info(f"LLM call succeeded on attempt {attempt + 1}")
+            return result
+            
+        except asyncio.TimeoutError:
+            last_error = f"LLM response timed out (90s)"
+            logger.warning(f"{last_error} (attempt {attempt + 1}/{max_retries})")
+            
+        except LangChainException as e:
+            if 'rate limit' in str(e).lower():
+                last_error = f"Rate limit exceeded: {str(e)}"
+                logger.warning(f"{last_error} (attempt {attempt + 1}/{max_retries})")
+            else:
+                last_error = f"LangChain error: {str(e)}"
+                logger.error(f"{last_error} (attempt {attempt + 1}/{max_retries})")
+                
+        except Exception as e:
+            last_error = f"Unexpected error: {str(e)}"
+            logger.error(f"{last_error} (attempt {attempt + 1}/{max_retries})")
+        
+        if attempt < max_retries - 1:
+            delay = (2 ** attempt) * 3.0
+            logger.info(f"Retrying LLM call in {delay}s...")
+            await asyncio.sleep(delay)
+    
+    raise Exception(f"LLM call failed after {max_retries} attempts: {last_error}")
 
 def analyze_query(state: AgentState) -> AgentState:
     """
@@ -50,7 +105,7 @@ Return a JSON with:
         response = llm.invoke([
             SystemMessage(content=system_prompt),
             HumanMessage(content=query)
-        ])
+        ], timeout=30)
         
         result_text = response.content.strip()
         
@@ -127,7 +182,7 @@ IMPORTANT:
     try:
         response = llm.invoke([
             SystemMessage(content=system_prompt)
-        ])
+        ], timeout=90)
         
         result_text = response.content.strip()
         
