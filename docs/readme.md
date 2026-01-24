@@ -4,3 +4,4 @@
 https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP
 https://mcpservers.org/servers/video-db/agent-toolkit
 https://mcpservers.org/servers/TSavo/creatify-mcp
+https://github.com/video-creator/ffmpeg-mcp
