@@ -72,7 +72,8 @@ export function VideoPreview({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [togglePlay, seekRelative, changeVolume, toggleMute, toggleFullscreen])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleTimeUpdate = useCallback(() => {
     if (videoRef.current) {

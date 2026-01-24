@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
         ...inputProps,
       },
       serveUrl: bundled,
-      outputLocation: outputPath,
+      output: outputPath,
       inputProps,
     });
 
