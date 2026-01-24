@@ -72,7 +72,7 @@ export function VideoPreview({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [togglePlay, seekRelative, changeVolume, toggleMute, toggleFullscreen])
 
   const handleTimeUpdate = useCallback(() => {
     if (videoRef.current) {

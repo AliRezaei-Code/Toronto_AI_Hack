@@ -40,7 +40,6 @@ export async function POST(request: NextRequest) {
       serveUrl: bundled,
       outputLocation: outputPath,
       inputProps,
-      frame,
     });
 
     // Clean up the bundle
