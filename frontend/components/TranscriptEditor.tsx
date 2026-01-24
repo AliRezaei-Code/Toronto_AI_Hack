@@ -35,10 +35,13 @@ export function TranscriptEditor({
   const [inlineEditedWords, setInlineEditedWords] = useState<Word[]>([])
   const [editedWordIndices, setEditedWordIndices] = useState<Set<number>>(new Set())
   const [editedWordIndex, setEditedWordIndex] = useState<number | null>(null)
+  const [history, setHistory] = useState<string[]>([])
+  const [historyIndex, setHistoryIndex] = useState(-1)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const inlineInputRef = useRef<HTMLInputElement>(null)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const baselineWordsRef = useRef<Word[]>([])
+  const historyIndexRef = useRef(-1)
 
   useEffect(() => {
     const index = transcript.findIndex(
