@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
-import { UploadZone } from '@/components/UploadZone'
-import { VideoPreview } from '@/components/VideoPreview'
-import { TranscriptEditor } from '@/components/TranscriptEditor'
+import UploadZone from '@/components/UploadZone'
+import VideoPreview from '@/components/VideoPreview'
+import TranscriptEditor from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
 import { uploadVideos, getJobStatus, processEdit } from '@/lib/api-client'
 
