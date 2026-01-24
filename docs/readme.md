@@ -6,45 +6,23 @@
 
 ```mermaid
 flowchart LR
-    subgraph Client
-        A[Android App]
-    end
+    A[Android App] -->|upload media| S[Object Storage]
+    A -->|write metadata| D[MongoDB]
+    A -->|request guidance| M[Assembly Agent MCP Orchestrator]
 
-    subgraph Storage
-        S[Object Storage]
-        D[MongoDB]
-    end
+    M -->|list tools| R[Tool Registry]
+    M -->|best practices| C[Retention Editing Corpus JSON]
 
-    subgraph Knowledge
-        C[Retention Editing Corpus (JSON)]
-    end
+    M -->|invoke edits| F[Editing MCPs FFmpeg Premiere]
+    M -->|invoke comps| E[After Effects MCP]
 
-    subgraph Orchestration
-        M[Assembly Agent(s) / MCP Orchestrator]
-        R[Tool Registry]
-    end
+    F -->|edited assets| S
+    E -->|renders| S
 
-    subgraph Editing_Tools
-        F[Editing MCPs (FFmpeg / PP / etc.)]
-        E[After Effects MCP]
-    end
+    S -->|asset refs| M
+    D -->|metadata| M
 
-    A -->|Upload media| S
-    A -->|Write metadata| D
-    A -->|Request guidance| M
-
-    M -->|List available tools| R
-    M <-->|Read/write| S
-    M <-->|Read/write| D
-    M <-->|Best practices| C
-
-    M -->|Invoke edits| F
-    M -->|Invoke comps| E
-
-    F -->|Edited assets| S
-    E -->|Rendered assets| S
-
-    M -->|Suggestions + diffs| A
+    M -->|suggestions and diffs| A
 ```
 
 ## PRD (Product Requirements Document)
