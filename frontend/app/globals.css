@@ -33,3 +33,66 @@ body {
 .word-highlight:hover {
   @apply bg-blue-400;
 }
+
+@keyframes transcript-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes word-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes word-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.35);
+  }
+}
+
+@keyframes timeline-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transcript-panel {
+  animation: transcript-rise 0.45s ease-out both;
+}
+
+.word-reveal {
+  animation: word-reveal 0.35s ease-out both;
+}
+
+.word-current {
+  animation: word-pulse 1.6s ease-in-out infinite;
+}
+
+.timeline-panel {
+  animation: timeline-rise 0.4s ease-out both;
+}
+
+.timeline-bar {
+  animation: word-reveal 0.3s ease-out both;
+}
