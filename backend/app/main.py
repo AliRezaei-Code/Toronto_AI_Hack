@@ -187,6 +187,82 @@ async def upload_videos(
             detail=f"Upload failed due to server error. Please try again."
         )
 
+@app.post("/api/demo", response_model=UploadResponse)
+async def start_demo(background_tasks: BackgroundTasks):
+    """
+    Start a demo job using sample clips in shared-data/sample-videos/clips.
+    """
+    validator = VideoValidator()
+    demo_clips = _get_demo_clips()
+    
+    if len(demo_clips) < 3:
+        raise HTTPException(
+            status_code=400,
+            detail="Demo clips not found. Add 3-5 clips to shared-data/sample-videos/clips."
+        )
+    
+    job_id = str(uuid.uuid4())
+    uploaded_files = []
+    
+    try:
+        for i, clip_path in enumerate(demo_clips[:5]):
+            file_extension = Path(clip_path).suffix
+            filename = f"{job_id}_demo_{i}{file_extension}"
+            file_path = os.path.join(UPLOADS_DIR, filename)
+            
+            shutil.copy2(clip_path, file_path)
+            
+            is_valid, error_msg = validator.validate_file(file_path, check_duration=True)
+            if not is_valid:
+                os.remove(file_path)
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Demo clip validation failed: {error_msg}"
+                )
+            
+            uploaded_files.append(file_path)
+        
+        await state_manager.save_job(job_id, {
+            'job_id': job_id,
+            'status': 'processing',
+            'uploaded_files': uploaded_files,
+            'created_at': datetime.utcnow().isoformat(),
+            'demo_mode': True,
+        })
+        
+        processing_jobs[job_id] = True
+        
+        preset_transcript_path = os.path.join(SAMPLE_TRANSCRIPTS_DIR, 'demo_transcript.json')
+        if not os.path.exists(preset_transcript_path):
+            preset_transcript_path = None
+        
+        background_tasks.add_task(
+            process_uploads,
+            job_id,
+            uploaded_files,
+            preset_transcript_path
+        )
+        
+        return UploadResponse(
+            job_id=job_id,
+            message="Demo clips loaded. Processing started."
+        )
+    
+    except HTTPException:
+        for file_path in uploaded_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        raise
+    except Exception as e:
+        for file_path in uploaded_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        logger.error(f"Demo processing error: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Demo failed to start due to server error. Please try again."
+        )
+
 async def process_uploads(job_id: str, clip_paths: List[str], preset_transcript_path: str | None = None):
     """
     Process uploaded clips: stitch and generate transcript.
