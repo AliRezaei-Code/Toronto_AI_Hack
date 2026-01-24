@@ -9,8 +9,11 @@
     "lint": "next lint",
     "remotion:preview": "remotion preview src/remotion/index.ts",
     "remotion:render": "remotion render src/remotion/index.ts VideoEditor out/video.mp4",
+    "remotion:render-short": "remotion render src/remotion/index.ts ShortForm out/short.mp4",
     "remotion:upgrade": "remotion upgrade",
-    "remotion:studio": "remotion studio src/remotion/index.ts"
+    "remotion:studio": "remotion studio src/remotion/index.ts",
+    "remotion:thumbnail": "remotion still src/remotion/index.ts VideoEditor out/thumbnail.png",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.409",
