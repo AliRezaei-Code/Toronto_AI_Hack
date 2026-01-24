@@ -60,6 +60,19 @@ export async function uploadVideos(
   })
 }
 
+export async function startDemoJob(): Promise<{ job_id: string; message: string }> {
+  const response = await fetch(`${API_URL}/api/demo`, {
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(errorText || 'Failed to start demo')
+  }
+
+  return response.json()
+}
+
 export async function getTranscript(jobId: string): Promise<Transcript> {
   const response = await fetch(`${API_URL}/api/transcript/${jobId}`)
   
@@ -89,11 +102,31 @@ export async function processEdit(
   return response.json()
 }
 
+export async function editTranscriptText(
+  jobId: string,
+  editedText: string
+): Promise<EditResponse> {
+  const response = await fetch(`${API_URL}/api/transcript/${jobId}/edit`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ job_id: jobId, edited_text: editedText }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to edit transcript')
+  }
+
+  return response.json()
+}
+
 export async function getJobStatus(jobId: string): Promise<{
   status: 'processing' | 'completed' | 'error'
   video_url?: string
   transcript?: Transcript
   error?: string
+  warning?: string
 }> {
   const response = await fetch(`${API_URL}/api/job/${jobId}/status`)
   
