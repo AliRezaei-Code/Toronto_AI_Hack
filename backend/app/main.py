@@ -10,6 +10,11 @@ from dotenv import load_dotenv
 
 # Load .env from project root
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
+import json
+from datetime import datetime
+from pathlib import Path
+from typing import List
+from glob import glob
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -131,6 +136,9 @@ else:
 UPLOADS_DIR = os.path.join(SHARED_DATA_DIR, 'uploads')
 PROCESSED_DIR = os.path.join(SHARED_DATA_DIR, 'processed')
 TRANSCRIPTS_DIR = os.path.join(SHARED_DATA_DIR, 'transcripts')
+SAMPLE_VIDEOS_DIR = os.path.join(SHARED_DATA_DIR, 'sample-videos')
+SAMPLE_CLIPS_DIR = os.path.join(SAMPLE_VIDEOS_DIR, 'clips')
+SAMPLE_TRANSCRIPTS_DIR = os.path.join(SAMPLE_VIDEOS_DIR, 'transcripts')
 MCP_SERVER_URL = os.getenv('MCP_SERVER_URL', 'http://localhost:9000')
 
 # Log configuration at startup
@@ -146,6 +154,15 @@ for dir_path in [UPLOADS_DIR, PROCESSED_DIR, TRANSCRIPTS_DIR]:
 state_manager = StateManager(TRANSCRIPTS_DIR)
 
 processing_jobs = {}
+
+def _get_demo_clips() -> List[str]:
+    supported_extensions = ['.mp4', '.mov', '.webm', '.avi']
+    clip_files = []
+    
+    for ext in supported_extensions:
+        clip_files.extend(glob(os.path.join(SAMPLE_CLIPS_DIR, f'clip_*{ext}')))
+    
+    return sorted(set(clip_files))
 
 @app.get(
     "/",
@@ -168,6 +185,7 @@ async def root():
             "transcript": "/api/transcript/{job_id}",
             "query": "/api/agent/query",
             "recommendations": "/api/recommendations",
+            "demo": "/api/demo",
         }
     )
 
@@ -327,7 +345,8 @@ async def upload_videos(
         background_tasks.add_task(
             process_uploads,
             job_id,
-            uploaded_files
+            uploaded_files,
+            None
         )
         logger.info(f"[upload_videos] Background task scheduled, returning response")
         
@@ -351,7 +370,83 @@ async def upload_videos(
             detail=f"Upload failed due to server error. Please try again."
         )
 
-async def process_uploads(job_id: str, clip_paths: List[str]):
+@app.post("/api/demo", response_model=UploadResponse)
+async def start_demo(background_tasks: BackgroundTasks):
+    """
+    Start a demo job using sample clips in shared-data/sample-videos/clips.
+    """
+    validator = VideoValidator()
+    demo_clips = _get_demo_clips()
+    
+    if len(demo_clips) < 3:
+        raise HTTPException(
+            status_code=400,
+            detail="Demo clips not found. Add 3-5 clips to shared-data/sample-videos/clips."
+        )
+    
+    job_id = str(uuid.uuid4())
+    uploaded_files = []
+    
+    try:
+        for i, clip_path in enumerate(demo_clips[:5]):
+            file_extension = Path(clip_path).suffix
+            filename = f"{job_id}_demo_{i}{file_extension}"
+            file_path = os.path.join(UPLOADS_DIR, filename)
+            
+            shutil.copy2(clip_path, file_path)
+            
+            is_valid, error_msg = validator.validate_file(file_path, check_duration=True)
+            if not is_valid:
+                os.remove(file_path)
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Demo clip validation failed: {error_msg}"
+                )
+            
+            uploaded_files.append(file_path)
+        
+        await state_manager.save_job(job_id, {
+            'job_id': job_id,
+            'status': 'processing',
+            'uploaded_files': uploaded_files,
+            'created_at': datetime.utcnow().isoformat(),
+            'demo_mode': True,
+        })
+        
+        processing_jobs[job_id] = True
+        
+        preset_transcript_path = os.path.join(SAMPLE_TRANSCRIPTS_DIR, 'demo_transcript.json')
+        if not os.path.exists(preset_transcript_path):
+            preset_transcript_path = None
+        
+        background_tasks.add_task(
+            process_uploads,
+            job_id,
+            uploaded_files,
+            preset_transcript_path
+        )
+        
+        return UploadResponse(
+            job_id=job_id,
+            message="Demo clips loaded. Processing started."
+        )
+    
+    except HTTPException:
+        for file_path in uploaded_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        raise
+    except Exception as e:
+        for file_path in uploaded_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        logger.error(f"Demo processing error: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Demo failed to start due to server error. Please try again."
+        )
+
+async def process_uploads(job_id: str, clip_paths: List[str], preset_transcript_path: str | None = None):
     """
     Process uploaded clips: transcribe, segment, smart merge, render directly from clips.
     
@@ -597,7 +692,8 @@ async def get_job_status(job_id: str):
         video_url=video_url,
         transcript=transcript,
         creator_context=creator_context,
-        error=job_data.get('error')
+        error=job_data.get('error'),
+        warning=job_data.get('warning')
     )
 
 @app.get(

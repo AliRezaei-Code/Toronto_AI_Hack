@@ -6,8 +6,9 @@ import {UploadZone} from '@/components/UploadZone'
 import {VideoPreview} from '@/components/VideoPreview'
 import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
-import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary, Transcript } from '@/lib/api-client'
-import { createEmptyTranscript } from '@/lib/transcript-utils'
+import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary, Transcript, startDemoJob } from '@/lib/api-client'
+import { createEmptyTranscript, getAllWords } from '@/lib/transcript-utils'
+import { WaveformTimeline } from '@/components/WaveformTimeline';
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -30,6 +31,14 @@ export default function Home() {
   const [jobs, setJobs] = useState<JobSummary[]>([])
   const [showJobList, setShowJobList] = useState(false)
   const [isLoadingJobs, setIsLoadingJobs] = useState(false)
+
+  const statusMessageLower = statusMessage.toLowerCase()
+  const isErrorMessage =
+    statusMessageLower.includes('failed') || statusMessageLower.includes('error')
+  const isWarningMessage =
+    statusMessageLower.includes('warning') ||
+    statusMessageLower.includes('transcription') ||
+    statusMessageLower.includes('disabled')
   
   const pollingRef = useRef<NodeJS.Timeout>()
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -64,6 +73,25 @@ export default function Home() {
     }
   }
 
+  const handleDemo = async () => {
+    setIsProcessing(true)
+    setUploadProgress(0)
+    setProcessingStep('Loading demo clips...')
+    setStatusMessage('Loading demo clips...')
+
+    try {
+      const result = await startDemoJob()
+      setJobId(result.job_id)
+      pollJobStatus(result.job_id)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Demo failed to start.'
+      setStatusMessage(message)
+      setIsProcessing(false)
+      setProcessingStep('')
+      setUploadProgress(0)
+    }
+  }
+
   const pollJobStatus = async (id: string) => {
     const poll = async () => {
       try {
@@ -73,7 +101,7 @@ export default function Home() {
           setVideoUrl(status.video_url || null)
           setTranscript(status.transcript || null)
           setIsProcessing(false)
-          setStatusMessage('')
+          setStatusMessage(status.warning || '')
           setUploadProgress(100)
           setProcessingStep('')
           if (pollingRef.current) clearInterval(pollingRef.current)
@@ -325,8 +353,10 @@ export default function Home() {
 
       {statusMessage && (
         <div className={`px-6 py-2 text-sm text-center border-b ${
-          statusMessage.includes('failed') || statusMessage.includes('error')
+          isErrorMessage
             ? 'bg-red-600/20 text-red-400 border-red-600/30'
+            : isWarningMessage
+            ? 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30'
             : 'bg-blue-600/20 text-blue-400 border-blue-600/30'
         }`}>
           {statusMessage}
@@ -337,6 +367,7 @@ export default function Home() {
         {showUpload && !showEditor ? (
           <UploadZone 
             onUpload={handleUpload}
+            onDemo={handleDemo}
             isUploading={isProcessing}
             uploadProgress={uploadProgress}
             uploadStatus={processingStep}
@@ -349,7 +380,7 @@ export default function Home() {
                   transcript={transcript}
                   currentTime={currentTime}
                   onWordClick={handleWordClick}
-                  jobId={jobId}
+                  jobId={jobId ?? ''}
                   isProcessing={isProcessing}
                   onTranscriptUpdate={setTranscript}
                 />
@@ -362,12 +393,21 @@ export default function Home() {
 
             <div className="w-1/2 flex flex-col">
               {showEditor ? (
-                <VideoPreview
-                  videoUrl={videoUrl}
-                  currentTime={currentTime}
-                  onTimeUpdate={setCurrentTime}
-                  onSeek={setCurrentTime}
-                />
+                <>
+                  <div className="flex-1">
+                    <VideoPreview
+                      videoUrl={videoUrl}
+                      currentTime={currentTime}
+                      onTimeUpdate={setCurrentTime}
+                      onSeek={setCurrentTime}
+                    />
+                  </div>
+                  <WaveformTimeline
+                    transcript={transcript ? getAllWords(transcript) : []}
+                    currentTime={currentTime}
+                    onSeek={setCurrentTime}
+                  />
+                </>
               ) : (
                 <div className="flex items-center justify-center flex-1">
                   <p className="text-gray-400">Loading video...</p>

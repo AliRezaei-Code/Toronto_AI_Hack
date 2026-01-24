@@ -8,6 +8,7 @@ interface UploadZoneProps {
   isUploading?: boolean
   uploadProgress?: number
   uploadStatus?: string
+  onDemo?: () => void
 }
 
 interface FileWithInfo {
@@ -20,6 +21,7 @@ export function UploadZone({
   isUploading = false,
   uploadProgress = 0,
   uploadStatus = '',
+  onDemo,
 }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState<FileWithInfo[]>([])
@@ -156,18 +158,36 @@ export function UploadZone({
               </p>
             </div>
             
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                multiple
-                accept="video/*"
-                className="hidden"
-                onChange={handleFileInput}
-              />
-              <div className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors">
-                Browse Files
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  multiple
+                  accept="video/*"
+                  className="hidden"
+                  onChange={handleFileInput}
+                />
+                <div className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors">
+                  Browse Files
+                </div>
+              </label>
+              {onDemo && (
+                <button
+                  type="button"
+                  onClick={onDemo}
+                  disabled={isUploading}
+                  className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors disabled:opacity-50"
+                >
+                  Try Demo Clips
+                </button>
+              )}
+            </div>
+
+            {onDemo && (
+              <div className="text-xs text-gray-500">
+                Uses clips from shared-data/sample-videos/clips
               </div>
-            </label>
+            )}
 
             <div className="flex items-center gap-2 text-gray-500 text-sm">
               <FileVideo className="w-4 h-4" />
