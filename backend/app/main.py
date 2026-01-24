@@ -149,9 +149,10 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
             await state_manager.save_transcript(job_id, transcript)
             
             job_data = await state_manager.load_job(job_id)
-            job_data['status'] = 'completed'
-            job_data['current_video_path'] = stitched_video_path
-            await state_manager.save_job(job_id, job_data)
+            if job_data:
+                job_data['status'] = 'completed'
+                job_data['current_video_path'] = stitched_video_path
+                await state_manager.save_job(job_id, job_data)
             
             for clip_path in clip_paths:
                 if os.path.exists(clip_path):
@@ -251,10 +252,14 @@ async def process_agent_query(request: dict):
         )
     
     try:
+        current_video_path = job_data.get('current_video_path')
+        if not current_video_path:
+            raise HTTPException(status_code=400, detail="No video found for this job")
+        
         result = await run_agent(
             job_id=job_id,
             query=query,
-            current_video_path=job_data.get('current_video_path')
+            current_video_path=current_video_path
         )
         
         updated_transcript = Transcript(
