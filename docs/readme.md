@@ -5,6 +5,7 @@
 ## Mermaid diagram (improved)
 
 ```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 60, "rankSpacing": 80}}}%%
 flowchart LR
     A[Android App] -->|upload media| S[Object Storage]
     A -->|write metadata| D[MongoDB]
