@@ -1,3 +1,26 @@
+# ===========================================
+# Build and Deploy Workflow
+# ===========================================
+# Builds Docker images for all services and deploys to VM
+#
+# Required GitHub Secrets:
+#   DEPLOY_HOST     - VM IP address or hostname
+#   DEPLOY_USER     - SSH username on VM
+#   DEPLOY_SSH_KEY  - Private SSH key for authentication
+#   OPENAI_API_KEY  - OpenAI API key for backend/mcp-server
+#
+# Optional (only needed for PRIVATE repos/packages):
+#   PAT             - GitHub Personal Access Token (repo access)
+#                     Not needed if repo is public and packages inherit visibility
+#
+# Note: GITHUB_TOKEN is used for pushing images during build.
+#       For VM deployment, PAT is only needed if repo/packages are private.
+#
+# Triggers:
+#   - Push to main branch
+#   - Manual workflow dispatch
+# ===========================================
+
 name: Build and Deploy
 
 on:
@@ -82,7 +105,14 @@ jobs:
             # Configure git
             export GIT_TERMINAL_PROMPT=0
 
-            REPO_URL="https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git"
+            # Use PAT if available (for private repos), otherwise use public URL
+            PAT="${{ secrets.PAT }}"
+            if [ -n "$PAT" ]; then
+              REPO_URL="https://${PAT}@github.com/${{ github.repository }}.git"
+            else
+              REPO_URL="https://github.com/${{ github.repository }}.git"
+            fi
+            
             REPO_DIR="/opt/toronto-ai-hack"
 
             # Check if we can use the directory
@@ -102,10 +132,7 @@ jobs:
             if [ -d "$REPO_DIR/.git" ]; then
               echo "Repository exists, pulling latest code..."
               cd "$REPO_DIR"
-              CURRENT_URL=$(git remote get-url origin)
-              if [[ "$CURRENT_URL" != *"${{ secrets.PAT }}"* ]]; then
-                git remote set-url origin "$REPO_URL"
-              fi
+              git remote set-url origin "$REPO_URL"
               git fetch origin main
               git checkout main
               git pull origin main
@@ -129,11 +156,16 @@ jobs:
             MCP_SERVER_URL=http://mcp-server:9000
             IMAGE_PREFIX=${{ github.repository_owner }}
             IMAGE_TAG=latest
+            FRONTEND_PORT=3010
             EOF
 
-            # Login to GitHub Container Registry
-            echo "Logging in to GitHub Container Registry..."
-            echo "${{ secrets.PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            # Login to GitHub Container Registry (only if PAT is provided for private packages)
+            if [ -n "$PAT" ]; then
+              echo "Logging in to GitHub Container Registry..."
+              echo "$PAT" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            else
+              echo "No PAT provided - assuming public packages, skipping docker login"
+            fi
 
             # Pull and deploy services
             echo "Pulling latest images..."
