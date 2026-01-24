@@ -1,8 +1,11 @@
 import os
 import json
+import subprocess
 import asyncio
 import uuid
 from typing import List, Dict, Any
+
+from .utils import ffmpeg_safe_path
 
 class RenderingTool:
     def __init__(self, output_dir: str):
@@ -80,17 +83,14 @@ class RenderingTool:
             output_path
         ]
 
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True
         )
 
-        stdout, stderr = await process.communicate()
-
-        if process.returncode != 0:
-            error_msg = stderr.decode()
-            raise Exception(f"Single segment render failed: {error_msg}")
+        if result.returncode != 0:
+            raise Exception(f"Single segment render failed: {result.stderr}")
 
         return {
             'output_path': output_path,
@@ -129,7 +129,7 @@ class RenderingTool:
 
             with open(concat_file, 'w') as f:
                 for segment_path in temp_segments:
-                    f.write(f"file '{os.path.abspath(segment_path)}'\n")
+                    f.write(f"file '{ffmpeg_safe_path(segment_path)}'\n")
 
             command = [
                 'ffmpeg',
@@ -141,17 +141,14 @@ class RenderingTool:
                 output_path
             ]
 
-            process = await asyncio.create_subprocess_exec(
-                *command,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True
             )
 
-            stdout, stderr = await process.communicate()
-
-            if process.returncode != 0:
-                error_msg = stderr.decode()
-                raise Exception(f"Multi-segment render failed: {error_msg}")
+            if result.returncode != 0:
+                raise Exception(f"Multi-segment render failed: {result.stderr}")
 
             final_duration = await self._get_video_duration(output_path)
 
@@ -233,19 +230,16 @@ class RenderingTool:
         """
         Get video duration using FFprobe.
         """
-        command = [
-            'ffprobe',
-            '-v', 'error',
-            '-show_entries', 'format=duration',
-            '-of', 'default=noprint_wrappers=1:nokey=1',
-            video_path
-        ]
-
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            [
+                'ffprobe',
+                '-v', 'error',
+                '-show_entries', 'format=duration',
+                '-of', 'default=noprint_wrappers=1:nokey=1',
+                video_path
+            ],
+            capture_output=True,
+            text=True
         )
 
-        stdout, _ = await process.communicate()
-        return float(stdout.decode().strip())
+        return float(result.stdout.strip())

@@ -16,10 +16,11 @@ from app.state_manager import StateManager
 logger = logging.getLogger(__name__)
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-SHARED_DATA_DIR = os.getenv(
-    'SHARED_DATA_DIR',
-    os.path.join(os.path.dirname(__file__), '..', '..', 'shared-data')
-)
+_shared_data_env = os.getenv('SHARED_DATA_DIR')
+if _shared_data_env:
+    SHARED_DATA_DIR = os.path.abspath(_shared_data_env)
+else:
+    SHARED_DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'shared-data'))
 TRANSCRIPTS_DIR = os.path.join(SHARED_DATA_DIR, 'transcripts')
 
 os.makedirs(TRANSCRIPTS_DIR, exist_ok=True)

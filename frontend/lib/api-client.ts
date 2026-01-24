@@ -103,3 +103,19 @@ export async function getJobStatus(jobId: string): Promise<{
 
   return response.json()
 }
+
+export interface JobSummary {
+  job_id: string
+  status: string
+  created_at: string
+}
+
+export async function getJobs(): Promise<{ jobs: JobSummary[] }> {
+  const response = await fetch(`${API_URL}/api/jobs`)
+  
+  if (!response.ok) {
+    throw new Error('Failed to get jobs')
+  }
+
+  return response.json()
+}

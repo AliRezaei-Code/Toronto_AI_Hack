@@ -5,13 +5,33 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from typing import List
+from dotenv import load_dotenv
+
+# Load .env from project root
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 import httpx
 
-from app.models import UploadResponse, EditResponse, JobStatus, Transcript, Word, TranscriptEditRequest
+from app.models import (
+    UploadResponse,
+    EditResponse,
+    JobStatus,
+    Transcript,
+    Word,
+    TranscriptEditRequest,
+    AgentQueryRequest,
+    RecommendationsResponse,
+    LimitsInfo,
+    RootResponse,
+    HealthResponse,
+    DeleteJobResponse,
+    ErrorResponse,
+    ListJobsResponse,
+    JobSummary,
+)
 from app.state_manager import StateManager
 from app.agent import run_agent
 from utils.validator import VideoValidator
@@ -19,7 +39,67 @@ from utils.validator import VideoValidator
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Video Editor Backend API")
+# OpenAPI Tags for grouping endpoints
+tags_metadata = [
+    {
+        "name": "Health",
+        "description": "Health check and system status endpoints.",
+    },
+    {
+        "name": "Upload",
+        "description": "Upload video clips for processing.",
+    },
+    {
+        "name": "Jobs",
+        "description": "Job status and management operations.",
+    },
+    {
+        "name": "Videos",
+        "description": "Video retrieval and streaming.",
+    },
+    {
+        "name": "Transcripts",
+        "description": "Transcript retrieval and editing operations.",
+    },
+    {
+        "name": "Agent",
+        "description": "AI-powered natural language video editing.",
+    },
+]
+
+app = FastAPI(
+    title="Video Editor Backend API",
+    description="""
+## Video Editor Backend API
+
+A powerful API for uploading, processing, and editing video clips using AI-powered transcript editing.
+
+### Features
+
+* **Video Upload**: Upload 3-5 video clips that will be automatically stitched together
+* **Automatic Transcription**: AI-powered speech-to-text transcription with word-level timing
+* **Natural Language Editing**: Use plain English to describe edits (e.g., "Remove all filler words")
+* **Script-Based Editing**: Edit the transcript directly and the video will update accordingly
+
+### Workflow
+
+1. Upload 3-5 video clips using `/api/upload`
+2. Poll `/api/job/{job_id}/status` until processing completes
+3. View the stitched video at `/api/video/{job_id}`
+4. Use `/api/agent/query` for natural language editing
+5. Or use `/api/transcript/{job_id}/edit` for script-based editing
+    """,
+    version="2.0.0",
+    openapi_tags=tags_metadata,
+    license_info={
+        "name": "MIT",
+    },
+    responses={
+        400: {"model": ErrorResponse, "description": "Bad Request"},
+        404: {"model": ErrorResponse, "description": "Not Found"},
+        500: {"model": ErrorResponse, "description": "Internal Server Error"},
+    },
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,10 +109,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SHARED_DATA_DIR = os.getenv(
-    'SHARED_DATA_DIR',
-    os.path.join(os.path.dirname(__file__), '..', '..', 'shared-data')
-)
+_shared_data_env = os.getenv('SHARED_DATA_DIR')
+if _shared_data_env:
+    SHARED_DATA_DIR = os.path.abspath(_shared_data_env)
+else:
+    SHARED_DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'shared-data'))
 UPLOADS_DIR = os.path.join(SHARED_DATA_DIR, 'uploads')
 PROCESSED_DIR = os.path.join(SHARED_DATA_DIR, 'processed')
 TRANSCRIPTS_DIR = os.path.join(SHARED_DATA_DIR, 'transcripts')
@@ -45,12 +126,21 @@ state_manager = StateManager(TRANSCRIPTS_DIR)
 
 processing_jobs = {}
 
-@app.get("/")
+@app.get(
+    "/",
+    response_model=RootResponse,
+    tags=["Health"],
+    summary="API Root",
+    description="Get API information and available endpoints.",
+)
 async def root():
-    return {
-        "message": "Video Editor Backend API",
-        "version": "2.0.0",
-        "endpoints": {
+    """
+    Returns basic API information and a list of available endpoints.
+    """
+    return RootResponse(
+        message="Video Editor Backend API",
+        version="2.0.0",
+        endpoints={
             "upload": "/api/upload",
             "status": "/api/job/{job_id}/status",
             "video": "/api/video/{job_id}",
@@ -58,43 +148,108 @@ async def root():
             "query": "/api/agent/query",
             "recommendations": "/api/recommendations",
         }
-    }
+    )
 
-@app.get("/api/recommendations")
+@app.get(
+    "/api/recommendations",
+    response_model=RecommendationsResponse,
+    tags=["Upload"],
+    summary="Get Upload Recommendations",
+    description="Get recommendations and guidelines for optimal video uploads.",
+)
 async def get_recommendations():
-    """Get upload recommendations and guidelines."""
-    from utils.validator import VideoValidator
-    
+    """
+    Returns upload recommendations, file size limits, duration limits,
+    and supported video formats.
+    """
     validator = VideoValidator()
     
-    return {
-        "recommendations": validator.get_validation_recommendations(),
-        "limits": {
-            "max_file_size_mb": validator.MAX_FILE_SIZE / (1024 * 1024),
-            "max_duration_seconds": validator.MAX_DURATION,
-            "recommended_duration_seconds": validator.RECOMMENDED_DURATION,
-            "min_clips": 3,
-            "max_clips": 5,
-        },
-        "supported_formats": list(validator.SUPPORTED_FORMATS)
-    }
+    return RecommendationsResponse(
+        recommendations=validator.get_validation_recommendations(),
+        limits=LimitsInfo(
+            max_file_size_mb=validator.MAX_FILE_SIZE / (1024 * 1024),
+            max_duration_seconds=validator.MAX_DURATION,
+            recommended_duration_seconds=validator.RECOMMENDED_DURATION,
+            min_clips=3,
+            max_clips=5,
+        ),
+        supported_formats=list(validator.SUPPORTED_FORMATS)
+    )
 
-@app.get("/health")
+
+@app.get(
+    "/health",
+    response_model=HealthResponse,
+    tags=["Health"],
+    summary="Health Check",
+    description="Check if the API is running and healthy.",
+)
 async def health():
-    return {"status": "healthy"}
+    """
+    Returns the health status of the API.
+    """
+    return HealthResponse(status="healthy")
 
-@app.post("/api/upload", response_model=UploadResponse)
+
+@app.get(
+    "/api/jobs",
+    response_model=ListJobsResponse,
+    tags=["Jobs"],
+    summary="List All Jobs",
+    description="Get a list of all jobs with their metadata, sorted by creation date (newest first).",
+)
+async def list_jobs():
+    """
+    List all jobs with their metadata including status and creation time.
+    
+    Jobs are sorted by creation date (newest first).
+    """
+    job_ids = await state_manager.list_jobs()
+    jobs = []
+    for job_id in job_ids:
+        job_data = await state_manager.load_job(job_id)
+        if job_data:
+            jobs.append(JobSummary(
+                job_id=job_id,
+                status=job_data.get("status"),
+                created_at=job_data.get("created_at"),
+            ))
+    # Sort by created_at descending (newest first)
+    jobs.sort(key=lambda x: x.created_at or "", reverse=True)
+    return ListJobsResponse(jobs=jobs)
+
+
+@app.post(
+    "/api/upload",
+    response_model=UploadResponse,
+    tags=["Upload"],
+    summary="Upload Video Clips",
+    description="Upload 3-5 video clips for processing. Clips will be stitched together and transcribed.",
+    responses={
+        200: {"description": "Upload successful, processing started"},
+        400: {"model": ErrorResponse, "description": "Invalid file format or validation failed"},
+        500: {"model": ErrorResponse, "description": "Server error during upload"},
+    },
+)
 async def upload_videos(
     background_tasks: BackgroundTasks,
-    clip_0: UploadFile = File(...),
-    clip_1: UploadFile = File(...),
-    clip_2: UploadFile = File(...),
-    clip_3: UploadFile | None = None,
-    clip_4: UploadFile | None = None,
+    clip_0: UploadFile = File(..., description="First video clip (required)"),
+    clip_1: UploadFile = File(..., description="Second video clip (required)"),
+    clip_2: UploadFile = File(..., description="Third video clip (required)"),
+    clip_3: UploadFile | None = File(None, description="Fourth video clip (optional)"),
+    clip_4: UploadFile | None = File(None, description="Fifth video clip (optional)"),
 ):
     """
-    Upload 3-5 video clips for processing with validation.
+    Upload 3-5 video clips for processing.
+    
+    The clips will be:
+    1. Validated for format and duration
+    2. Stitched together with crossfade transitions
+    3. Transcribed using AI speech-to-text
+    
+    Use the returned `job_id` to check status and retrieve results.
     """
+    print("starting upload_videos")
     validator = VideoValidator()
     clips = [clip_0, clip_1, clip_2, clip_3, clip_4]
     files = [f for f in clips if f is not None]
@@ -211,6 +366,7 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
                         words=[Word(**w) for w in transcript_data.get('words', [])],
                         duration=transcript_data.get('duration')
                     )
+                    print("transcript", transcript)
                     
                     await state_manager.save_transcript(job_id, transcript)
                     logger.info(f"Transcript generated successfully for job {job_id}")
@@ -258,10 +414,25 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
     finally:
         processing_jobs.pop(job_id, None)
 
-@app.get("/api/job/{job_id}/status", response_model=JobStatus)
+@app.get(
+    "/api/job/{job_id}/status",
+    response_model=JobStatus,
+    tags=["Jobs"],
+    summary="Get Job Status",
+    description="Check the processing status of an upload job.",
+    responses={
+        200: {"description": "Job status retrieved successfully"},
+        404: {"model": ErrorResponse, "description": "Job not found"},
+    },
+)
 async def get_job_status(job_id: str):
     """
-    Get the status of a processing job.
+    Get the current status of a processing job.
+    
+    Status values:
+    - `processing`: Video is being stitched and transcribed
+    - `completed`: Processing finished, video and transcript available
+    - `error`: Processing failed, check the error field for details
     """
     job_data = await state_manager.load_job(job_id)
     
@@ -282,13 +453,22 @@ async def get_job_status(job_id: str):
         error=job_data.get('error')
     )
 
-@app.get("/api/video/{job_id}")
+@app.get(
+    "/api/video/{job_id}",
+    tags=["Videos"],
+    summary="Get Video",
+    description="Stream or download the processed video.",
+    responses={
+        200: {"description": "Video file", "content": {"video/mp4": {}}},
+        404: {"model": ErrorResponse, "description": "Video not found or job not completed"},
+    },
+)
 async def get_video(job_id: str):
     """
-    Stream the processed video for a job.
-    """
-    from fastapi.responses import FileResponse
+    Stream the processed video for a completed job.
     
+    Returns the video file as an MP4 stream.
+    """
     job_data = await state_manager.load_job(job_id)
     
     if not job_data or job_data['status'] != 'completed':
@@ -305,10 +485,22 @@ async def get_video(job_id: str):
         filename=f"video_{job_id}.mp4"
     )
 
-@app.get("/api/transcript/{job_id}")
+@app.get(
+    "/api/transcript/{job_id}",
+    response_model=Transcript,
+    tags=["Transcripts"],
+    summary="Get Transcript",
+    description="Retrieve the transcript for a completed job.",
+    responses={
+        200: {"description": "Transcript retrieved successfully"},
+        404: {"model": ErrorResponse, "description": "Transcript not found"},
+    },
+)
 async def get_transcript(job_id: str):
     """
-    Get the transcript for a job.
+    Get the transcript for a completed job.
+    
+    Returns word-level transcript with timing information.
     """
     transcript = await state_manager.load_transcript(job_id)
     
@@ -317,19 +509,31 @@ async def get_transcript(job_id: str):
     
     return transcript
 
-@app.post("/api/agent/query", response_model=EditResponse)
-async def process_agent_query(request: dict):
+@app.post(
+    "/api/agent/query",
+    response_model=EditResponse,
+    tags=["Agent"],
+    summary="Natural Language Edit",
+    description="Edit video using natural language instructions.",
+    responses={
+        200: {"description": "Edit completed successfully"},
+        400: {"model": ErrorResponse, "description": "Invalid request or job still processing"},
+        404: {"model": ErrorResponse, "description": "Job not found"},
+        500: {"model": ErrorResponse, "description": "Agent processing failed"},
+    },
+)
+async def process_agent_query(request: AgentQueryRequest):
     """
-    Process a natural language edit query using the agent.
-    """
-    job_id = request.get('job_id')
-    query = request.get('query')
+    Process a natural language edit query using the AI agent.
     
-    if not job_id or not query:
-        raise HTTPException(
-            status_code=400,
-            detail="Both job_id and query are required"
-        )
+    Example queries:
+    - "Remove all filler words like um and uh"
+    - "Cut out the section where I talk about pricing"
+    - "Keep only the introduction and conclusion"
+    - "Remove awkward pauses longer than 2 seconds"
+    """
+    job_id = request.job_id
+    query = request.query
     
     job_data = await state_manager.load_job(job_id)
     
@@ -369,10 +573,25 @@ async def process_agent_query(request: dict):
             detail=f"Agent processing failed: {str(e)}"
         )
 
-@app.delete("/api/job/{job_id}")
+@app.delete(
+    "/api/job/{job_id}",
+    response_model=DeleteJobResponse,
+    tags=["Jobs"],
+    summary="Delete Job",
+    description="Delete a job and all associated files.",
+    responses={
+        200: {"description": "Job deleted successfully"},
+    },
+)
 async def delete_job(job_id: str):
     """
     Delete a job and all associated files.
+    
+    This will remove:
+    - The processed video file
+    - Any uploaded clip files
+    - The transcript data
+    - Job metadata
     """
     job_data = await state_manager.load_job(job_id)
     
@@ -386,13 +605,28 @@ async def delete_job(job_id: str):
     
     await state_manager.delete_job(job_id)
     
-    return {"message": f"Job {job_id} deleted"}
+    return DeleteJobResponse(message=f"Job {job_id} deleted")
 
-@app.post("/api/transcript/{job_id}/edit", response_model=EditResponse)
+@app.post(
+    "/api/transcript/{job_id}/edit",
+    response_model=EditResponse,
+    tags=["Transcripts"],
+    summary="Edit Transcript",
+    description="Edit the transcript directly to modify the video.",
+    responses={
+        200: {"description": "Edit completed successfully"},
+        400: {"model": ErrorResponse, "description": "Invalid request, job still processing, or no transcript available"},
+        404: {"model": ErrorResponse, "description": "Job not found"},
+        500: {"model": ErrorResponse, "description": "Edit processing failed"},
+    },
+)
 async def edit_transcript_text(request: TranscriptEditRequest):
     """
     Edit the transcript text directly and regenerate the video.
+    
     This enables script-based editing where text changes affect the video.
+    Simply provide the edited transcript text, and the video will be
+    re-cut to match the new text.
     """
     job_id = request.job_id
     edited_text = request.edited_text

@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
-import UploadZone from '@/components/UploadZone'
-import VideoPreview from '@/components/VideoPreview'
+import {UploadZone} from '@/components/UploadZone'
+import {VideoPreview} from '@/components/VideoPreview'
 import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
-import { uploadVideos, getJobStatus, processEdit } from '@/lib/api-client'
+import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary } from '@/lib/api-client'
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -32,8 +32,12 @@ export default function Home() {
   const [statusMessage, setStatusMessage] = useState('')
   const [uploadProgress, setUploadProgress] = useState(0)
   const [processingStep, setProcessingStep] = useState('')
+  const [jobs, setJobs] = useState<JobSummary[]>([])
+  const [showJobList, setShowJobList] = useState(false)
+  const [isLoadingJobs, setIsLoadingJobs] = useState(false)
   
   const pollingRef = useRef<NodeJS.Timeout>()
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const handleUpload = async (files: File[]) => {
     setIsProcessing(true)
@@ -97,14 +101,94 @@ export default function Home() {
     pollingRef.current = setInterval(poll, 2000)
   }
 
+  const fetchJobs = async () => {
+    setIsLoadingJobs(true)
+    try {
+      const response = await getJobs()
+      setJobs(response.jobs)
+    } catch (error) {
+      console.error('Failed to fetch jobs:', error)
+    } finally {
+      setIsLoadingJobs(false)
+    }
+  }
+
   useEffect(() => {
+    fetchJobs()
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current)
     }
   }, [])
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowJobList(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const handleWordClick = (time: number) => {
     setCurrentTime(time)
+  }
+
+  const handleSelectJob = async (selectedJobId: string) => {
+    setShowJobList(false)
+    setIsProcessing(true)
+    setStatusMessage('Loading project...')
+    
+    try {
+      const status = await getJobStatus(selectedJobId)
+      
+      if (status.status === 'completed') {
+        setJobId(selectedJobId)
+        setVideoUrl(status.video_url || null)
+        setTranscript(status.transcript?.words || [])
+        setCurrentTime(0)
+        setStatusMessage('')
+      } else if (status.status === 'processing') {
+        setJobId(selectedJobId)
+        setStatusMessage('This project is still processing...')
+        pollJobStatus(selectedJobId)
+      } else if (status.status === 'error') {
+        setStatusMessage(status.error || 'This project encountered an error')
+      }
+    } catch (error) {
+      console.error('Failed to load job:', error)
+      setStatusMessage('Failed to load project. Please try again.')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleNewProject = () => {
+    if (pollingRef.current) clearInterval(pollingRef.current)
+    setJobId(null)
+    setVideoUrl(null)
+    setTranscript([])
+    setCurrentTime(0)
+    setStatusMessage('')
+    setUploadProgress(0)
+    setProcessingStep('')
+    setShowJobList(false)
+  }
+
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+    
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHours < 24) return `${diffHours}h ago`
+    if (diffDays < 7) return `${diffDays}d ago`
+    return date.toLocaleDateString()
   }
 
   const handleSendMessage = async (message: string) => {
@@ -155,11 +239,93 @@ export default function Home() {
           </div>
           <h1 className="text-xl font-semibold">Script-Based Video Editor</h1>
         </div>
-        <button className="text-gray-400 hover:text-white transition-colors" title="Help coming soon!">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12 a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </button>
+        <div className="flex items-center gap-3">
+          {/* History Button with Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => {
+                setShowJobList(!showJobList)
+                if (!showJobList) fetchJobs()
+              }}
+              className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+              title="View previous projects"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm">History</span>
+            </button>
+            
+            {showJobList && (
+              <div className="absolute right-0 top-full mt-2 w-72 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-700">
+                  <h3 className="text-sm font-medium text-white">Previous Projects</h3>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {isLoadingJobs ? (
+                    <div className="px-4 py-6 text-center text-gray-400">
+                      <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-transparent mb-2"></div>
+                      <p className="text-sm">Loading...</p>
+                    </div>
+                  ) : jobs.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-gray-400">
+                      <p className="text-sm">No previous projects</p>
+                    </div>
+                  ) : (
+                    jobs.map((job) => (
+                      <button
+                        key={job.job_id}
+                        onClick={() => handleSelectJob(job.job_id)}
+                        className={`w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                          job.job_id === jobId ? 'bg-gray-700/50' : ''
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-white font-mono truncate">
+                            {job.job_id.substring(0, 8)}...
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {job.created_at ? formatRelativeTime(job.created_at) : 'Unknown date'}
+                          </p>
+                        </div>
+                        <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
+                          job.status === 'completed' 
+                            ? 'bg-green-500/20 text-green-400'
+                            : job.status === 'processing'
+                            ? 'bg-yellow-500/20 text-yellow-400'
+                            : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {job.status}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* New Project Button */}
+          {jobId && (
+            <button
+              onClick={handleNewProject}
+              className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+              title="Start a new project"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="text-sm">New Project</span>
+            </button>
+          )}
+
+          {/* Help Button */}
+          <button className="text-gray-400 hover:text-white transition-colors p-2" title="Help coming soon!">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12 a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </div>
       </header>
 
       {statusMessage && (
@@ -188,7 +354,7 @@ export default function Home() {
                   transcript={transcript}
                   currentTime={currentTime}
                   onWordClick={handleWordClick}
-                  jobId={currentJobId}
+                  jobId={jobId}
                   isProcessing={isProcessing}
                   onTranscriptUpdate={(newTranscript) => {
                     setTranscript(newTranscript)

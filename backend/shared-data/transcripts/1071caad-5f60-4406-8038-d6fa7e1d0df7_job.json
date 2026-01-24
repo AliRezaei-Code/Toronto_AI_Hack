@@ -1,0 +1,13 @@
+{
+  "job_id": "1071caad-5f60-4406-8038-d6fa7e1d0df7",
+  "status": "completed",
+  "uploaded_files": [
+    "D:\\Chris\\Startups\\Toronto_AI_Hack\\backend\\shared-data\\uploads\\1071caad-5f60-4406-8038-d6fa7e1d0df7_clip_0.mov",
+    "D:\\Chris\\Startups\\Toronto_AI_Hack\\backend\\shared-data\\uploads\\1071caad-5f60-4406-8038-d6fa7e1d0df7_clip_1.mov",
+    "D:\\Chris\\Startups\\Toronto_AI_Hack\\backend\\shared-data\\uploads\\1071caad-5f60-4406-8038-d6fa7e1d0df7_clip_2.mov",
+    "D:\\Chris\\Startups\\Toronto_AI_Hack\\backend\\shared-data\\uploads\\1071caad-5f60-4406-8038-d6fa7e1d0df7_clip_3.mov",
+    "D:\\Chris\\Startups\\Toronto_AI_Hack\\backend\\shared-data\\uploads\\1071caad-5f60-4406-8038-d6fa7e1d0df7_clip_4.mov"
+  ],
+  "created_at": "2026-01-24T10:08:45.530240",
+  "current_video_path": "D:\\Chris\\Startups\\Toronto_AI_Hack\\mcp-server\\shared-data\\processed\\stitched_18d6d75e.mp4"
+}

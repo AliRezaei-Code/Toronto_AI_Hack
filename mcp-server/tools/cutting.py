@@ -4,6 +4,8 @@ import asyncio
 import uuid
 from typing import Dict, Any
 
+from .utils import ffmpeg_safe_path
+
 class CuttingTool:
     def __init__(self, output_dir: str):
         self.output_dir = output_dir
@@ -64,16 +66,14 @@ class CuttingTool:
             output_path
         ]
 
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True
         )
 
-        stdout, stderr = await process.communicate()
-
-        if process.returncode != 0:
-            error_msg = stderr.decode()
+        if result.returncode != 0:
+            error_msg = result.stderr
             
             fallback_result = await self._reencoded_cut(
                 video_path, output_path, start_time, duration
@@ -110,17 +110,14 @@ class CuttingTool:
             output_path
         ]
 
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True
         )
 
-        stdout, stderr = await process.communicate()
-
-        if process.returncode != 0:
-            error_msg = stderr.decode()
-            raise Exception(f"FFmpeg cut failed: {error_msg}")
+        if result.returncode != 0:
+            raise Exception(f"FFmpeg cut failed: {result.stderr}")
 
         return {
             'output_path': output_path,
@@ -164,9 +161,9 @@ class CuttingTool:
                 await self._smart_cut(video_path, part2_path, end_time, part2_duration)
 
             with open(concat_file, 'w') as f:
-                f.write(f"file '{os.path.abspath(part1_path)}'\n")
+                f.write(f"file '{ffmpeg_safe_path(part1_path)}'\n")
                 if part2_duration > 0:
-                    f.write(f"file '{os.path.abspath(part2_path)}'\n")
+                    f.write(f"file '{ffmpeg_safe_path(part2_path)}'\n")
 
             command = [
                 'ffmpeg',
@@ -178,17 +175,14 @@ class CuttingTool:
                 output_path
             ]
 
-            process = await asyncio.create_subprocess_exec(
-                *command,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True
             )
 
-            stdout, stderr = await process.communicate()
-
-            if process.returncode != 0:
-                error_msg = stderr.decode()
-                raise Exception(f"Segment removal failed: {error_msg}")
+            if result.returncode != 0:
+                raise Exception(f"Segment removal failed: {result.stderr}")
 
             final_duration = await self._get_video_duration(output_path)
 
@@ -207,19 +201,16 @@ class CuttingTool:
         """
         Get video duration using FFprobe.
         """
-        command = [
-            'ffprobe',
-            '-v', 'error',
-            '-show_entries', 'format=duration',
-            '-of', 'default=noprint_wrappers=1:nokey=1',
-            video_path
-        ]
-
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            [
+                'ffprobe',
+                '-v', 'error',
+                '-show_entries', 'format=duration',
+                '-of', 'default=noprint_wrappers=1:nokey=1',
+                video_path
+            ],
+            capture_output=True,
+            text=True
         )
 
-        stdout, _ = await process.communicate()
-        return float(stdout.decode().strip())
+        return float(result.stdout.strip())
