@@ -9,19 +9,56 @@ from typing import List, Optional, Dict, Any
 class Word(BaseModel):
     """A single word from the transcript with timing information."""
     word: str = Field(..., description="The transcribed word", example="Hello")
-    start: float = Field(..., description="Start time in seconds", example=0.0)
-    end: float = Field(..., description="End time in seconds", example=0.5)
+    start: float = Field(..., description="Start time in seconds (absolute, relative to stitched video)", example=0.0)
+    end: float = Field(..., description="End time in seconds (absolute, relative to stitched video)", example=0.5)
 
     model_config = ConfigDict(json_schema_extra={
         "example": {"word": "Hello", "start": 0.0, "end": 0.5}
     })
 
 
+class Segment(BaseModel):
+    """A phrase/sentence segment detected from speech pauses, containing nested words."""
+    text: str = Field(..., description="The segment text", example="Hello world")
+    start: float = Field(..., description="Start time in seconds (absolute)", example=0.0)
+    end: float = Field(..., description="End time in seconds (absolute)", example=2.5)
+    words: List[Word] = Field(default_factory=list, description="Words contained in this segment")
+
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "text": "Hello world",
+            "start": 0.0,
+            "end": 2.5,
+            "words": [
+                {"word": "Hello", "start": 0.0, "end": 0.5},
+                {"word": "world", "start": 0.6, "end": 1.0}
+            ]
+        }
+    })
+
+
+class Clip(BaseModel):
+    """A video clip containing segments with nested words."""
+    clip_index: int = Field(..., description="Index of this clip in the original upload order", example=0)
+    duration: float = Field(..., description="Original clip duration in seconds", example=15.2)
+    start_offset: float = Field(..., description="Where this clip starts in the stitched video", example=0.0)
+    segments: List[Segment] = Field(default_factory=list, description="Phrase segments in this clip")
+
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "clip_index": 0,
+            "duration": 15.2,
+            "start_offset": 0.0,
+            "segments": []
+        }
+    })
+
+
 class Transcript(BaseModel):
-    """Full transcript with text and word-level timing."""
+    """Hierarchical transcript: Clips -> Segments -> Words."""
     text: Optional[str] = Field(None, description="Full transcript text", example="Hello world, this is a test video.")
-    words: List[Word] = Field(default_factory=list, description="Word-level transcript with timing")
     duration: Optional[float] = Field(None, description="Total duration in seconds", example=30.5)
+    clips: List[Clip] = Field(default_factory=list, description="Clips containing segments with nested words")
 
 
 class EditInstruction(BaseModel):
@@ -96,6 +133,7 @@ class JobStatus(BaseModel):
     status: str = Field(..., description="Job status: 'processing', 'completed', or 'error'", example="completed")
     video_url: Optional[str] = Field(None, description="URL to stream the video (when completed)", example="/api/video/550e8400-e29b-41d4-a716-446655440000")
     transcript: Optional[Transcript] = Field(None, description="Transcript data (when completed)")
+    creator_context: Optional[Dict[str, str]] = Field(None, description="Auto-detected creator context for smart merge")
     error: Optional[str] = Field(None, description="Error message if status is 'error'")
     warning: Optional[str] = Field(None, description="Warning message (e.g., transcription unavailable)")
 
@@ -202,6 +240,59 @@ class ErrorResponse(BaseModel):
     model_config = ConfigDict(json_schema_extra={
         "example": {"detail": "Job not found"}
     })
+
+
+# ============================================================================
+# Smart Merge Models
+# ============================================================================
+
+class CreatorContext(BaseModel):
+    """Auto-detected creator context for smart content optimization."""
+    industry: str = Field(..., description="Industry/niche", example="tech/saas")
+    role: str = Field(..., description="Creator's role", example="software engineer")
+    target_audience: str = Field(..., description="Target audience", example="entrepreneurs")
+    tone: str = Field(..., description="Content tone", example="professional")
+    suggested_hook_style: str = Field(..., description="Recommended hook style", example="results-driven")
+
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "industry": "tech/saas",
+            "role": "software engineer",
+            "target_audience": "entrepreneurs",
+            "tone": "professional",
+            "suggested_hook_style": "results-driven"
+        }
+    })
+
+
+class SmartMergeRequest(BaseModel):
+    """Request to perform smart merge on a job's video."""
+    job_id: str = Field(..., description="The job ID to smart merge", example="550e8400-e29b-41d4-a716-446655440000")
+
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "job_id": "550e8400-e29b-41d4-a716-446655440000"
+        }
+    })
+
+
+class SmartMergeSegment(BaseModel):
+    """A segment in the smart merge result with clip reference."""
+    clip_index: int = Field(..., description="Index of source clip", example=0)
+    start: float = Field(..., description="Start time in seconds (local to clip)", example=1.5)
+    end: float = Field(..., description="End time in seconds (local to clip)", example=5.2)
+    label: str = Field(..., description="Segment label/purpose", example="hook")
+
+
+class SmartMergeResponse(BaseModel):
+    """Response after smart merge completes."""
+    video_url: str = Field(..., description="URL to the smart-merged video", example="/api/video/550e8400-e29b-41d4-a716-446655440000")
+    transcript: Transcript = Field(..., description="Updated transcript after smart merge")
+    creator_context: CreatorContext = Field(..., description="Detected creator context used for optimization")
+    reasoning: str = Field(..., description="LLM reasoning for the merge decisions", example="Hook uses strong numbers to grab attention")
+    segments_used: List[SmartMergeSegment] = Field(..., description="Segments included in order")
+    estimated_duration: float = Field(..., description="Estimated final video duration", example=32.5)
+    message: str = Field(..., description="Human-readable result message", example="Smart merge complete: 5 segments reordered with hook first")
 
 
 # ============================================================================

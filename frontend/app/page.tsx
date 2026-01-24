@@ -6,7 +6,8 @@ import {UploadZone} from '@/components/UploadZone'
 import {VideoPreview} from '@/components/VideoPreview'
 import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
-import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary } from '@/lib/api-client'
+import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary, Transcript } from '@/lib/api-client'
+import { createEmptyTranscript } from '@/lib/transcript-utils'
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -17,16 +18,10 @@ const LoadingSpinner = () => (
   </div>
 )
 
-interface Word {
-  word: string
-  start: number
-  end: number
-}
-
 export default function Home() {
   const [jobId, setJobId] = useState<string | null>(null)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
-  const [transcript, setTranscript] = useState<Word[]>([])
+  const [transcript, setTranscript] = useState<Transcript | null>(null)
   const [currentTime, setCurrentTime] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
   const [statusMessage, setStatusMessage] = useState('')
@@ -51,11 +46,11 @@ export default function Home() {
         if (progress < 30) {
           setProcessingStep('Uploading videos...')
         } else if (progress < 60) {
-          setProcessingStep('Stitching clips together...')
+          setProcessingStep('Transcribing with AI...')
         } else if (progress < 90) {
-          setProcessingStep('Generating transcript with AI...')
+          setProcessingStep('Smart merging for optimal hook...')
         } else {
-          setProcessingStep('Finalizing...')
+          setProcessingStep('Rendering final video...')
         }
       })
       setJobId(result.job_id)
@@ -76,7 +71,7 @@ export default function Home() {
         
         if (status.status === 'completed') {
           setVideoUrl(status.video_url || null)
-          setTranscript(status.transcript?.words || [])
+          setTranscript(status.transcript || null)
           setIsProcessing(false)
           setStatusMessage('')
           setUploadProgress(100)
@@ -90,7 +85,7 @@ export default function Home() {
           if (pollingRef.current) clearInterval(pollingRef.current)
         } else {
           setUploadProgress(Math.min(85, uploadProgress + 5))
-          setProcessingStep(status.video_url ? 'Almost done...' : 'Processing videos and generating transcript...')
+          setProcessingStep(status.video_url ? 'Almost done...' : 'Transcribing and smart merging...')
         }
       } catch (error) {
         console.error('Polling failed:', error)
@@ -146,7 +141,7 @@ export default function Home() {
       if (status.status === 'completed') {
         setJobId(selectedJobId)
         setVideoUrl(status.video_url || null)
-        setTranscript(status.transcript?.words || [])
+        setTranscript(status.transcript || null)
         setCurrentTime(0)
         setStatusMessage('')
       } else if (status.status === 'processing') {
@@ -168,7 +163,7 @@ export default function Home() {
     if (pollingRef.current) clearInterval(pollingRef.current)
     setJobId(null)
     setVideoUrl(null)
-    setTranscript([])
+    setTranscript(null)
     setCurrentTime(0)
     setStatusMessage('')
     setUploadProgress(0)
@@ -208,7 +203,7 @@ export default function Home() {
       
       clearInterval(progressInterval)
       setVideoUrl(response.video_url)
-      setTranscript(response.transcript.words)
+      setTranscript(response.transcript)
       setStatusMessage('')
       setUploadProgress(100)
       setProcessingStep('')
@@ -356,9 +351,7 @@ export default function Home() {
                   onWordClick={handleWordClick}
                   jobId={jobId}
                   isProcessing={isProcessing}
-                  onTranscriptUpdate={(newTranscript) => {
-                    setTranscript(newTranscript)
-                  }}
+                  onTranscriptUpdate={setTranscript}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">

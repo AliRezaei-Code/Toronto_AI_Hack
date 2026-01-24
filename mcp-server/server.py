@@ -84,6 +84,10 @@ class RenderTimelineRequest(BaseModel):
     edit_instructions: List[dict]
     source_video: str
 
+class RenderFromClipsRequest(BaseModel):
+    segments: List[dict]
+    clip_paths: List[str]
+
 class EditInstructionsRequest(BaseModel):
     transcript: List[dict]
     edits_to_make: List[dict]
@@ -154,6 +158,21 @@ async def render_timeline(request: RenderTimelineRequest):
         )
         return {"status": "success", "data": result}
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/tool/render_from_clips")
+async def render_from_clips(request: RenderFromClipsRequest):
+    """Render video directly from multiple source clips (no pre-stitch needed)."""
+    logger.info(f"[render_from_clips] START - {len(request.segments)} segments from {len(request.clip_paths)} clips")
+    try:
+        result = await rendering_tool.render_from_clips(
+            request.segments,
+            request.clip_paths
+        )
+        logger.info(f"[render_from_clips] SUCCESS - output: {result.get('output_path')}")
+        return {"status": "success", "data": result}
+    except Exception as e:
+        logger.error(f"[render_from_clips] FAILED - error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/generate_edit_instructions")

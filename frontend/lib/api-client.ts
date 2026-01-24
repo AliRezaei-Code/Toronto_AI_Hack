@@ -1,13 +1,45 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-interface Word {
+// ============================================================================
+// Hierarchical Transcript Types (Clips -> Segments -> Words)
+// ============================================================================
+
+export interface Word {
   word: string
   start: number
   end: number
 }
 
-interface Transcript {
+export interface Segment {
+  text: string
+  start: number
+  end: number
   words: Word[]
+}
+
+export interface Clip {
+  clip_index: number
+  duration: number
+  start_offset: number
+  segments: Segment[]
+}
+
+export interface Transcript {
+  text?: string
+  duration?: number
+  clips: Clip[]
+}
+
+// ============================================================================
+// Creator Context (auto-detected during processing)
+// ============================================================================
+
+export interface CreatorContext {
+  industry: string
+  role: string
+  target_audience: string
+  tone: string
+  suggested_hook_style: string
 }
 
 interface EditResponse {
@@ -93,6 +125,7 @@ export async function getJobStatus(jobId: string): Promise<{
   status: 'processing' | 'completed' | 'error'
   video_url?: string
   transcript?: Transcript
+  creator_context?: CreatorContext
   error?: string
 }> {
   const response = await fetch(`${API_URL}/api/job/${jobId}/status`)

@@ -53,15 +53,28 @@ class CuttingTool:
         duration: float
     ) -> Dict[str, Any]:
         """
-        Fast cut using stream copy (no re-encoding).
+        Frame-accurate cut with consistent A/V encoding.
+        Re-encodes both video AND audio to ensure all segments have identical
+        formats for seamless concatenation without A/V desync.
         """
         command = [
             'ffmpeg',
             '-ss', str(start_time),
             '-i', video_path,
             '-t', str(duration),
-            '-c', 'copy',
-            '-avoid_negative_ts', '1',
+            # Video: re-encode for frame-accurate cuts
+            '-c:v', 'libx264',
+            '-preset', 'veryfast',
+            '-crf', '18',
+            '-pix_fmt', 'yuv420p',
+            # Audio: re-encode to consistent format (fixes desync from mixed sources)
+            '-c:a', 'aac',
+            '-ar', '48000',            # Fixed sample rate
+            '-ac', '2',                # Stereo
+            '-b:a', '192k',
+            # Timestamp handling
+            '-avoid_negative_ts', 'make_zero',
+            '-async', '1',             # Sync audio to timestamps
             '-y',
             output_path
         ]
@@ -73,18 +86,12 @@ class CuttingTool:
         )
 
         if result.returncode != 0:
-            error_msg = result.stderr
-            
-            fallback_result = await self._reencoded_cut(
-                video_path, output_path, start_time, duration
-            )
-            fallback_result['method'] = 'reencoded_fallback'
-            return fallback_result
+            raise Exception(f"FFmpeg cut failed: {result.stderr}")
 
         return {
             'output_path': output_path,
             'duration': duration,
-            'method': 'smart_copy'
+            'method': 'full_reencode'
         }
 
     async def _reencoded_cut(

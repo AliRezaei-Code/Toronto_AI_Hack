@@ -1,21 +1,22 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { processEdit } from '@/lib/api-client'
-
-interface Word {
-  word: string
-  start: number
-  end: number
-}
+import { processEdit, Transcript, Word } from '@/lib/api-client'
+import { 
+  findWordAtTime, 
+  formatTimestamp, 
+  isTranscriptEmpty,
+  getFullText,
+  getWordCount
+} from '@/lib/transcript-utils'
 
 interface TranscriptEditorProps {
-  transcript: Word[]
+  transcript: Transcript | null
   currentTime: number
   onWordClick: (time: number) => void
   jobId: string
   isProcessing?: boolean
-  onTranscriptUpdate?: (transcript: Word[]) => void
+  onTranscriptUpdate?: (transcript: Transcript) => void
 }
 
 export function TranscriptEditor({
@@ -26,18 +27,31 @@ export function TranscriptEditor({
   isProcessing = false,
   onTranscriptUpdate,
 }: TranscriptEditorProps) {
-  const [highlightedWordIndex, setHighlightedWordIndex] = useState(-1)
+  const [currentWordLocation, setCurrentWordLocation] = useState<{
+    clipIndex: number
+    segmentIndex: number
+    wordIndex: number
+  } | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editedText, setEditedText] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  // Track current word based on playback time
   useEffect(() => {
-    const index = transcript.findIndex(
-      word => currentTime >= word.start && currentTime <= word.end
-    )
-    setHighlightedWordIndex(index)
+    if (!transcript) return
+    
+    const location = findWordAtTime(transcript, currentTime)
+    if (location) {
+      setCurrentWordLocation({
+        clipIndex: location.clipIndex,
+        segmentIndex: location.segmentIndex,
+        wordIndex: location.wordIndex
+      })
+    } else {
+      setCurrentWordLocation(null)
+    }
   }, [currentTime, transcript])
 
   const handleWordClick = (time: number) => {
@@ -45,7 +59,8 @@ export function TranscriptEditor({
   }
 
   const handleStartEdit = () => {
-    setEditedText(transcript.map(w => w.word).join(' '))
+    if (!transcript) return
+    setEditedText(getFullText(transcript))
     setIsEditing(true)
     setSaveError(null)
   }
@@ -64,7 +79,7 @@ export function TranscriptEditor({
       const result = await processEdit(jobId, editedText)
       
       if (onTranscriptUpdate) {
-        onTranscriptUpdate(result.transcript.words)
+        onTranscriptUpdate(result.transcript)
       }
       
       setIsEditing(false)
@@ -74,6 +89,25 @@ export function TranscriptEditor({
     } finally {
       setIsSaving(false)
     }
+  }
+
+  // Check if a word is the current word
+  const isCurrentWord = (clipIdx: number, segIdx: number, wordIdx: number): boolean => {
+    if (!currentWordLocation) return false
+    return (
+      currentWordLocation.clipIndex === clipIdx &&
+      currentWordLocation.segmentIndex === segIdx &&
+      currentWordLocation.wordIndex === wordIdx
+    )
+  }
+
+  // Check if a word is near the current word (for subtle highlighting)
+  const isNearCurrentWord = (clipIdx: number, segIdx: number, wordIdx: number): boolean => {
+    if (!currentWordLocation) return false
+    if (currentWordLocation.clipIndex !== clipIdx) return false
+    if (currentWordLocation.segmentIndex !== segIdx) return false
+    return Math.abs(currentWordLocation.wordIndex - wordIdx) <= 2 && 
+           Math.abs(currentWordLocation.wordIndex - wordIdx) > 0
   }
 
   if (isProcessing) {
@@ -87,7 +121,7 @@ export function TranscriptEditor({
     )
   }
 
-  if (!transcript || transcript.length === 0) {
+  if (isTranscriptEmpty(transcript)) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-400 text-center">
@@ -97,13 +131,17 @@ export function TranscriptEditor({
     )
   }
 
+  const wordCount = transcript ? getWordCount(transcript) : 0
+
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b border-gray-700 flex justify-between items-center">
         <div>
           <h3 className="text-lg font-semibold">Transcript</h3>
           <p className="text-sm text-gray-400">
-            {isEditing ? 'Edit the text below to edit the video' : 'Click any word to jump to that moment'}
+            {isEditing 
+              ? 'Edit the text below to edit the video' 
+              : `${transcript?.clips.length || 0} clips • ${wordCount} words • Click any word to jump`}
           </p>
         </div>
         {!isEditing && (
@@ -151,31 +189,65 @@ export function TranscriptEditor({
           </div>
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
-          <div className="text-lg leading-relaxed">
-            {transcript.map((word, index) => {
-              const isHighlighted = highlightedWordIndex === index
-              const isNearCurrent = 
-                index >= highlightedWordIndex - 2 && index <= highlightedWordIndex + 2
-              
-              return (
-                <span
-                  key={`${index}-${word.start}`}
-                  className={`inline-block mx-0.5 px-1 rounded transition-all ${
-                    isHighlighted
-                      ? 'bg-blue-500 text-white cursor-pointer'
-                      : isNearCurrent
-                      ? 'bg-blue-500/30 text-white cursor-pointer'
-                      : 'text-gray-300 cursor-pointer hover:bg-gray-700'
-                  }`}
-                  onClick={() => handleWordClick(word.start)}
-                  title={`${word.start.toFixed(2)}s - ${word.end.toFixed(2)}s`}
-                >
-                  {word.word}
+        <div className="flex-1 overflow-y-auto scrollbar-thin">
+          {transcript?.clips.map((clip, clipIndex) => (
+            <div key={`clip-${clipIndex}`} className="border-b border-gray-800 last:border-b-0">
+              {/* Clip Header */}
+              <div className="sticky top-0 z-10 bg-gray-800/95 backdrop-blur-sm px-4 py-2 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="bg-blue-600 text-white text-xs font-medium px-2 py-0.5 rounded">
+                    Clip {clipIndex + 1}
+                  </span>
+                  <span className="text-gray-400 text-sm">
+                    {clip.segments.length} segment{clip.segments.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <span className="text-gray-500 text-sm font-mono">
+                  {formatTimestamp(clip.start_offset)}
                 </span>
-              )
-            })}
-          </div>
+              </div>
+              
+              {/* Segments */}
+              <div className="p-4 space-y-3">
+                {clip.segments.map((segment, segmentIndex) => (
+                  <div 
+                    key={`segment-${clipIndex}-${segmentIndex}`}
+                    className="pl-3 border-l-2 border-gray-700 hover:border-blue-500/50 transition-colors"
+                  >
+                    {/* Segment timestamp */}
+                    <div className="text-xs text-gray-500 mb-1 font-mono">
+                      {formatTimestamp(segment.start)} - {formatTimestamp(segment.end)}
+                    </div>
+                    
+                    {/* Words */}
+                    <div className="text-lg leading-relaxed">
+                      {segment.words.map((word, wordIndex) => {
+                        const isCurrent = isCurrentWord(clipIndex, segmentIndex, wordIndex)
+                        const isNear = isNearCurrentWord(clipIndex, segmentIndex, wordIndex)
+                        
+                        return (
+                          <span
+                            key={`word-${clipIndex}-${segmentIndex}-${wordIndex}`}
+                            className={`inline-block mx-0.5 px-1 rounded transition-all cursor-pointer ${
+                              isCurrent
+                                ? 'bg-blue-500 text-white'
+                                : isNear
+                                ? 'bg-blue-500/30 text-white'
+                                : 'text-gray-300 hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleWordClick(word.start)}
+                            title={`${word.start.toFixed(2)}s - ${word.end.toFixed(2)}s`}
+                          >
+                            {word.word}
+                          </span>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
