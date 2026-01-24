@@ -268,7 +268,7 @@ flowchart TB
 - Viral-style subtitle presets
 - Custom style support via Retention Corpus
 
----
+--
 
 **Related Documents:**
 - [Transcription MCP Spec](transcription-mcp-spec.md)

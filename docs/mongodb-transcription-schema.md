@@ -320,7 +320,7 @@ db.createCollection("transcriptions", {
 })
 ```
 
----
+--
 
 **Related Documents:**
 - [Transcription MCP Spec](transcription-mcp-spec.md)

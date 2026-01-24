@@ -15,7 +15,7 @@ The Transcription MCP is a new service component that provides speech-to-text ca
   "description": "Speech-to-text transcription service with subtitle generation",
   "dependencies": ["ffmpeg-mcp", "object-storage"]
 }
-```
+``` 
 
 ## API Methods
 
@@ -295,3 +295,4 @@ Word timings are formatted for After Effects text layer expressions:
 - [MongoDB Schema](mongodb-transcription-schema.md)
 - [Integration Guide](transcription-integration-guide.md)
 - [Subtitle Presets](subtitle-style-presets.md)
+ad

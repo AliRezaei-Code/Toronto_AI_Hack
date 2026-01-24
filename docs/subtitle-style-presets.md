@@ -515,7 +515,7 @@ Users can create custom styles by extending a base preset:
 }
 ```
 
----
+--
 
 **Related Documents:**
 - [Transcription MCP Spec](transcription-mcp-spec.md)

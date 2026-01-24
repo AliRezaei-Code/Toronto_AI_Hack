@@ -553,7 +553,7 @@ logging.getLogger("transcription_mcp").setLevel(logging.DEBUG)
 logging.getLogger("ffmpeg_mcp").setLevel(logging.DEBUG)
 ```
 
----
+--
 
 **Related Documents:**
 - [Transcription MCP Spec](transcription-mcp-spec.md)
