@@ -6,7 +6,7 @@ import { VideoPreview } from '@/components/VideoPreview'
 import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
 import { WaveformTimeline } from '@/components/WaveformTimeline'
-import { uploadVideos, getJobStatus, processEdit } from '@/lib/api-client'
+import { uploadVideos, getJobStatus, processEdit, startDemoJob } from '@/lib/api-client'
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -70,6 +70,25 @@ export default function Home() {
       setStatusMessage('Upload failed. Please try again.')
       setIsProcessing(false)
       setProcessingStep('')
+    }
+  }
+
+  const handleDemo = async () => {
+    setIsProcessing(true)
+    setUploadProgress(0)
+    setProcessingStep('Loading demo clips...')
+    setStatusMessage('Loading demo clips...')
+
+    try {
+      const result = await startDemoJob()
+      setJobId(result.job_id)
+      pollJobStatus(result.job_id)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Demo failed to start.'
+      setStatusMessage(message)
+      setIsProcessing(false)
+      setProcessingStep('')
+      setUploadProgress(0)
     }
   }
 
@@ -186,6 +205,7 @@ export default function Home() {
         {showUpload && !showEditor ? (
           <UploadZone 
             onUpload={handleUpload}
+            onDemo={handleDemo}
             isUploading={isProcessing}
             uploadProgress={uploadProgress}
             uploadStatus={processingStep}
