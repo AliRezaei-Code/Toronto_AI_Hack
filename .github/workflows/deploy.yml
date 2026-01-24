@@ -1,0 +1,151 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - service: frontend
+            dockerfile: docker/frontend.Dockerfile
+            context: ./frontend
+          - service: backend
+            dockerfile: docker/backend.Dockerfile
+            context: ./backend
+          - service: mcp-server
+            dockerfile: docker/mcp-server.Dockerfile
+            context: ./mcp-server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.service }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=
+
+      - name: Build and push ${{ matrix.service }} image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -euo pipefail
+
+            echo "========================================"
+            echo "  Deploying Toronto AI Hack Services"
+            echo "========================================"
+
+            # Configure git
+            export GIT_TERMINAL_PROMPT=0
+
+            REPO_URL="https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git"
+            REPO_DIR="/opt/toronto-ai-hack"
+
+            # Check if we can use the directory
+            if [ -d "$REPO_DIR" ] && [ ! -w "$REPO_DIR" ]; then
+              echo "Warning: $REPO_DIR exists but is not writable, using home directory..."
+              REPO_DIR="$HOME/toronto-ai-hack"
+            elif [ ! -d "$REPO_DIR" ]; then
+              mkdir -p "$REPO_DIR" 2>/dev/null || {
+                echo "Warning: Cannot create $REPO_DIR, using home directory..."
+                REPO_DIR="$HOME/toronto-ai-hack"
+              }
+            fi
+
+            mkdir -p "$REPO_DIR"
+
+            # Clone or pull repository
+            if [ -d "$REPO_DIR/.git" ]; then
+              echo "Repository exists, pulling latest code..."
+              cd "$REPO_DIR"
+              CURRENT_URL=$(git remote get-url origin)
+              if [[ "$CURRENT_URL" != *"${{ secrets.PAT }}"* ]]; then
+                git remote set-url origin "$REPO_URL"
+              fi
+              git fetch origin main
+              git checkout main
+              git pull origin main
+            else
+              echo "Repository not found, cloning..."
+              if [ -d "$REPO_DIR" ] && [ -w "$REPO_DIR" ]; then
+                rm -rf "$REPO_DIR"
+                mkdir -p "$REPO_DIR"
+              fi
+              git clone "$REPO_URL" "$REPO_DIR"
+              cd "$REPO_DIR"
+              git checkout main
+            fi
+
+            # Create .env file from secrets
+            echo "Creating .env file..."
+            cat > .env <<EOF
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            NEXT_PUBLIC_API_URL=http://localhost:8000
+            SHARED_DATA_DIR=/shared-data
+            MCP_SERVER_URL=http://mcp-server:9000
+            IMAGE_PREFIX=${{ github.repository_owner }}
+            IMAGE_TAG=latest
+            EOF
+
+            # Login to GitHub Container Registry
+            echo "Logging in to GitHub Container Registry..."
+            echo "${{ secrets.PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+            # Pull and deploy services
+            echo "Pulling latest images..."
+            docker compose -f docker-compose.deployed.yml pull
+
+            echo "Starting services..."
+            docker compose -f docker-compose.deployed.yml up -d
+
+            echo ""
+            echo "========================================"
+            echo "  Deployment Complete!"
+            echo "========================================"
+            echo ""
+            echo "Service status:"
+            docker compose -f docker-compose.deployed.yml ps
