@@ -1,5 +1,6 @@
 import os
 import json
+import asyncio
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 
@@ -7,7 +8,7 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
-from app.models import AgentState, Word, EditInstruction
+from app.models import AgentState, Word, EditInstruction, Transcript
 from app.state_manager import StateManager
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
