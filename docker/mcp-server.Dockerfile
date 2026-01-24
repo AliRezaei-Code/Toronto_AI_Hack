@@ -16,4 +16,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 9000
 
-CMD ["python", "-m", "mcp.cli.server", "server.py"]
+CMD ["python", "main.py"]
