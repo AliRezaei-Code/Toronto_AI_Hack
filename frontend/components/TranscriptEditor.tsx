@@ -15,7 +15,7 @@ interface TranscriptEditorProps {
   isProcessing?: boolean
 }
 
-export default function TranscriptEditor({
+export function TranscriptEditor({
   transcript,
   currentTime,
   onWordClick,

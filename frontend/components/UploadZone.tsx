@@ -7,7 +7,7 @@ interface UploadZoneProps {
   onUpload: (files: File[]) => void
 }
 
-export default function UploadZone({ onUpload }: UploadZoneProps) {
+export function UploadZone({ onUpload }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
 
   const handleDragOver = (e: React.DragEvent) => {

@@ -10,7 +10,7 @@ interface VideoPreviewProps {
   onSeek: (time: number) => void
 }
 
-export default function VideoPreview({
+export function VideoPreview({
   videoUrl,
   currentTime,
   onTimeUpdate,

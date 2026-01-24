@@ -8,7 +8,7 @@ interface MagicBoxProps {
   isProcessing?: boolean
 }
 
-export default function MagicBox({
+export function MagicBox({
   onSendMessage,
   isProcessing = false,
 }: MagicBoxProps) {
