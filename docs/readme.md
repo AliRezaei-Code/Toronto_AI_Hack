@@ -7,9 +7,11 @@
 ```mermaid
 %%{init: {"flowchart": {"nodeSpacing": 60, "rankSpacing": 80}}}%%
 flowchart LR
-    A[Android App] -->|upload media| S[Object Storage]
-    A -->|write metadata| D[MongoDB]
-    A -->|request guidance| M[Assembly Agent MCP Orchestrator]
+    A[Android App] <-->|all requests| API[API Layer]
+
+    API -->|store media| S[Object Storage]
+    API -->|read/write| D[MongoDB]
+    API <-->|guidance & suggestions| M[Assembly Agent MCP Orchestrator]
 
     M -->|list tools| R[Tool Registry]
     M -->|best practices| C[Retention Editing Corpus JSON]
@@ -17,13 +19,8 @@ flowchart LR
     M -->|invoke edits| F[Editing MCPs FFmpeg Premiere]
     M -->|invoke comps| E[After Effects MCP]
 
-    F -->|edited assets| S
-    E -->|renders| S
-
-    S -->|asset refs| M
-    D -->|metadata| M
-
-    M -->|suggestions and diffs| A
+    F -->|edited assets| M
+    E -->|renders| M
 ```
 
 ## PRD (Product Requirements Document)
