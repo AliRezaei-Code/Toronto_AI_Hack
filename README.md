@@ -224,7 +224,7 @@ All MCP tools are accessible via the MCP protocol at `/tools` endpoint.
 
 ## License
 
-MIT License - HackAI x Stanford 2026
+MIT License - HackAI x stan 2026
 
 ## Acknowledgments
 
