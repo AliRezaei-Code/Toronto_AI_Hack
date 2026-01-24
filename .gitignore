@@ -30,12 +30,24 @@ dist/
 build/
 *.egg-info/
 
-# Shared data (videos)
-shared-data/
+# Shared data (videos) - keep structure but ignore actual video files
+!shared-data/
+!shared-data/sample-videos/
+!shared-data/sample-videos/README.md
+!shared-data/sample-videos/clips/
+!shared-data/sample-videos/clips/.gitkeep
+!shared-data/sample-videos/transcripts/
+!shared-data/sample-videos/transcripts/*.json
+shared-data/uploads/
+shared-data/processed/
+shared-data/transcripts/*.json
+
+# Video files anywhere in project
 *.mp4
 *.mov
 *.webm
 *.avi
+*.mkv
 
 # OS
 .DS_Store
