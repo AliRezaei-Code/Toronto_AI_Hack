@@ -277,7 +277,7 @@ async def upload_videos(
     clips = [clip_0, clip_1, clip_2, clip_3, clip_4]
     files = [f for f in clips if f is not None]
     
-    if len(files) < 3 or len(files) > 5:
+    if len(files) < 0 or len(files) > 10:
         raise HTTPException(
             status_code=400,
             detail="Please upload between 3 and 5 video clips"
