@@ -1,6 +1,7 @@
 import os
 import uuid
 import shutil
+from datetime import datetime
 from pathlib import Path
 from typing import List
 
@@ -50,11 +51,18 @@ async def health():
 @app.post("/api/upload", response_model=UploadResponse)
 async def upload_videos(
     background_tasks: BackgroundTasks,
-    files: List[UploadFile] = File(...)
+    clip_0: UploadFile = File(...),
+    clip_1: UploadFile = File(...),
+    clip_2: UploadFile = File(...),
+    clip_3: UploadFile | None = None,
+    clip_4: UploadFile | None = None,
 ):
     """
     Upload 3-5 video clips for processing.
     """
+    clips = [clip_0, clip_1, clip_2, clip_3, clip_4]
+    files = [f for f in clips if f is not None]
+    
     if len(files) < 3 or len(files) > 5:
         raise HTTPException(
             status_code=400,
@@ -85,7 +93,7 @@ async def upload_videos(
             'job_id': job_id,
             'status': 'processing',
             'uploaded_files': uploaded_files,
-            'created_at': str(uuid.uuid4())
+            'created_at': datetime.utcnow().isoformat()
         })
         
         processing_jobs[job_id] = True
@@ -150,9 +158,10 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
             
             job_data = await state_manager.load_job(job_id)
             if job_data:
-                job_data['status'] = 'completed'
-                job_data['current_video_path'] = stitched_video_path
-                await state_manager.save_job(job_id, job_data)
+                new_job_data = job_data.copy()
+                new_job_data['status'] = 'completed'
+                new_job_data['current_video_path'] = stitched_video_path
+                await state_manager.save_job(job_id, new_job_data)
             
             for clip_path in clip_paths:
                 if os.path.exists(clip_path):
@@ -160,9 +169,11 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
             
     except Exception as e:
         job_data = await state_manager.load_job(job_id)
-        job_data['status'] = 'error'
-        job_data['error'] = str(e)
-        await state_manager.save_job(job_id, job_data)
+        if job_data:
+            new_job_data = job_data.copy()
+            new_job_data['status'] = 'error'
+            new_job_data['error'] = str(e)
+            await state_manager.save_job(job_id, new_job_data)
     
     finally:
         processing_jobs.pop(job_id, None)
