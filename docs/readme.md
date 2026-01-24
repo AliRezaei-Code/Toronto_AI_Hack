@@ -1,3 +1,3 @@
 - Agent mcp tells the users what  tools are avaialbe to them and it suggests users stuff (agent prmompts the user not the other way around )
 -it suggests changes based on the SOTA best pracrticdes in short form cvontent retention editing from a json databse 
-- test contenthttps://drive.google.com/drive/folders/1ptJdoCLkHCmZnNUHn_5sIVc5FfTEGWQF?referrer=luma
+- test content https://drive.google.com/drive/folders/1ptJdoCLkHCmZnNUHn_5sIVc5FfTEGWQF?referrer=luma
