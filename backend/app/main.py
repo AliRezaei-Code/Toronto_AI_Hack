@@ -279,7 +279,8 @@ async def get_job_status(job_id: str):
         status=job_data['status'],
         video_url=video_url,
         transcript=transcript,
-        error=job_data.get('error')
+        error=job_data.get('error'),
+        warning=job_data.get('warning')
     )
 
 @app.get("/api/video/{job_id}")
