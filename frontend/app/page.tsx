@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import UploadZone from '@/components/UploadZone'
 import VideoPreview from '@/components/VideoPreview'
-import TranscriptEditor from '@/components/TranscriptEditor'
+import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
 import { uploadVideos, getJobStatus, processEdit } from '@/lib/api-client'
 
@@ -188,7 +188,11 @@ export default function Home() {
                   transcript={transcript}
                   currentTime={currentTime}
                   onWordClick={handleWordClick}
+                  jobId={currentJobId}
                   isProcessing={isProcessing}
+                  onTranscriptUpdate={(newTranscript) => {
+                    setTranscript(newTranscript)
+                  }}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">

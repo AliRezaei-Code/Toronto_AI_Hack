@@ -128,26 +128,75 @@ Return a JSON with:
 def fetch_transcript(state: AgentState) -> AgentState:
     """
     Fetch current transcript for the job.
+    Falls back to basic time-based editing if transcript is unavailable.
     """
     try:
         transcript = asyncio.run(state_manager.load_transcript(state.job_id))
         
         if transcript and transcript.words:
             state.current_transcript = transcript.words
+            state.message = 'Transcript loaded successfully'
         else:
-            state.message = 'No transcript found for this job'
+            state.current_transcript = None
+            state.message = 'No transcript available - using time-based editing fallback'
+            logger.warning(f"No transcript found for job {state.job_id}, switching to fallback mode")
     
     except Exception as e:
-        state.message = f'Error fetching transcript: {str(e)}'
+        state.current_transcript = None
+        state.message = f'Error fetching transcript: {str(e)} - using time-based editing fallback'
+        logger.warning(f"Transcript error for job {state.job_id}: {str(e)}")
     
     return state
 
 def determine_edits(state: AgentState) -> AgentState:
     """
     Use GPT-4o to determine word indices/time ranges to edit.
+    Falls back to simpler time-based analysis if transcript is unavailable.
     """
     if not state.current_transcript:
-        state.message = 'No transcript available to determine edits'
+        system_prompt = f"""You are a video editing expert. The user wants to edit a video but no transcript is available.
+
+User request: {state.user_query}
+Edit intent: {state.edit_intent}
+Estimated video duration: Use context clues or default to 60 seconds if unknown
+
+Determine time-based edits based on the user's request.
+For example:
+- "Remove the first 10 seconds" -> [[0, 10]]
+- "Cut out the middle part from 20 to 40 seconds" -> [[20, 40]]
+- "Remove the last 5 seconds" -> [[55, 60]]
+
+Return a JSON object with:
+{{
+    "words_to_delete": [],  // Empty array when no transcript
+    "time_ranges_to_delete": [[start1, end1], [start2, end2]],  // Time ranges in seconds
+    "reasoning": "Explanation of the time-based edits"
+}}"""
+
+        try:
+            response = llm.invoke([
+                SystemMessage(content=system_prompt),
+                HumanMessage(content="Determine the time ranges to edit.")
+            ], timeout=90)
+            
+            result_text = response.content.strip()
+            
+            if result_text.startswith('```json'):
+                result_text = result_text[7:-3].strip()
+            elif result_text.startswith('```'):
+                result_text = result_text[3:-3].strip()
+            
+            analysis = json.loads(result_text)
+            time_ranges = analysis.get('time_ranges_to_delete', [])
+            
+            state.time_ranges_to_delete = [(r[0], r[1]) for r in time_ranges]
+            state.message = analysis.get('reasoning', f'Determined {len(time_ranges)} time ranges to remove')
+            logger.info(f"Fallback mode: determined {len(time_ranges)} time ranges for job {state.job_id}")
+            
+        except Exception as e:
+            state.message = f'Error determining time-based edits: {str(e)}'
+            logger.error(f"Fallback edit error for job {state.job_id}: {str(e)}")
+        
         return state
     
     words_text = json.dumps([w.model_dump() for w in state.current_transcript], indent=2)
@@ -265,6 +314,7 @@ async def call_mcp_tools(state: AgentState) -> AgentState:
 async def update_state(state: AgentState) -> AgentState:
     """
     Save updated state and regenerate transcript if needed.
+    Gracefully handles transcription failures by updating job status with a warning.
     """
     import httpx
     
@@ -274,36 +324,45 @@ async def update_state(state: AgentState) -> AgentState:
         await state_manager.save_agent_state(state.job_id, state)
         
         if state.result_video_path:
-            mcp_server_url = os.getenv('MCP_SERVER_URL', 'http://localhost:9000')
-            
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    f'{mcp_server_url}/tool/generate_transcript',
-                    json={'video_path': state.result_video_path},
-                    timeout=180
-                )
-                
-                if response.status_code == 200:
-                    result = response.json()
-                    transcript_data = result.get('data', {})
-                    
-                    new_transcript = Transcript(
-                        text=transcript_data.get('text'),
-                        words=[Word(**w) for w in transcript_data.get('words', [])],
-                        duration=transcript_data.get('duration')
-                    )
-                    
-                    state.result_transcript = new_transcript.words
-                    await state_manager.save_transcript(state.job_id, new_transcript)
-                    state.message = 'Transcript regenerated successfully'
-            
             job_data = await state_manager.load_job(state.job_id)
             if job_data:
                 job_data['current_video_path'] = state.result_video_path
                 await state_manager.save_job(state.job_id, job_data)
+            
+            mcp_server_url = os.getenv('MCP_SERVER_URL', 'http://localhost:9000')
+            
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        f'{mcp_server_url}/tool/generate_transcript',
+                        json={'video_path': state.result_video_path},
+                        timeout=180
+                    )
+                    
+                    if response.status_code == 200:
+                        result = response.json()
+                        transcript_data = result.get('data', {})
+                        
+                        new_transcript = Transcript(
+                            text=transcript_data.get('text'),
+                            words=[Word(**w) for w in transcript_data.get('words', [])],
+                            duration=transcript_data.get('duration')
+                        )
+                        
+                        state.result_transcript = new_transcript.words
+                        await state_manager.save_transcript(state.job_id, new_transcript)
+                        state.message = 'Video edited and transcript regenerated successfully'
+                    else:
+                        state.message = 'Video edited successfully, but transcript regeneration failed. Script-based editing will be updated on next edit.'
+                        logger.warning(f"Transcription regeneration failed for job {state.job_id}")
+                        
+            except Exception as e:
+                state.message = 'Video edited successfully, but transcript regeneration failed. Script-based editing will be updated on next edit.'
+                logger.warning(f"Transcription regeneration error for job {state.job_id}: {str(e)}")
     
     except Exception as e:
         state.message = f'Error updating state: {str(e)}'
+        logger.error(f"State update error for job {state.job_id}: {str(e)}")
     
     return state
 

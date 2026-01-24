@@ -34,6 +34,7 @@ class JobStatus(BaseModel):
     video_url: Optional[str] = None
     transcript: Optional[Transcript] = None
     error: Optional[str] = None
+    warning: Optional[str] = None
 
 class AgentState(BaseModel):
     job_id: str
@@ -55,3 +56,7 @@ class TimeRangeAnalysis(BaseModel):
     description: str
     time_ranges_to_delete: List[tuple[float, float]] = Field(default_factory=list)
     reason: str
+
+class TranscriptEditRequest(BaseModel):
+    job_id: str
+    edited_text: str

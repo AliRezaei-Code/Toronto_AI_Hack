@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import httpx
 
-from app.models import UploadResponse, EditResponse, JobStatus, Transcript, Word
+from app.models import UploadResponse, EditResponse, JobStatus, Transcript, Word, TranscriptEditRequest
 from app.state_manager import StateManager
 from app.agent import run_agent
 from utils.validator import VideoValidator
@@ -192,31 +192,43 @@ async def process_uploads(job_id: str, clip_paths: List[str]):
             stitch_result = stitch_response.json()
             stitched_video_path = stitch_result['data']['output_path']
             
-            transcript_response = await client.post(
-                f'{MCP_SERVER_URL}/tool/generate_transcript',
-                json={'video_path': stitched_video_path},
-                timeout=180
-            )
+            transcript = None
+            transcript_warning = None
             
-            if transcript_response.status_code != 200:
-                raise Exception(f"Transcription failed: {transcript_response.text}")
-            
-            transcript_result = transcript_response.json()
-            transcript_data = transcript_result['data']
-            
-            transcript = Transcript(
-                text=transcript_data.get('text'),
-                words=[Word(**w) for w in transcript_data.get('words', [])],
-                duration=transcript_data.get('duration')
-            )
-            
-            await state_manager.save_transcript(job_id, transcript)
+            try:
+                transcript_response = await client.post(
+                    f'{MCP_SERVER_URL}/tool/generate_transcript',
+                    json={'video_path': stitched_video_path},
+                    timeout=180
+                )
+                
+                if transcript_response.status_code == 200:
+                    transcript_result = transcript_response.json()
+                    transcript_data = transcript_result['data']
+                    
+                    transcript = Transcript(
+                        text=transcript_data.get('text'),
+                        words=[Word(**w) for w in transcript_data.get('words', [])],
+                        duration=transcript_data.get('duration')
+                    )
+                    
+                    await state_manager.save_transcript(job_id, transcript)
+                    logger.info(f"Transcript generated successfully for job {job_id}")
+                else:
+                    transcript_warning = "Transcription service unavailable. Script-based editing will be disabled."
+                    logger.warning(f"Transcription failed for job {job_id}: {transcript_response.text}")
+                    
+            except Exception as e:
+                transcript_warning = f"Transcription failed: {str(e)}. Script-based editing will be disabled."
+                logger.warning(f"Transcription error for job {job_id}: {str(e)}")
             
             job_data = await state_manager.load_job(job_id)
             if job_data:
                 new_job_data = job_data.copy()
                 new_job_data['status'] = 'completed'
                 new_job_data['current_video_path'] = stitched_video_path
+                if transcript_warning:
+                    new_job_data['warning'] = transcript_warning
                 await state_manager.save_job(job_id, new_job_data)
             
             for clip_path in clip_paths:
@@ -375,6 +387,60 @@ async def delete_job(job_id: str):
     await state_manager.delete_job(job_id)
     
     return {"message": f"Job {job_id} deleted"}
+
+@app.post("/api/transcript/{job_id}/edit", response_model=EditResponse)
+async def edit_transcript_text(request: TranscriptEditRequest):
+    """
+    Edit the transcript text directly and regenerate the video.
+    This enables script-based editing where text changes affect the video.
+    """
+    job_id = request.job_id
+    edited_text = request.edited_text
+    
+    job_data = await state_manager.load_job(job_id)
+    
+    if not job_data:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    if job_data['status'] != 'completed':
+        raise HTTPException(status_code=400, detail="Job is still processing")
+    
+    try:
+        current_transcript = await state_manager.load_transcript(job_id)
+        
+        if not current_transcript or not current_transcript.words:
+            raise HTTPException(
+                status_code=400,
+                detail="No transcript available. Script-based editing requires a transcript."
+            )
+        
+        current_video_path = job_data.get('current_video_path')
+        if not current_video_path:
+            raise HTTPException(status_code=400, detail="No video found for this job")
+        
+        result = await run_agent(
+            job_id=job_id,
+            query=f"Edit transcript to match: {edited_text}",
+            current_video_path=current_video_path
+        )
+        
+        updated_transcript = Transcript(
+            words=[Word(**w) for w in result['transcript_words']]
+        )
+        
+        return EditResponse(
+            video_url=f"/api/video/{job_id}",
+            transcript=updated_transcript,
+            message=result['message']
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to edit transcript: {str(e)}"
+        )
 
 if __name__ == "__main__":
     import uvicorn
