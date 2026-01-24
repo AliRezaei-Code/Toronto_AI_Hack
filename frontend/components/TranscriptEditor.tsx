@@ -247,6 +247,50 @@ export function TranscriptEditor({
     }
   }
 
+  const canUndo = historyIndex > 0
+  const canRedo = historyIndex >= 0 && historyIndex < history.length - 1
+  const disableHistoryControls = isSaving || isEditing
+
+  const applyHistory = async (targetIndex: number) => {
+    const targetText = history[targetIndex]
+    if (!targetText) {
+      return
+    }
+
+    setIsSaving(true)
+    setSaveError(null)
+
+    try {
+      const result = await editTranscriptText(jobId, targetText)
+      historyIndexRef.current = targetIndex
+      setHistoryIndex(targetIndex)
+      onTranscriptUpdate?.(result.transcript.words)
+      setIsEditing(false)
+      setIsSidebarEdit(false)
+      setEditedWordIndex(null)
+      setInlineEditedWords([])
+      setEditedWordIndices(new Set())
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Failed to apply history')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleUndo = () => {
+    if (!canUndo || disableHistoryControls) {
+      return
+    }
+    void applyHistory(historyIndex - 1)
+  }
+
+  const handleRedo = () => {
+    if (!canRedo || disableHistoryControls) {
+      return
+    }
+    void applyHistory(historyIndex + 1)
+  }
+
   const displayWords =
     isEditing && !isSidebarEdit && inlineEditedWords.length > 0
       ? inlineEditedWords
