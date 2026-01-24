@@ -6,9 +6,11 @@
 
 ```mermaid
 flowchart LR
-    A[Android App] -->|upload media| S[Object Storage]
-    A -->|write metadata| D[MongoDB]
-    A -->|request guidance| M[Assembly Agent MCP Orchestrator]
+    A[Android App] -->|request guidance| M[Assembly Agent MCP Orchestrator]
+    A -->|upload/download| API[API Layer]
+
+    API -->|store media| S[Object Storage]
+    API -->|read/write| D[MongoDB]
 
     M -->|list tools| R[Tool Registry]
     M -->|best practices| C[Retention Editing Corpus JSON]
