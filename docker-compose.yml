@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - shared-data:/shared-data
+      - ./.env:/app/.env:ro
+    depends_on:
+      - backend
+    networks:
+      - video-editor-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SHARED_DATA_DIR=/shared-data
+      - MCP_SERVER_URL=http://mcp-server:9000
+    volumes:
+      - ./backend:/app
+      - shared-data:/shared-data
+      - ./.env:/app/.env:ro
+    depends_on:
+      - mcp-server
+    networks:
+      - video-editor-network
+
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: ../docker/mcp-server.Dockerfile
+    ports:
+      - "9000:9000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SHARED_DATA_DIR=/shared-data
+    volumes:
+      - ./mcp-server:/app
+      - shared-data:/shared-data
+      - ./.env:/app/.env:ro
+    networks:
+      - video-editor-network
+
+volumes:
+  shared-data:
+    driver: local
+
+networks:
+  video-editor-network:
+    driver: bridge
