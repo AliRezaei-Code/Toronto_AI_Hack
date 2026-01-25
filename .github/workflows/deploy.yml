@@ -43,9 +43,9 @@ jobs:
     strategy:
       matrix:
         include:
-          #- service: frontend
-          #  dockerfile: docker-deployment/frontend.Dockerfile
-          #  context: .
+          - service: frontend
+            dockerfile: docker-deployment/frontend.Dockerfile
+            context: .
           - service: backend
             dockerfile: docker-deployment/backend.Dockerfile
             context: .
