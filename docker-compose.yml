@@ -64,7 +64,7 @@ services:
   video-processor:
     build:
       context: ./video-processor
-      dockerfile: Dockerfile
+      dockerfile: video-processor.Dockerfile
     ports:
       - "8001:8001"
     environment:
