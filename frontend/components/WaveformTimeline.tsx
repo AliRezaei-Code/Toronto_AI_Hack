@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { motion } from 'framer-motion'
 
 interface Word {
   word: string
@@ -51,17 +52,31 @@ export function WaveformTimeline({
 
   if (!transcript.length) {
     return (
-      <div className="px-4 pb-4">
+      <motion.div
+        className="px-4 pb-4"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+      >
         <div className="bg-gray-800/40 border border-gray-700/60 rounded-lg p-4 text-sm text-gray-400">
           Timeline appears once the transcript is ready.
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className="px-4 pb-4">
-      <div className="bg-gray-800/40 border border-gray-700/60 rounded-lg p-4 timeline-panel">
+    <motion.div
+      className="px-4 pb-4"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+    >
+      <motion.div
+        className="bg-gray-800/40 border border-gray-700/60 rounded-lg p-4 timeline-panel"
+        whileHover={{ y: -2 }}
+        transition={{ duration: 0.2 }}
+      >
         <div className="flex items-center justify-between mb-2 text-xs text-gray-400">
           <span>Timeline</span>
           <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
@@ -92,7 +107,7 @@ export function WaveformTimeline({
           <span>Start</span>
           <span>End</span>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
