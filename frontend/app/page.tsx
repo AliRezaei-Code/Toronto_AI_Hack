@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import dynamic from 'next/dynamic'
 import { AnimatePresence, motion } from 'framer-motion'
 import {UploadZone} from '@/components/UploadZone'
 import {VideoPreview} from '@/components/VideoPreview'
