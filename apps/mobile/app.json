@@ -19,7 +19,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Allow access to camera to record videos for AI processing",
         "NSMicrophoneUsageDescription": "Allow access to microphone to record audio for videos",
-        "NSPhotoLibraryUsageDescription": "Allow access to photo library to select videos for AI processing"
+        "NSPhotoLibraryUsageDescription": "Allow access to photo library to select videos for AI processing",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -56,7 +57,11 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "5aac95dd-bdc0-4117-82ad-9bc3caee2135"
       }
-    }
+    },
+    "owner": "cyr0rez"
   }
 }
