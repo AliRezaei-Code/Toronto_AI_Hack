@@ -42,13 +42,16 @@ jobs:
         include:
           - service: frontend
             dockerfile: docker/frontend.Dockerfile
-            context: ./frontend
+            context: ./apps/web
           - service: backend
             dockerfile: docker/backend.Dockerfile
             context: ./backend
           - service: mcp-server
             dockerfile: docker/mcp-server.Dockerfile
             context: ./mcp-server
+          - service: video-processor
+            dockerfile: docker/video-processor.Dockerfile
+            context: ./video-processor
 
     steps:
       - name: Checkout repository
