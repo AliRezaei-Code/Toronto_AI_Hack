@@ -1,0 +1,323 @@
+{
+  "meta": {
+    "title": "Compliance Guidelines and Risk Management",
+    "category": "SEO Metadata",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["title_optimization.json", "technical_metadata.json"]
+  },
+  "summary": "YouTube spam, deceptive practices, and guideline boundaries that ensure optimization strategies don't result in penalties or channel strikes.",
+  "core_principles": [
+    {
+      "principle": "Content Promise Fulfillment",
+      "description": "Title and thumbnail promises must be delivered in video content within first 30 seconds",
+      "importance": "high"
+    },
+    {
+      "principle": "No Tag Stuffing",
+      "description": "Dozens of irrelevant tags violate spam policy and can result in video removal",
+      "importance": "high"
+    },
+    {
+      "principle": "Accurate Visual Representation",
+      "description": "Thumbnails must accurately depict content; famous figures/events in thumbnail must appear in video",
+      "importance": "high"
+    },
+    {
+      "principle": "Clear Sponsorship Disclosure",
+      "description": "Sponsored content must have clear, conspicuous disclosure near sponsorship links",
+      "importance": "high"
+    },
+    {
+      "principle": "No Off-Platform Scam Links",
+      "description": "Deceptive practices include leading viewers to harmful or scam sites via description",
+      "importance": "high"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Misleading Metadata Prevention",
+      "description": "Ensuring title, thumbnail, and description accurately reflect video content",
+      "implementation": [
+        "Never promise content not present in video",
+        "Avoid 'bait and switch' tactics",
+        "Title promise must be delivered within first 30 seconds",
+        "Thumbnail must depict actual content or real reaction",
+        "Avoid hiding solutions behind paywalls if title promises",
+        "If using news figure thumbnail, they must appear in video",
+        "Test retention to validate promise fulfillment",
+        "Update titles if content changes or pivots"
+      ],
+      "timing": "Throughout creation process and post-publication review",
+      "examples": [
+        "VALID: '5 SEO Tips' that shows 5 distinct tips",
+        "INVALID: 'The Secret Solution' without revealing solution in video",
+        "INVALID: Thumbnail with famous figure who doesn't appear in video"
+      ],
+      "tools": [
+        "Retention graph analysis",
+        "A/B testing for honest vs clickbait",
+        "YouTube Studio publication review"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Builds trust and long-term channel health",
+          "con": "May reduce short-term CTR vs sensational titles"
+        },
+        {
+          "pro": "Avoids algorithmic suppression from low retention",
+          "con": "Resists temptation to over-promise for clicks"
+        }
+      ]
+    },
+    {
+      "name": "Tag Stuffing Avoidance",
+      "description": "Preventing spam policy violations by limiting tags to relevant terms only",
+      "implementation": [
+        "Limit tags to 5-8 highly relevant terms",
+        "Never use irrelevant tags to gain views",
+        "Tag stuffing (dozens of tags) is policy violation",
+        "Use tags for misspellings and categorization only",
+        "Avoid trending topic tags if not relevant to content",
+        "Tag violation can result in video removal or strikes",
+        "Repeated violations risk channel termination",
+        "Focus on organic content quality over tag manipulation"
+      ],
+      "timing": "During upload and tag management",
+      "examples": [
+        "VALID: Crypto video → 'Ethereum, Etherium, ETH, Crypto' (5 tags",
+        "INVALID: Gaming video → 'Gaming, Fortnite, Politics, News, Sports, Music, Movies...' (dozens)",
+        "INVALID: Video about X → tags for trending topic Y for traffic"
+      ],
+      "tools": [
+        "YouTube Studio tag manager (limits input)",
+        "vidIQ tag suggestions (quality focused)",
+        "Manual discipline in tag selection"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents policy violations and strikes",
+          "con": "Reduces temptation to use tags for quick views"
+        },
+        {
+          "pro": "Aligns with 2025 tag importance (diminished",
+          "con": "May feel restrictive to creators used to tag-heavy strategies"
+        }
+      ]
+    },
+    {
+      "name": "Thumbnail Accuracy Compliance",
+      "description": "Ensuring thumbnails truthfully represent video content",
+      "implementation": [
+        "Thumbnail must depict actual video content",
+        "Famous figures/events in thumbnail must appear in video",
+        "Avoid using 'News Anchor' thumbnails without context",
+        "Images must not be misleading about content",
+        "Text on thumbnails should not make false claims",
+        "Use authentic reaction shots (real or realistic)",
+        "Avoid clickbait visuals that don't correspond to video",
+        "Review thumbnails against final cut before publishing"
+      ],
+      "timing": "Thumbnail design and pre-publication review",
+      "examples": [
+        "VALID: Thumbnail shows product being reviewed in video",
+        "VALID: Thumbnail shows person's real reaction from video content",
+        "INVALID: Thumbnail with famous figure who never appears",
+        "INVALID: Thumbnail shows dramatic event that doesn't happen"
+      ],
+      "tools": [
+        "Thumbnail comparison with video content",
+        "YouTube review before publishing",
+        "A/B testing to find honest but effective thumbnails"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents deceptive practice strikes",
+          "con": "Requires design focused on accuracy, not just CTR"
+        },
+        {
+          "pro": "Builds viewer trust for long-term retention",
+          "con": "May reduce initial CTR vs sensational alternatives"
+        }
+      ]
+    },
+    {
+      "name": "Sponsorship Disclosure Compliance",
+      "description": "FTC-compliant and YouTube-policy aligned sponsorship disclosures",
+      "implementation": [
+        "Use clear and conspicuous disclosure language",
+        "Standard phrases: 'Sponsored by,' 'Ad,' 'Thanks to'",
+        "Place disclosure near sponsorship link in description",
+        "Include near beginning of video (within first 30 seconds)",
+        "Avoid ambiguous or hidden language",
+        "Satisfies FTC guidelines and YouTube paid promotion policy",
+        "Clear in video and description both",
+        "Consider on-screen text disclosure if appropriate"
+      ],
+      "timing": "Video intro (oral) and description (text)",
+      "examples": [
+        "Video: 'This video is sponsored by XYZ.'",
+        "Description: 'Thanks to XYZ for sponsoring! Get XYZ: [link]'",
+        "Video on-screen: 'SPONSORED BY' text at start"
+      ],
+      "tools": [
+        "FTC sponsorship guidelines reference",
+        "YouTube Creator Academy policies",
+        "Legal counsel for high-value sponsorships"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Legal and platform compliance",
+          "con": "May feel repetitive to viewers"
+        },
+        {
+          "pro": "Transparent with audience",
+          "con": "Can impact perceived objectivity if overly emphasized"
+        }
+      ]
+    },
+    {
+      "name": "Off-Platform Link Risk Management",
+      "description": "Managing external links to avoid deceptive practice allegations",
+      "implementation": [
+        "Avoid leading viewers to scam or harmful sites",
+        "Deceptive practices includes harmful external links via description",
+        "Vet all external sponsors and affiliate links",
+        "Warn viewers when leading to external platforms",
+        "Avoid clickbait that misrepresents external content",
+        "External affiliate links must have proper disclosure",
+        "Keep main focus on YouTube content and on-platform retention",
+        "Prioritize on-platform recirculation over off-platform links"
+      ],
+      "timing": "Link selection and placement in description",
+      "examples": [
+        "VALID: Link to legitimate sponsor product with disclosure",
+        "VALID: Link to social media at bottom of description",
+        "INVALID: Misleading link to scam site without warning",
+        "INVALID: Hidden affiliate links without disclosure"
+      ],
+      "tools": [
+        "Sponsor vetting processes",
+        "Link monitoring for safety",
+        "Analytics to track external link clicks"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents deceptive practice strikes",
+          "con": "May reduce external revenue opportunities"
+        },
+        {
+          "pro": "Protects viewers from harmful content",
+          "con": "Requires vetting time for all external partnerships"
+        }
+      ]
+    },
+    {
+      "name": "Algorithmic Penalty vs Policy Strike Understanding",
+      "description": "Distinguishing between algorithmic suppression (clickbait) and policy strikes (deceptive practices)",
+      "implementation": [
+        "Algorithmic Penalty: Low retention from misleading metadata",
+        "Consequence: Algorithm stops recommending, hurts individual video",
+        "Doesn't necessarily strike the channel",
+        "Policy Strike: Repeated violations (tag stuffing, deceptive)",
+        "Consequence: Community Guidelines strike",
+        "Three strikes result in channel termination",
+        "2025 update: deceptive practices includes off-platform harm",
+        "Monitor retention graphs for algorithmic penalties"
+      ],
+      "timing": "Pre-publication planning and post-publication review",
+      "examples": [
+        "Algorithmic penalty: High CTR, low retention → video dies",
+        "Policy strike: Tag stuffing, fake thumbnails → strike issued",
+        "Distinguish: optimization (penalty risk) vs violation (strike risk)"
+      ],
+      "tools": [
+        "YouTube Analytics (retention graphs)",
+        "Community Guidelines reference",
+        "Strike monitoring in Studio"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Understanding risks allows strategic optimization",
+          "con": "Complex distinction requires careful judgment"
+        },
+        {
+          "pro": "Balances growth ambition with platform safety",
+          "con": "Requires ongoing policy awareness"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "compliance_checklist": {
+      "title_thumbnail": {
+        "accuracy": "Content promise appears in video within 30s",
+        "visuals": "Thumbnail depicts actual video content",
+        "figures": "Famous figures in thumbnail appear in video",
+        "clickbait_check": "No bait-and-switch tactics"
+      },
+      "tags_hashtags": {
+        "tag_count": "5-8 tags maximum",
+        "tag_relevance": "All tags highly relevant to content",
+        "no_stuffing": "No dozens of irrelevant tags",
+        "hashtag_limit": "3-5 hashtags, not 15+"
+      },
+      "sponsorship": {
+        "disclosure_present": "Clear language used ('Sponsored', 'Ad'",
+        "placement": "Near link in description, video intro",
+        "ftc_compliance": "Conspicuous and clear disclosure",
+        "affiliate_tagged": "Affiliate links disclosed"
+      },
+      "external_links": {
+        "vetted": "All external sponsors and links vetted",
+        "no_scams": "No links to harmful or scam sites",
+        "warnings": "Warn viewers when leading off-platform",
+        "priority": "On-platform content prioritized"
+      }
+    },
+    "penalty_types": {
+      "algorithmic_penalty": {
+        "cause": "Low retention from misleading metadata (clickbait",
+        "scope": "Individual video only",
+        "consequence": "Algorithm stops recommending video",
+        "channel_impact": "Limited to underperforming videos"
+      },
+      "policy_strike": {
+        "cause": "Deceptive practices violations (tag stuffing, fake thumbnails, scam links",
+        "scope": "Channel-wide",
+        "consequence": "Community Guidelines strike",
+        "channel_impact": "Three strikes = channel termination"
+      }
+    },
+    "risk_benefit_matrix": {
+      "high_risk_low_reward": {
+        "examples": ["tag_stuffing", "fake_news_thumbnails", "hidden_sponsorship"],
+        "avoid": "policy_strike_risk"
+      },
+      "moderate_risk_low_reward": {
+        "examples": ["borderline_clickbait", "exaggerated_claims"],
+        "avoid": "retention_penalty_risk"
+      },
+      "low_risk_high_reward": {
+        "examples": [
+          "accurate_compelling_titles",
+          "authentic_thumbnails",
+          "strategic_seo_metadata"
+        ],
+        "pursue": "safe_optimization"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "SEO_Metadata_Engineering.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "YouTube Spam, Deceptive Practices, & Scams Policy",
+      "url": "https://support.google.com/youtube/answer/2801973",
+      "relevance": "high"
+    }
+  ]
+}

@@ -43,9 +43,9 @@ jobs:
     strategy:
       matrix:
         include:
-          #- service: frontend
-          #  dockerfile: docker-deployment/frontend.Dockerfile
-          #  context: .
+          - service: frontend
+            dockerfile: docker-deployment/frontend.Dockerfile
+            context: .
           - service: backend
             dockerfile: docker-deployment/backend.Dockerfile
             context: .
@@ -214,4 +214,4 @@ jobs:
             echo "========================================"
             echo ""
             echo "Service status:"
-            docker compose -f docker-compose.deployed.yml ps
+            dockercompose -f docker-compose.deployed.yml ps

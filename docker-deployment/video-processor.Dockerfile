@@ -42,8 +42,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-ins
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
-# Copy Python packages from builder
-COPY --from=builder /root/.local /root/.local
+# Copy Python packages from builder to app directory (accessible by appuser)
+COPY --from=builder /root/.local /app/.local
 
 # Copy application code
 COPY video-processor/*.py ./
@@ -53,12 +53,12 @@ RUN mkdir -p /tmp/video-processor && \
     chown -R appuser:appuser /tmp/video-processor
 
 # Set environment variables
-ENV PATH=/root/.local/bin:$PATH
+ENV PATH=/app/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV TEMP_DIR=/tmp/video-processor
 
-# Set proper permissions
+# Set proper permissions (now includes .local directory)
 RUN chown -R appuser:appuser /app
 
 # Switch to non-root user

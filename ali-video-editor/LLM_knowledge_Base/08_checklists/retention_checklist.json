@@ -1,0 +1,283 @@
+{
+  "meta": {
+    "title": "Retention Checklist",
+    "category": "Checklists",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pacing_rhythm.json", "spatial_dynamics.json", "sound_layers.json"]
+  },
+  "summary": "Actionable checklist for implementing retention editing strategies from scripting through publication.",
+  "core_principles": [
+    {
+      "principle": "Systematic Implementation",
+      "description": "Checklist ensures retention engineering is applied consistently",
+      "importance": "high"
+    },
+    {
+      "principle": "Multi-Phase Coverage",
+      "description": "Retention optimization spans scripting, editing, audio, and visual phases",
+      "importance": "high"
+    },
+    {
+      "principle": "Metric-Based Validation",
+      "description": "Success measured through retention analytics and viewer behavior",
+      "importance": "medium"
+    },
+    {
+      "principle": "Iterative Improvement",
+      "description": "Checklist evolves based on performance analysis and algorithm updates",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Scripting Phase Retention Checklist",
+      "description": "Pre-production items that enable effective retention editing",
+      "items": [
+        {
+          "action": "Use AV script format separating audio and visual columns",
+          "importance": "high",
+          "verification": "Visual directives exist for every section"
+        },
+        {
+          "action": "Front-load hook in first 30 seconds",
+          "importance": "high",
+          "verification": "Hook clearly defined in script"
+        },
+        {
+          "action": "Create open loops and curiosity gaps",
+          "importance": "medium",
+          "verification": "Loops identified and closure points marked"
+        },
+        {
+          "action": "Include specific B-roll shot descriptions with angles and timing",
+          "importance": "high",
+          "verification": "B-roll noted throughout script, not just 'insert B-roll'"
+        },
+        {
+          "action": "Add motion design prompts for kinetic typography and data viz",
+          "importance": "medium",
+          "verification": "Text animations specified in visual column"
+        },
+        {
+          "action": "Mark pacing notes (cuts, speed, pauses",
+          "importance": "high",
+          "verification": "Punctuation and script markers guide editor"
+        },
+        {
+          "action": "Plan visual change points every 3-5 seconds",
+          "importance": "medium",
+          "verification": "Visual cadence mapped through content"
+        }
+      ]
+    },
+    {
+      "name": "Visual Editing Retention Checklist",
+      "description": "Core editing items for maximizing viewer attention",
+      "items": [
+        {
+          "action": "Visual state changes every 3-5 seconds (cuts, zooms, overlays, B-roll",
+          "importance": "high",
+          "verification": "Timeline markers show visual changes throughout"
+        },
+        {
+          "action": "Apply dynamic zoom or movement to all static shots",
+          "importance": "medium",
+          "verification": "No tripod-locked static shots without motion"
+        },
+        {
+          "action": "Use kinetic typography synced to speech",
+          "importance": "medium",
+          "verification": "Text appears frame-accurate with spoken words"
+        },
+        {
+          "action": "Insert B-roll every 10-20 seconds during dialogue",
+          "importance": "high",
+          "verification": "Talking head sections intercut with B-roll"
+        },
+        {
+          "action": "Apply pattern interrupts during dense content",
+          "importance": "high",
+          "verification": "Context switches or visual breaks every 45-60s"
+        },
+        {
+          "action": "Remove all fluff, dead air, and unnecessary pauses",
+          "importance": "high",
+          "verification": "Timeline gaps eliminated or repurposed for effect"
+        },
+        {
+          "action": "Hook delivered visually within first 8 seconds",
+          "importance": "high",
+          "verification": "First frame is visually compelling, not generic"
+        },
+        {
+          "action": "Title promise fulfilled visually in first 30 seconds",
+          "importance": "high",
+          "verification": "Content early matches what title promised"
+        }
+      ]
+    },
+    {
+      "name": "Audio Design Retention Checklist",
+      "description": "Audio engineering items that drive engagement",
+      "items": [
+        {
+          "action": "Dialogue is clear, crisp, and sits at −14 to −16 LUFS",
+          "importance": "high",
+          "verification": "Dialogue not buried in mix"
+        },
+        {
+          "action": "Music ducked automatically or automatically during speech",
+          "importance": "high",
+          "verification": "Music doesn't compete with voice"
+        },
+        {
+          "action": "SFX timed to visual actions (whooshes, pops, clicks",
+          "importance": "medium",
+          "verification": "Sound effects sync to transitions and emphasis"
+        },
+        {
+          "action": "Use music strategically (drops on emphasis, swells on buildups",
+          "importance": "medium",
+          "verification": "Music serves narrative, not just background"
+        },
+        {
+          "action": "Include silence for emphasis (1-3 second drops",
+          "importance": "medium",
+          "verification": "Strategic silence used, not continuous sound"
+        },
+        {
+          "action": "Layer ambient sounds to prevent audio emptiness",
+          "importance": "low",
+          "verification": "Room tone or environmental sounds present"
+        },
+        {
+          "action": "Manage dynamic range - avoid ear fatigue",
+          "importance": "medium",
+          "verification": "Quiet and loud moments balanced"
+        }
+      ]
+    },
+    {
+      "name": "Analytics and Iteration Checklist",
+      "description": "Post-publication analysis for continuous improvement",
+      "items": [
+        {
+          "action": "Review retention graph 24-48 hours after publish",
+          "importance": "high",
+          "verification": "Analytics dashboard checked within timeframe"
+        },
+        {
+          "action": "Identify major dip points and analyze causes",
+          "importance": "high",
+          "verification": "Dip causes documented (boring section, long pause, confusing graph"
+        },
+        {
+          "action": "Note retention spikes and investigate value",
+          "importance": "medium",
+          "verification": "Spike segments analyzed for repurposing"
+        },
+        {
+          "action": "Check CTR in search and suggested feeds",
+          "importance": "medium",
+          "verification": "CTR metrics meet or exceed targets (5-7%"
+        },
+        {
+          "action": "A/B test title and thumbnail on underperforming videos",
+          "importance": "medium",
+          "verification": "Test variations created and monitored"
+        },
+        {
+          "action": "Update script templates based on findings",
+          "importance": "low",
+          "verification": "Lessons documented for future videos"
+        },
+        {
+          "action": "Adjust pacing strategy based on retention patterns",
+          "importance": "medium",
+          "verification": "Next video pacing modified based on data"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "retention_checklist_complete": {
+      "scripting_phase": {
+        "av_script_format": "High",
+        "hook_front_loading": "High",
+        "open_loops": "Medium",
+        "b_roll_specificity": "High",
+        "motion_design_prompts": "Medium",
+        "pacing_notes": "High",
+        "visual_change_planning": "Medium",
+        "completion_criteria": "85%_of_high_importance_items"
+      },
+      "visual_editing_phase": {
+        "visual_change_frequency": "High",
+        "dynamic_zoom_static_shots": "Medium",
+        "kinetic_typography_sync": "Medium",
+        "b_roll_frequency": "High",
+        "pattern_interrupts": "High",
+        "fluff_removal": "High",
+        "first_8s_hook": "High",
+        "title_promise_fulfillment": "High",
+        "completion_criteria": "90%_of_high_importance_items"
+      },
+      "audio_design_phase": {
+        "dialogue_clarity_and_loudness": "High",
+        "music_ducking": "High",
+        "sfx_timing": "Medium",
+        "strategic_music_usage": "Medium",
+        "strategic_silence": "Medium",
+        "ambience_layers": "Low",
+        "dynamic_range_management": "Medium",
+        "completion_criteria": "85%_of_high_importance_items"
+      },
+      "analytics_phase": {
+        " retention_graph_review": "High",
+        "dip_analysis": "High",
+        "spike_investigation": "Medium",
+        "ctr_monitoring": "Medium",
+        "a_b_testing": "Medium",
+        "template_updates": "Low",
+        "pacing_adjustments": "Medium",
+        "completion_criteria": "75%_items_for_iterative_learning"
+      }
+    },
+    "priority_weighting": {
+      "high": "Critical for retention, must complete every time",
+      "medium": "Important for retention, complete when possible",
+      "low": "Enhancement items, complete as time allows"
+    },
+    "metrics_reference": {
+      "ctr": {
+        "healthy": "5-7%",
+        "excellent": "10%+",
+        "poor": "< 3%"
+      },
+      "retention": {
+        "average_view_duration": "Target > 50%",
+        "first_30_seconds": "Target > 70%",
+        "short_videos": "Target > 70%",
+        "long_videos": "Target > 40-50%"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "SEO_Metadata_Engineering.md",
+      "url": "internal",
+      "relevance": "medium"
+    }
+  ]
+}

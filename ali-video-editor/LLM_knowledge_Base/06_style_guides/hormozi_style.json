@@ -1,0 +1,282 @@
+{
+  "meta": {
+    "title": "Hormozi Style (High-Energy Educational)",
+    "category": "Style Guides",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["kinetic_typography.json", "sound_layers.json", "pacing_rhythm.json"]
+  },
+  "summary": "High-energy, word-by-word kinetic captioning style with bold colors, emojis, and rapid pacing that gamifies listening experience.",
+  "core_principles": [
+    {
+      "principle": "Word-by-Word Captions",
+      "description": "Every or every 2-3 words highlighted with pop-in animations to lock attention",
+      "importance": "high"
+    },
+    {
+      "principle": "Bold, High-Contrast Typography",
+      "description": "Bold sans-serif fonts with bright backgrounds (yellow, green, cyan) for maximum visibility",
+      "importance": "high"
+    },
+    {
+      "principle": "Emoji Icon Integration",
+      "description": "Replace abstract words with emoji icons for faster cognitive processing",
+      "importance": "medium"
+    },
+    {
+      "principle": "Gamified Listening Experience",
+      "description": "Captions transform passive listening into interactive reading-plus-listening",
+      "importance": "high"
+    },
+    {
+      "principle": "High-Energy Delivery",
+      "description": "Rapid speech pacing matched to quick caption appearance for cohesive rhythm",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Word-by-Word Kinetic Captions",
+      "description": "Each word animated onto screen with pop-in motion as it is spoken",
+      "implementation": [
+        "Display caption for spoken words",
+        "Animate each word or 2-3 word phrase with pop-in",
+        "Sync timing exactly to speech or slightly ahead",
+        "Use bold fonts for visibility",
+        "Apply high-contrast backgrounds (yellow, green, cyan",
+        "Animations: pop with bounce, scale, or shake",
+        "Position to not obscure face (lower third or side",
+        "Lock viewer attention to timeline"
+      ],
+      "timing": "Word-by-word or 2-3 word phrases",
+      "examples": [
+        "MAKE money - pops in shaking, green background",
+        "STOP watching - bold red pops, stop sign emoji",
+        "RETENTION - bold yellow slides with bounce effect"
+      ],
+      "tools": [
+        "CapCut (Hormozi-style presets)",
+        "Submagic (AI-powered kinetic captions)",
+        "Descript (automatic word-by-word generation)",
+        "Premiere Pro/After Effects (manual keyframing)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "High engagement on mobile, locks attention",
+          "con": "Can feel overwhelming or exhausting at scale"
+        },
+        {
+          "pro": "Accessible for sound-off viewers",
+          "con": "May distract from emotional content"
+        }
+      ]
+    },
+    {
+      "name": "High-Contrast Color Scheme",
+      "description": "Bright, saturated colors with dark text for maximum readability",
+      "implementation": [
+        "Primary colors: yellow (#FFFD03), neon green (#00FF00), cyan",
+        "Background boxes or shadows for contrast",
+        "Dark text (#000000) on bright backgrounds",
+        "White text with black stroke for other backgrounds",
+        "Color coding for emphasis (red = warning, green = success",
+        "High saturation for 'loud' attention-grabbing effect",
+        "Avoid pastel or muted tones"
+      ],
+      "timing": "Consistent throughout captions",
+      "examples": [
+        "Yellow background with black text for main statements",
+        "Green background for positive outcomes",
+        "Red background for warnings or 'stop' words"
+      ],
+      "tools": [
+        "CapCut color palette presets",
+        "Manual color adjustment in caption tools",
+        "Design tools for custom backgrounds"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Maximum visibility and attention",
+          "con": "Color scheme may feel repetitive or aggressive"
+        },
+        {
+          "pro": "Standards for 'Hormozi style' recognition",
+          "con": "Not suitable for all content types"
+        }
+      ]
+    },
+    {
+      "name": "Emoji and Icon Integration",
+      "description": "Replacing abstract words with emoji icons to speed cognitive processing",
+      "implementation": [
+        "Use emojis to replace abstract concepts (money = 💰)",
+        "Icons for concepts (time = ⏰, growth = 📈",
+        "Pop emojis in sync with relevant words",
+        "Use sparingly to enhance, not overwhelm",
+        "Common replacements: money, time, growth, success, danger",
+        "Maintain consistency with emoji choices",
+        "Position near related text word"
+      ],
+      "timing": "Synced with relevant words",
+      "examples": [
+        "MAKING money → MAKING 💰",
+        "FAST results → FAST ⚡",
+        "STOP losing → STOP 🛑",
+        "BIGGER impact → BIGGER 💥"
+      ],
+      "tools": [
+        "CapCapCap (auto-emoji insertion)",
+        "Submagic emoji features",
+        "Manual emoji selection during caption editing"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Speeds cognitive processing, adds visual interest",
+          "con": "Can feel childish or informal for serious topics"
+        },
+        {
+          "pro": "Gamifies and adds character",
+          "con": "Emojis can clutter visuals if overused"
+        }
+      ]
+    },
+    {
+      "name": "Animation Variety and Energy",
+      "description": "Using multiple animation types for dynamic, energetic motion",
+      "implementation": [
+        "Animation types: pop-in, bounce, shake, slide, scale-up",
+        "Vary animations based on word importance",
+        "Key words: more intense animations (shake, bounce)",
+        "Less important: gentler animations (fade, slide)",
+        "Sync animation energy to speech emphasis",
+        "Avoid single- animation monotony",
+        "Motion keeps visual cortex engaged"
+      ],
+      "timing": "Each word or phrase",
+      "examples": [
+        "IMPORTANT: shake animation with scale pulse",
+        "concept: simple pop-in",
+        "KEY WORDS: bounce with color flash"
+      ],
+      "tools": [
+        "CapCut animation library",
+        "After Effects advanced keyframing",
+        "Manual animation choice in caption tools"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents visual boredom, adds energy",
+          "con": "Too much variety can feel chaotic"
+        },
+        {
+          "pro": "Motion reinforces spoken emphasis",
+          "con": "Requires thoughtful animation matching to content"
+        }
+      ]
+    },
+    {
+      "name": "Rapid Pacing and Tight Editing",
+      "description": "Speech and visual pacing matched for high-energy, information-dense experience",
+      "implementation": [
+        "Rapid speech delivery matched to caption speed",
+        "Eliminate fluff and pauses completely",
+        "Tight editing with zero gaps between thoughts",
+        "Information density: high amount per minute",
+        "Visual changes: every 3-5 seconds minimum",
+        "Audio edits: remove dead air completely",
+        "Keep energy consistently high throughout",
+        "Respect viewer's time with efficiency"
+      ],
+      "timing": "Speech at 150-180+ wpm, cuts every 3-5s",
+      "examples": [
+        "Fast delivery with no pauses between points",
+        "Immediate next point after without transition",
+        "Visual changes sync with rapid dialogue"
+      ],
+      "tools": [
+        "Timeline editing with tight cutting",
+        "Audio editing for silence removal",
+        "Pacing analysis tools"
+      ],
+      "pros_cons": [
+        {
+          "pro": "High value per minute of viewing time",
+          "con": "Can feel rushed for complex topics"
+        },
+        {
+          "pro": "Respects time, efficient delivery",
+          "con": "May sacrifice nuance or emotional depth"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "hormozi_style_profile": {
+      "target_audience": "entrepreneurial_education_viewers",
+      "captions": "word_by_word_kinetic",
+      "energy": "maximum_information_density",
+      "primary_retention_tool": "gamified_listening",
+      "characteristics": {
+        "text": ["bold", "word_by_word", "high_contrast"],
+        "colors": ["yellow", "neon_green", "cyan", "red"],
+        "icons": ["emoji_integration", "symbolic"],
+        "animations": ["pop", "bounce", "shake", "slide"]
+      }
+    },
+    "color_palette_specification": {
+      "primary": {
+        "yellow": "#FFFD03",
+        "text_color": "#000000",
+        "usage": "main_statements"
+      },
+      "secondary": {
+        "green": "#00FF00",
+        "text_color": "#000000",
+        "usage": "positive_outcomes"
+      },
+      "tertiary": {
+        "cyan": "#00FFFF",
+        "text_color": "#000000",
+        "usage": "emphasis_and_clarity"
+      },
+      "warning": {
+        "red": "#FF0000",
+        "text_color": "#FFFFFF",
+        "usage": "warnings_and_stop_words"
+      }
+    },
+    "emoji_mapping_reference": {
+      "money": "💰",
+      "growth": "📈",
+      "time": "⏰",
+      "success": "✅",
+      "warning": "⚠️",
+      "stop": "🛑",
+      "danger": "❌",
+      "impact": "💥",
+      "speed": "⚡",
+      "target": "🎯"
+    },
+    "animation_intensity_scale": {
+      "high": {
+        "animations": ["shake", "pulse", "bounce_scale"],
+        "use_for": "key_points_main_value"
+      },
+      "medium": {
+        "animations": ["pop-in", "scale-up", "slide"],
+        "use_for": "supporting_points_regular_text"
+      },
+      "low": {
+        "animations": ["fade", "gentle_slide", "subtle_scale"],
+        "use_for": "connecting_words_less_emphasis"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

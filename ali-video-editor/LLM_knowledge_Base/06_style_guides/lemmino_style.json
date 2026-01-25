@@ -1,0 +1,269 @@
+{
+  "meta": {
+    "title": "Lemmino Style (Atmospheric Documentary)",
+    "category": "Style Guides",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["spatial_dynamics.json", "sound_layers.json", "pacing_rhythm.json"]
+  },
+  "summary": "Slow, deliberate pacing with deep atmospheric design using 3D photo projection, dark ambient audio, and mystery-driven narrative hooks.",
+  "core_principles": [
+    {
+      "principle": "Slow Pacing Builds Mystery",
+      "description": "Retention driven by intellectual curiosity and suspense rather than constant visual stimulation",
+      "importance": "high"
+    },
+    {
+      "principle": "3D Photo Projection",
+      "description": "Converting 2D archival photos into 3D scenes allows camera movement through history",
+      "importance": "high"
+    },
+    {
+      "principle": "Atmospheric Audio Design",
+      "description": "Dark ambient music and subtle SFX (rain, clocks, footsteps) builds tension and immersion",
+      "importance": "high"
+    },
+    {
+      "principle": "Mystery and Curiosity Hooks",
+      "description": "Narrative driven by unanswered questions and gradual revelation rather than fast information delivery",
+      "importance": "high"
+    },
+    {
+      "principle": "Cinematic Visual Quality",
+      "description": "High-end visuals with attention to texture, lighting, and composition despite slow pace",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "3D Photo Projection",
+      "description": "Transforming flat 2D archival photos into immersive 3D environments",
+      "implementation": [
+        "Import flat archival photograph",
+        "Create or match 3D geometry (walls, planes, terrain",
+        "Project photo image onto 3D geometry in Blender or After Effects",
+        "Animate virtual camera to move through the 3D scene",
+        "Add subtle parallax and depth effects",
+        "Match perspective to create realistic immersion",
+        "Bring static history to life with movement",
+        "Use for historical content and documentary storytelling"
+      ],
+      "timing": "10-30 second sequences",
+      "examples": [
+        "Old building photo: camera moves through entrance",
+        "Battle scene: camera pans across battlefield with parallax",
+        "Portrait: camera orbits subject revealing depth"
+      ],
+      "tools": [
+        "Blender (3D modeling and projection mapping)",
+        "After Effects (3D camera, camera projection effect)",
+        "Nuke (advanced 3D projection tools)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Transforms static history into immersive experience",
+          "con": "Highly technical, requires 3D skills"
+        },
+        {
+          "pro": "Dramatically increases production value",
+          "con": "Time-intensive workflow per scene"
+        }
+      ]
+    },
+    {
+      "name": "Atmospheric Audio Architecture",
+      "description": "Layered sound design using dark ambient music and environmental SFX for immersion",
+      "implementation": [
+        "Dark ambient music as primary musical layer",
+        "Environmental SFX: rain, ticking clocks, distant footsteps",
+        "Low-frequency drones for underlying tension",
+        "Subtle reverb for space and depth",
+        "Music swells slowly with narrative tension",
+        "Periodic audio pattern interrupts for emphasis",
+        "Silence used strategically for dramatic weight",
+        "Audio design drives emotion more than visual cuts"
+      ],
+      "timing": "Continuous throughout video",
+      "examples": [
+        "Rain sounds fade in under narrative about mystery",
+        "Clock ticking creates tension during countdown",
+        "Low drone builds toward revelation, drops with realization"
+      ],
+      "tools": [
+        "Ambient music libraries",
+        "SFX libraries with environmental sounds",
+        "DAW layering and automation",
+        "Reverb and spatial audio plugins"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Creates deep immersion and emotional engagement",
+          "con": "Less suitable for fast-paced or light content"
+        },
+        {
+          "pro": "Viewers stay for narrative, not stimulation",
+          "con": "Requires strong narrative to maintain slow pace"
+        }
+      ]
+    },
+    {
+      "name": "Slow, Deliberate Pacing",
+      "description": "Extended takes and slower editing rhythm allowing information processing and tension building",
+      "implementation": [
+        "Extended shots held for emotional effect (5-15 seconds",
+        "Slower camera movements and transitions",
+        "Information delivered gradually, not rapid-fire",
+        "Narrative arcs with clear build and release",
+        "Allow viewer time to process complex information",
+        "Visual changes every 5-10 seconds (not 3-5",
+        "Use visual quality to hold attention, not rapid cuts",
+        "Pacing matches mystery/dramatic tone"
+      ],
+      "timing": "Visual changes every 5-10 seconds",
+      "examples": [
+        "Historical photo held for 8 seconds while narration explains context",
+        "Slow camera move across landscape with voiceover",
+        "Extended take of atmospheric scene before revelation"
+      ],
+      "tools": [
+        "Timeline planning with extended takes",
+        "Narrative arc mapping",
+        "Pacing rhythm monitoring"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Appropriate for serious educational or mystery content",
+          "con": "More challenging to maintain engagement without strong narrative"
+        },
+        {
+          "pro": "Viewers appreciate respect for complexity",
+          "con": "Not suitable for all demographics (younger audiences"
+        }
+      ]
+    },
+    {
+      "name": "Mystery-Driven Narrative Hooks",
+      "description": "Open loops and questions that compel viewing through curiosity rather than rapid information",
+      "implementation": [
+        "Open with mystery or unanswered question",
+        "Gradually reveal information across narrative",
+        "Use open loops resolved later in video",
+        "Narrative driven by what viewer doesn't know yet",
+        "Tease revelations instead of rapid-fire delivery",
+        "Build tension through information withholding",
+        "Multiple small mysteries building to larger reveal",
+        "Curiosity as primary retention driver"
+      ],
+      "timing": "Narrative structure across video length",
+      "examples": [
+        "Open: 'What disappeared in 1986 still baffles investigators'",
+        "Mid-video: 'The answer lies where no one expected'",
+        "Climax: Gradual reveal of full story piece by piece"
+      ],
+      "tools": [
+        "Narrative planning and structuring",
+        "Script writing focused on mystery",
+        "Hook design for curiosity"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Compelling for narrative-driven content",
+          "con": "Not suitable for tutorial or quick-tip content"
+        },
+        {
+          "pro": "Deep engagement through narrative investment",
+          "con": "Requires strong storytelling skills"
+        }
+      ]
+    },
+    {
+      "name": "Cinematic Color Grading and Texture",
+      "description": "High-end color work and texture application for visual sophistication",
+      "implementation": [
+        "Cinematic color grading with intentional mood",
+        "Cool desaturated tones for mystery/somber sections",
+        "Warm tones for revelation/resolution",
+        "Film grain for cinematic texture",
+        "Subtle light leaks for atmosphere",
+        "Lens flares used tastefully not excessively",
+        "Consistent color palette across visual elements",
+        "Grade archival footage to match modern color narrative"
+      ],
+      "timing": "Applied throughout editing",
+      "examples": [
+        "Blue-grey tones for mystery section",
+        "Warm amber reveal at resolution",
+        "Subtle film grain throughout for texture"
+      ],
+      "tools": [
+        "DaVinci Resolve (color grading)",
+        "After Effects (texture overlays)",
+        "Film grain and light leak overlays"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Professional, cinematic appearance",
+          "con": "Requires color grading expertise"
+        },
+        {
+          "pro": "Supports atmospheric tone",
+          "con": "Additional production time"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "lemmino_style_profile": {
+      "target_audience": "documentary_mystery_viewers",
+      "pacing": "slow_deliberate_mystery-driven",
+      "atmosphere": "suspenseful_immersive",
+      "primary_retention_driver": "intellectual_curiosity_narrative",
+      "characteristics": {
+        "visuals": ["3D_photo_projection", "high_end_graphics"],
+        "audio": ["dark_ambient", "environmental_SFX", "music_swells"],
+        "narrative": ["mystery", "open_loops", "gradual_revelation"],
+        "pacing": ["extended_takes", "slow_build", "cinematic_rhythm"]
+      }
+    },
+    "atmospheric_audio_layers": {
+      "primary": {
+        "type": "dark_ambient_music",
+        "function": "emotional_foundation_tension",
+        "characteristics": ["slow_build", "low_frequency", "minimal_melody"]
+      },
+      "secondary": {
+        "type": "environmental_SFX",
+        "function": "space_and_context",
+        "examples": ["rain", "ticking_clocks", "distant_footsteps", "wind"]
+      },
+      "tertiary": {
+        "type": "drones_and_pads",
+        "function": "underlying_tension",
+        "characteristics": ["subtle", "continuous", "low_amplitude"]
+      }
+    },
+    "projection_mapping_workflow": {
+      "input": "flat_2D_archival_photograph",
+      "process": {
+        "1": "create_3D_geometry_matching_photo",
+        "2": "project_image_onto_geometry",
+        "3": "animate_virtual_camera",
+        "4": "add_parallax_and_depth"
+      },
+      "output": "immersive_3D_scene",
+      "applications": ["historical_documentary", "mystery_narrative", "visual_storytelling"]
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

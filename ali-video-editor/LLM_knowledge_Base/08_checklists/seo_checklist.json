@@ -1,0 +1,340 @@
+{
+  "meta": {
+    "title": "SEO Checklist",
+    "category": "Checklists",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": [
+      "title_optimization.json",
+      "description_engineering.json",
+      "technical_metadata.json",
+      "compliance_guidelines.json"
+    ]
+  },
+  "summary": "Actionable checklist for SEO metadata, technical optimization, and compliance policies.",
+  "core_principles": [
+    {
+      "principle": "Semantic Signal Alignment",
+      "description": "All metadata must tell consistent story for algorithmic understanding",
+      "importance": "high"
+    },
+    {
+      "principle": "Keyword and Search Optimization",
+      "description": "Titles, descriptions, and tags enable search discoverability",
+      "importance": "high"
+    },
+    {
+      "principle": "Technical Completeness",
+      "description": "Captions, timestamps, and file names provide indexing depth",
+      "importance": "high"
+    },
+    {
+      "principle": "Policy Compliance",
+      "description": "Adherence to spam and deceptive practices policies prevents penalties",
+      "importance": "high"
+    },
+    {
+      "principle": "Session Time Optimization",
+      "description": "Links and structure drive extended viewing sessions",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Title SEO Checklist",
+      "description": "Essential title optimization for search and CTR",
+      "items": [
+        {
+          "action": "Primary keyword within first 5 words",
+          "importance": "high",
+          "verification": "Keyword appears early in title string"
+        },
+        {
+          "action": "Title length 60-70 characters (fits mobile without truncation)",
+          "importance": "high",
+          "verification": "Character counter confirms length"
+        },
+        {
+          "action": "Contains psychological trigger word (power word)",
+          "importance": "medium",
+          "verification": "Power word selected from category list"
+        },
+        {
+          "action": "Uses SEO-Hook or Multi-Trigger formula structure",
+          "importance": "medium",
+          "verification": "Structure follows formula guidelines"
+        },
+        {
+          "action": "Title content delivered in first 30 seconds of video",
+          "importance": "high",
+          "verification": "Hook sequence matches title promise"
+        },
+        {
+          "action": "No deceptive or clickbait claims not fulfilled",
+          "importance": "high",
+          "verification": "Content review confirms accuracy"
+        },
+        {
+          "action": "Unique and not generic from channel",
+          "importance": "medium",
+          "verification": "Title differentiates from similar content"
+        }
+      ]
+    },
+    {
+      "name": "Description SEO Checklist",
+      "description": "Description content for indexing and conversion",
+      "items": [
+        {
+          "action": "Mini-blog 200-300 words for long-tail keywords",
+          "importance": "high",
+          "verification": "Word count meets minimum, includes related keywords"
+        },
+        {
+          "action": "First 150 characters (above fold) contains main keyword and value prop",
+          "importance": "high",
+          "verification": "Intro line optimized for search preview"
+        },
+        {
+          "action": "No generic intro phrases ('Welcome to channel')",
+          "importance": "medium",
+          "verification": "First lines dive directly into value"
+        },
+        {
+          "action": "Timestamps starting at 00:00 with minimum 3 chapters",
+          "importance": "high",
+          "verification": "Timestamp list present, each chapter 10s minimum"
+        },
+        {
+          "action": "Link hierarchy followed (Resources → Recirculation → Disclosures → Socials)",
+          "importance": "medium",
+          "verification": "Links ordered strategically"
+        },
+        {
+          "action": "Sponsorship disclosure clear and conspicuous",
+          "importance": "high",
+          "verification": "Disclosure present near sponsorship link"
+        },
+        {
+          "action": "Hashtags limited to 3-5 relevant tags",
+          "importance": "medium",
+          "verification": "Hashtag count 3-5, all relevant"
+        }
+      ]
+    },
+    {
+      "name": "Technical Metadata Checklist",
+      "description": "Hidden metadata elements for indexing depth",
+      "items": [
+        {
+          "action": "Custom captions (SRT) uploaded (not just auto-captions)",
+          "importance": "high",
+          "verification": "Custom caption file present"
+        },
+        {
+          "action": "Tags limited to 5-8 highly relevant terms",
+          "importance": "medium",
+          "verification": "Tag count 5-8, all relevant to content"
+        },
+        {
+          "action": "Tags used for misspellings and variations",
+          "importance": "medium",
+          "verification": "Misspelling variations included if applicable"
+        },
+        {
+          "action": "Thumbnail accurately depicts content",
+          "importance": "high",
+          "verification": "Thumbnail matches actual video content"
+        },
+        {
+          "action": "File name keyword-rich before upload",
+          "importance": "low",
+          "verification": "Filename uses keywords, not generic name"
+        },
+        {
+          "action": "Translated captions for target markets if applicable",
+          "importance": "medium",
+          "verification": "Multilingual caption tracks present"
+        },
+        {
+          "action": "All metadata aligns on same keywords and topics",
+          "importance": "high",
+          "verification": "Consistent story across title, description, captions, tags"
+        }
+      ]
+    },
+    {
+      "name": "Compliance Checklist",
+      "description": "Policy adherence to avoid penalties",
+      "items": [
+        {
+          "action": "Title promise fulfilled in video (no bait-and-switch)",
+          "importance": "high",
+          "verification": "Content review confirms delivery of promise"
+        },
+        {
+          "action": "No tag stuffing (dozens of irrelevant tags)",
+          "importance": "high",
+          "verification": "Tag count 5-8, all relevant"
+        },
+        {
+          "action": "Thumbnail depicts actual content (no fake thumbnails)",
+          "importance": "high",
+          "verification": "Thumbnail elements appear in video"
+        },
+        {
+          "action": "Sponsorship clearly disclosed in video and description",
+          "importance": "high",
+          "verification": "Oral disclosure in first 30s, text near links"
+        },
+        {
+          "action": "No links to scam or harmful sites",
+          "importance": "high",
+          "verification": "All external links vetted and safe"
+        },
+        {
+          "action": "Famous figures in thumbnail appear in video",
+          "importance": "high",
+          "verification": "News anchor check confirmed"
+        },
+        {
+          "action": "Affiliate links disclosed appropriately",
+          "importance": "high",
+          "verification": "Affiliate relationships clearly marked"
+        }
+      ]
+    },
+    {
+      "name": "Session Time Optimization Checklist",
+      "description": "Metadata features that drive extended viewing sessions",
+      "items": [
+        {
+          "action": "Recirculation links to channel content (videos, playlists)",
+          "importance": "medium",
+          "verification": "Related content links present"
+        },
+        {
+          "action": "Playlists created for content series",
+          "importance": "medium",
+          "verification": "Series content organized in playlists"
+        },
+        {
+          "action": "End screen with related content recommendations",
+          "importance": "low",
+          "verification": "End screen configured with suggested videos"
+        },
+        {
+          "action": "Cards for related content throughout video",
+          "importance": "low",
+          "verification": "Cards placed at relevant moments"
+        },
+        {
+          "action": "External link priority minimized (kept at bottom)",
+          "importance": "medium",
+          "verification": "Off-platform links placed last in description"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "seo_checklist_complete": {
+      "title_optimization": {
+        "keyword_position": "High",
+        "character_count": "High",
+        "power_words": "Medium",
+        "formula_structure": "Medium",
+        "promise_fulfillment": "High",
+        "uniqueness": "Medium",
+        "completion_criteria": "90%_of_high_importance_items"
+      },
+      "description_optimization": {
+        "mini_blog_length": "High",
+        "above_fold_optimized": "High",
+        "no_generic_intros": "Medium",
+        "timestamps_present": "High",
+        "link_hierarchy": "Medium",
+        "sponsorship_disclosure": "High",
+        "hashtag_limit": "Medium",
+        "completion_criteria": "85%_of_high_importance_items"
+      },
+      "technical_metadata": {
+        "custom_captions": "High",
+        "tag_limit": "Medium",
+        "tag_relevance": "Medium",
+        "thumbnail_accuracy": "High",
+        "file_naming": "Low",
+        "multilingual_captions": "Medium",
+        "seminal_alignment": "High",
+        "completion_criteria": "85%_of_high_importance_items"
+      },
+      "compliance": {
+        "promise_fulfillment": "High",
+        "no_tag_stuffing": "High",
+        "thumbnail_accuracy": "High",
+        "sponsorship_disclosure": "High",
+        "no_scam_links": "High",
+        "famous_figure_accuracy": "High",
+        "affiliate_disclosure": "High",
+        "completion_criteria": "100%_of_high_importance_items"
+      },
+      "session_time": {
+        "recirculation_links": "Medium",
+        "playlists": "Medium",
+        "end_screens": "Low",
+        "cards": "Low",
+        "external_link_positioning": "Medium",
+        "completion_criteria": "75%_items_for_session_optimization"
+      }
+    },
+    "completion_criteria": {
+      "minimum_pass": "70%_of_items_completed",
+      "good": "80%_of_items_completed",
+      "excellent": "90%_of_items_completed",
+      "critical_compliance": "100%_of_compliance_items"
+    },
+    "reference_metrics": {
+      "title_length": {
+        "ideal": "60-70_characters",
+        "maximum": "100_characters",
+        "mobile_truncation": "after_60_ characters"
+      },
+      "description": {
+        "mini_blog_word_count": "200-300_words",
+        "above_fold_characters": "150_characters",
+        "timestamp_minimum": "3_chapters",
+        "timestamp_chapter_minimum": "10_seconds"
+      },
+      "tags": {
+        "optimal": "5-8_tags",
+        "threshold_compliance": "below_10_tags",
+        "penalty": "15+_tags_all_ignored"
+      },
+      "hashtags": {
+        "optimal": "3-5_hashtags",
+        "penalty": "15+_hashtags_all_ignored"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "SEO_Metadata_Engineering.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "SEO_Metadata_Engineering.md Table 1",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "SEO_Metadata_Engineering.md Table 2",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "YouTube Spam, Deceptive Practices, & Scams Policy",
+      "url": "https://support.google.com/youtube/answer/2801973",
+      "relevance": "high"
+    }
+  ]
+}
