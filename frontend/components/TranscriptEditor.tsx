@@ -12,6 +12,7 @@ import {
 import { useEffect, useState, useRef, useCallback, KeyboardEvent } from 'react'
 import { motion } from 'framer-motion'
 import { editTranscriptText } from '@/lib/api-client'
+import { emitParticleBurstFromEvent } from '@/lib/particle-events'
 
 interface Word {
   word: string
@@ -547,8 +548,21 @@ export function TranscriptEditor({
                       ? 'bg-blue-500/30 text-white cursor-pointer'
                       : 'text-gray-300 cursor-pointer hover:bg-gray-700'
                   }`}
-                  onClick={() => onWordClick(word.start)}
-                  onDoubleClick={() => handleStartInlineEdit(index)}
+                  onClick={(event) => {
+                    const burstColor = isBeingEdited
+                      ? '#22c55e'
+                      : isHighlighted
+                      ? '#60a5fa'
+                      : isNearCurrent
+                      ? '#818cf8'
+                      : '#94a3b8'
+                    emitParticleBurstFromEvent(event, { color: burstColor, intensity: 0.8 })
+                    onWordClick(word.start)
+                  }}
+                  onDoubleClick={(event) => {
+                    emitParticleBurstFromEvent(event, { color: '#c084fc', intensity: 1.1 })
+                    handleStartInlineEdit(index)
+                  }}
                   title={`${word.start.toFixed(2)}s - ${word.end.toFixed(2)}s${
                     isEditing ? ' (Double-click to edit word)' : ''
                   }`}
