@@ -42,7 +42,7 @@ Complete redesign with:
 - **Header navigation** - Logo and back to home
 - **Branded card design** - Gold border, gradient background, backdrop blur
 - **Playfair Display** - For headlines ("Welcome Back", "Create Account")
-- **Inter font** - For body text and form inputs
+- **PP Formula SemiExtended font** - For body text and form inputs
 - **Luxury gold buttons** - Primary CTAs with hover effects
 - **Styled form inputs** - Dark charcoal with gold focus rings
 - **Error/success states** - Branded alert styling
@@ -89,7 +89,7 @@ Changes:
   <VantaBackground />
   <div className="bg-gradient-to-br from-rich-black via-charcoal to-rich-black border-luxury-gold/20">
     <h2 className="font-playfair font-bold text-4xl">Welcome Back</h2>
-    <button className="bg-luxury-gold hover:bg-muted-gold font-inter uppercase tracking-button">
+    <button className="bg-luxury-gold hover:bg-muted-gold font-formula uppercase tracking-button">
       SIGN IN
     </button>
   </div>
@@ -123,7 +123,7 @@ Changes:
 
 ### Typography
 ✅ Playfair Display for headlines
-✅ Inter for UI and body text
+✅ PP Formula SemiExtended for UI and body text
 ✅ Proper tracking (tight for headlines, +0.1em for buttons)
 ✅ ALL CAPS for buttons
 

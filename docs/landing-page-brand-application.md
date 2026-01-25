@@ -3,7 +3,7 @@
 > How the Rententio brand identity (Black, White & Gold) is applied to the landing page
 >
 > **Brand System**: Lightweight Brand Kit (updated 2026-01-24)
-> **Typography**: Playfair Display + Inter
+> **Typography**: Playfair Display + PP Formula SemiExtended
 > **Color System**: Rich Black, Pure White, Luxury Gold
 > **Specs Compliance**: landing-page-spec.md, business-ethos.md
 
@@ -15,7 +15,7 @@ Rententio uses a **luxury, premium aesthetic** with:
 - **Black & white** for clarity and sophistication
 - **Gold** for emphasis and prestige
 - **Serif headlines** (Playfair Display) for elegance
-- **Sans-serif body** (Inter) for readability
+- **Sans-serif body** (PP Formula SemiExtended) for readability
 
 This creates a professional, high-end feel that differentiates from typical SaaS products.
 
@@ -32,9 +32,9 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
 })
 
-const inter = Inter({
+const inter = PP Formula SemiExtended({
   weight: ['300', '400', '500', '600'],
-  variable: '--font-inter',
+  variable: '--font-formula',
 })
 ```
 
@@ -45,12 +45,12 @@ const inter = Inter({
 | **Hero Headline** | Playfair Display | Bold (700) | 64-96px | -0.02em | 1.15 |
 | **Logo** | Playfair Display | SemiBold (600) | 20px | tight | - |
 | **Stats Numbers** | Playfair Display | Bold (700) | 30px | - | - |
-| **Body Large** | Inter | Regular (400) | 18-20px | 0 | 1.7 |
-| **Navigation** | Inter | Medium (500) | 14px | wide | - |
-| **Buttons** | Inter | SemiBold (600) | 14px | +0.1em | - |
-| **Feature Labels** | Inter | Regular (400) | 14px | 0 | - |
-| **Stats Labels** | Inter | Light (300) | 12px | +0.1em | - |
-| **Footer** | Inter | Light (300) | 14px | 0 | - |
+| **Body Large** | PP Formula SemiExtended | Regular (400) | 18-20px | 0 | 1.7 |
+| **Navigation** | PP Formula SemiExtended | Medium (500) | 14px | wide | - |
+| **Buttons** | PP Formula SemiExtended | SemiBold (600) | 14px | +0.1em | - |
+| **Feature Labels** | PP Formula SemiExtended | Regular (400) | 14px | 0 | - |
+| **Stats Labels** | PP Formula SemiExtended | Light (300) | 12px | +0.1em | - |
+| **Footer** | PP Formula SemiExtended | Light (300) | 14px | 0 | - |
 
 ### Code Examples
 
@@ -63,14 +63,14 @@ const inter = Inter({
 
 **Button (ALL CAPS per Brand Kit):**
 ```tsx
-<Link className="font-inter font-semibold text-sm tracking-button uppercase">
+<Link className="font-formula font-semibold text-sm tracking-button uppercase">
   Get started
 </Link>
 ```
 
 **Body Text:**
 ```tsx
-<p className="font-inter text-xl leading-inter-body text-text-secondary-dark">
+<p className="font-formula text-xl leading-inter-body text-text-secondary-dark">
   Upload clips and get a retention‑optimized cut in minutes.
 </p>
 ```
@@ -143,14 +143,14 @@ Per Brand Kit accessibility notes:
 - Background: Rich Black
 - Border: Divider Dark (#2A2A2A)
 - Logo: Playfair Display + Gold gradient icon
-- Links: Inter Medium with gold hover
+- Links: PP Formula SemiExtended Medium with gold hover
 
 **Code:**
 ```tsx
 <header className="bg-rich-black border-b border-divider-dark">
   <div className="w-7 h-7 bg-gradient-to-br from-luxury-gold to-dark-gold" />
   <span className="font-playfair font-semibold">Rententio</span>
-  <Link className="font-inter font-medium text-text-secondary-dark hover:text-luxury-gold">
+  <Link className="font-formula font-medium text-text-secondary-dark hover:text-luxury-gold">
     Sign in
   </Link>
 </header>
@@ -161,13 +161,13 @@ Per Brand Kit accessibility notes:
 **Design:**
 - Background: Charcoal with gold border
 - Dot: Luxury Gold (pulsing)
-- Text: Pale Gold, Inter Regular
+- Text: Pale Gold, PP Formula SemiExtended Regular
 
 **Code:**
 ```tsx
 <div className="bg-charcoal border border-luxury-gold/20">
   <div className="w-2 h-2 bg-luxury-gold animate-pulse" />
-  <span className="font-inter text-pale-gold">AI-powered retention editing</span>
+  <span className="font-formula text-pale-gold">AI-powered retention editing</span>
 </div>
 ```
 
@@ -196,14 +196,14 @@ Per Brand Kit accessibility notes:
 ### 4. Hero Subtext
 
 **Design (per Brand Kit Body Large):**
-- Font: Inter Regular
+- Font: PP Formula SemiExtended Regular
 - Size: 18-20px
 - Color: Text Secondary Dark (#A0A0A0)
 - Line height: 1.7
 
 **Code:**
 ```tsx
-<p className="font-inter text-xl text-text-secondary-dark leading-inter-body">
+<p className="font-formula text-xl text-text-secondary-dark leading-inter-body">
   Upload clips and get a retention‑optimized cut in minutes.
 </p>
 ```
@@ -213,7 +213,7 @@ Per Brand Kit accessibility notes:
 **Design (per Brand Kit Button Guidelines):**
 - Background: Luxury Gold
 - Text: Rich Black (high contrast)
-- Font: Inter SemiBold
+- Font: PP Formula SemiExtended SemiBold
 - Size: 14px
 - Tracking: +0.1em
 - Transform: ALL CAPS
@@ -221,7 +221,7 @@ Per Brand Kit accessibility notes:
 
 **Code:**
 ```tsx
-<Link className="bg-luxury-gold hover:bg-muted-gold text-rich-black font-inter font-semibold text-sm tracking-button uppercase shadow-lg shadow-luxury-gold/30">
+<Link className="bg-luxury-gold hover:bg-muted-gold text-rich-black font-formula font-semibold text-sm tracking-button uppercase shadow-lg shadow-luxury-gold/30">
   Get started
 </Link>
 ```
@@ -237,12 +237,12 @@ Per Brand Kit accessibility notes:
 **Design:**
 - No background (text only)
 - Color: Text Secondary Dark → Luxury Gold on hover
-- Font: Inter Medium
+- Font: PP Formula SemiExtended Medium
 - Transform: Lowercase (contrast with primary)
 
 **Code:**
 ```tsx
-<Link className="text-text-secondary-dark hover:text-luxury-gold font-inter font-medium">
+<Link className="text-text-secondary-dark hover:text-luxury-gold font-formula font-medium">
   Sign in
 </Link>
 ```
@@ -256,7 +256,7 @@ Per Brand Kit accessibility notes:
 **Design (per Brand Kit Card styling):**
 - Background: Dark Depth gradient
 - Border: Gold at 20% opacity
-- Stats: Playfair Bold for numbers, Inter Light for labels
+- Stats: Playfair Bold for numbers, PP Formula SemiExtended Light for labels
 - Icons: Luxury Gold
 
 **Code:**
@@ -265,7 +265,7 @@ Per Brand Kit accessibility notes:
   {/* Stats */}
   <div className="bg-charcoal border border-divider-dark">
     <div className="font-playfair font-bold text-pure-white">47</div>
-    <div className="font-inter font-light text-text-secondary-dark uppercase tracking-button">
+    <div className="font-formula font-light text-text-secondary-dark uppercase tracking-button">
       Cuts Made
     </div>
   </div>
@@ -285,7 +285,7 @@ Per Brand Kit accessibility notes:
 <div className="bg-charcoal border border-luxury-gold/30">
   <svg className="text-luxury-gold">...</svg>
 </div>
-<span className="font-inter text-text-secondary-dark">Real-time analysis</span>
+<span className="font-formula text-text-secondary-dark">Real-time analysis</span>
 ```
 
 ---
@@ -346,7 +346,7 @@ Per spec Rule #4, visuals must frame content, not interrupt it.
 ❌ Form inputs
 ❌ Any text that needs high readability at small sizes
 
-### DO Use Inter For:
+### DO Use PP Formula SemiExtended For:
 ✅ All body text
 ✅ Buttons (ALL CAPS)
 ✅ Navigation
@@ -387,7 +387,7 @@ lg:text-8xl   // 96px (6rem)
 If brand evolves, follow these rules:
 
 1. **Maintain contrast ratios** (WCAG AA minimum)
-2. **Test with both Playfair and Inter** at all sizes
+2. **Test with both Playfair and PP Formula SemiExtended** at all sizes
 3. **Update tailwind.config.js** first
 4. **Document in Brand Kit** before using
 
@@ -395,7 +395,7 @@ If brand evolves, follow these rules:
 
 Current weights loaded:
 - Playfair: 400, 600, 700
-- Inter: 300, 400, 500, 600
+- PP Formula SemiExtended: 300, 400, 500, 600
 
 To add new weight:
 1. Update `layout.tsx` font config
@@ -406,7 +406,7 @@ To add new weight:
 ### Adding New Component Patterns
 
 When creating new components:
-1. **Choose typography**: Playfair for emphasis, Inter for function
+1. **Choose typography**: Playfair for emphasis, PP Formula SemiExtended for function
 2. **Choose colors**: Rich Black base, White text, Gold accents
 3. **Apply spacing**: Consistent with landing page (px-6, py-4, etc.)
 4. **Test contrast**: Use browser DevTools or contrast checker
@@ -426,14 +426,14 @@ const TOKENS = {
   sectionHeader: "font-playfair font-semibold",
 
   // Body
-  bodyLarge: "font-inter text-xl leading-inter-body",
-  bodyDefault: "font-inter text-base leading-inter-body",
-  bodySmall: "font-inter text-sm",
-  caption: "font-inter font-light text-xs",
+  bodyLarge: "font-formula text-xl leading-inter-body",
+  bodyDefault: "font-formula text-base leading-inter-body",
+  bodySmall: "font-formula text-sm",
+  caption: "font-formula font-light text-xs",
 
   // Interactive
-  button: "font-inter font-semibold text-sm tracking-button uppercase",
-  nav: "font-inter font-medium text-sm tracking-wide",
+  button: "font-formula font-semibold text-sm tracking-button uppercase",
+  nav: "font-formula font-medium text-sm tracking-wide",
 
   // Colors
   bg: "bg-rich-black",
@@ -466,7 +466,7 @@ const TOKENS = {
 
 **2026-01-24 - Brand Identity Applied**
 - Implemented Black, White & Gold color system
-- Applied Playfair Display + Inter typography
+- Applied Playfair Display + PP Formula SemiExtended typography
 - Created gold CTA button as brand signature
 - Added gold gradient to headline
 - Established luxury dark aesthetic throughout
