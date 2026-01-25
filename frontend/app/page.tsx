@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
+import { AnimatePresence, motion } from 'framer-motion'
 import {UploadZone} from '@/components/UploadZone'
 import {VideoPreview} from '@/components/VideoPreview'
 import { TranscriptEditor } from '@/components/TranscriptEditor'
@@ -255,7 +256,12 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900/50">
+      <motion.header
+        className="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900/50"
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold">VE</span>
@@ -349,19 +355,27 @@ export default function Home() {
             </svg>
           </button>
         </div>
-      </header>
+      </motion.header>
 
-      {statusMessage && (
-        <div className={`px-6 py-2 text-sm text-center border-b ${
-          isErrorMessage
-            ? 'bg-red-600/20 text-red-400 border-red-600/30'
-            : isWarningMessage
-            ? 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30'
-            : 'bg-blue-600/20 text-blue-400 border-blue-600/30'
-        }`}>
-          {statusMessage}
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {statusMessage && (
+          <motion.div
+            className={`px-6 py-2 text-sm text-center border-b ${
+              isErrorMessage
+                ? 'bg-red-600/20 text-red-400 border-red-600/30'
+                : isWarningMessage
+                ? 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30'
+                : 'bg-blue-600/20 text-blue-400 border-blue-600/30'
+            }`}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2 }}
+          >
+            {statusMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <main className="flex-1 overflow-hidden">
         {showUpload && !showEditor ? (
