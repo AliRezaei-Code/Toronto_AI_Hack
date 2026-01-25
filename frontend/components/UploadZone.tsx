@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Upload, Film, FileVideo, X } from 'lucide-react'
 import { emitParticleBurstFromElement, emitParticleBurstFromEvent } from '@/lib/particle-events'
@@ -28,6 +28,8 @@ export function UploadZone({
   const [isDragging, setIsDragging] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState<FileWithInfo[]>([])
   const dropZoneRef = useRef<HTMLDivElement>(null)
+  const uploadCardRef = useRef<HTMLDivElement>(null)
+  const lastBurstRef = useRef(0)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -99,11 +101,29 @@ export function UploadZone({
 
   const isValidCount = selectedFiles.length >= 3 && selectedFiles.length <= 5
 
+  useEffect(() => {
+    if (!isUploading) {
+      lastBurstRef.current = 0
+      return
+    }
+
+    const milestone = Math.floor(uploadProgress / 20) * 20
+    if (milestone > 0 && milestone !== lastBurstRef.current) {
+      lastBurstRef.current = milestone
+      const intensity = Math.min(1.6, 0.6 + milestone / 100)
+      emitParticleBurstFromElement(uploadCardRef.current, {
+        color: milestone >= 80 ? '#22c55e' : '#38bdf8',
+        intensity,
+      })
+    }
+  }, [isUploading, uploadProgress])
+
   if (isUploading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <motion.div
           className="w-full max-w-2xl p-12 bg-gray-800 rounded-2xl"
+          ref={uploadCardRef}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
