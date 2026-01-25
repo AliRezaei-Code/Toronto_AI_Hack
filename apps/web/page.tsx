@@ -2,46 +2,33 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import {UploadZone} from '../../components/UploadZone'
-import {VideoPreview} from '../../components/VideoPreview'
-import { TranscriptEditor } from '../../components/TranscriptEditor'
-import { MagicBox } from '../../components/MagicBox'
-import { createEmptyTranscript, getAllWords } from '../../lib/transcript-utils'
-import { WaveformTimeline } from '../../components/WaveformTimeline';
-import { emitParticleBurst } from '../../lib/particle-events'
-import { uploadVideos, getJobStatus, processEdit, startDemoJob } from '../../lib/api-client'
-import ProtectedRoute from '../../components/ProtectedRoute'
-import { useAuth } from '../../contexts/AuthContext'
+import {UploadZone} from '@/components/UploadZone'
+import {VideoPreview} from '@/components/VideoPreview'
+import { TranscriptEditor } from '@/components/TranscriptEditor'
+import { MagicBox } from '@/components/MagicBox'
+import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary, Transcript, startDemoJob } from '@/lib/api-client'
+import { createEmptyTranscript, getAllWords } from '@/lib/transcript-utils'
+import { WaveformTimeline } from '@/components/WaveformTimeline';
+import { emitParticleBurst } from '@/lib/particle-events'
+import { WaveformTimeline } from '@/components/WaveformTimeline'
+import { uploadVideos, getJobStatus, processEdit, startDemoJob } from '@/lib/api-client'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { useAuth } from '@/contexts/AuthContext'
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="text-center">
       <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-      <span className="mt-4 text-gray-400 block">Loading...</span>
+      <p className="mt-4 text-gray-400">Loading...</p>
     </div>
   </div>
 )
 
+export default function Home() {
 interface Word {
   word: string
   start: number
   end: number
-}
-interface Transcript {
-  words: Word[]
-  transcript: string
-  created_at: string
-  updated_at: string
-}
-interface JobSummary {
-  job_id: string
-  created_at: string
-  updated_at: string
-  status: string
-  video_url: string
-  transcript: string
-  warning: string
-  error: string
 }
 
 function HomeContent() {
@@ -126,7 +113,7 @@ function HomeContent() {
         
         if (status.status === 'completed') {
           setVideoUrl(status.video_url || null)
-          setTranscript(status.transcript as unknown as Transcript || null)
+          setTranscript(status.transcript || null)
           setIsProcessing(false)
           setStatusMessage(status.warning || '')
           setUploadProgress(100)
@@ -299,7 +286,7 @@ function HomeContent() {
   const showUpload = showEditor || (!isProcessing && !jobId)
 
   return (
-    <section className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen">
       <motion.header
         className="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-gray-900/50"
         initial={{ opacity: 0, y: -12 }}
@@ -312,7 +299,7 @@ function HomeContent() {
           </div>
           <h1 className="text-xl font-semibold">Script-Based Video Editor</h1>
         </div>
-        <nav className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           {/* History Button with Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -332,18 +319,18 @@ function HomeContent() {
             {showJobList && (
               <div className="absolute right-0 top-full mt-2 w-72 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
                 <div className="px-4 py-3 border-b border-gray-700">
-                  <strong className="text-sm font-medium text-white block">Previous Projects</strong>
+                  <h3 className="text-sm font-medium text-white">Previous Projects</h3>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
                   {isLoadingJobs ? (
-                    <aside className="px-4 py-6 text-center text-gray-400">
-                      <span className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-transparent mb-2" />
-                      <span className="block text-sm">Loading...</span>
-                    </aside>
+                    <div className="px-4 py-6 text-center text-gray-400">
+                      <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-transparent mb-2"></div>
+                      <p className="text-sm">Loading...</p>
+                    </div>
                   ) : jobs.length === 0 ? (
-                    <aside className="px-4 py-6 text-center text-gray-400">
-                      <span className="block text-sm">No previous projects</span>
-                    </aside>
+                    <div className="px-4 py-6 text-center text-gray-400">
+                      <p className="text-sm">No previous projects</p>
+                    </div>
                   ) : (
                     jobs.map((job) => (
                       <button
@@ -354,12 +341,12 @@ function HomeContent() {
                         }`}
                       >
                         <div className="flex-1 min-w-0">
-                          <span className="text-sm text-white font-mono truncate block">
+                          <p className="text-sm text-white font-mono truncate">
                             {job.job_id.substring(0, 8)}...
-                          </span>
-                          <span className="text-xs text-gray-400 block">
+                          </p>
+                          <p className="text-xs text-gray-400">
                             {job.created_at ? formatRelativeTime(job.created_at) : 'Unknown date'}
-                          </span>
+                          </p>
                         </div>
                         <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
                           job.status === 'completed' 
@@ -391,29 +378,31 @@ function HomeContent() {
               <span className="text-sm">New Project</span>
             </button>
           )}
-          <div className="flex items-center gap-4">
-            {user && (
-              <span className="text-sm text-gray-400">{user.email}</span>
-            )}
-            <button
-              onClick={signOut}
-              className="px-4 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-            >
-              Sign Out
-            </button>
-          </div>
+        <div className="flex items-center gap-4">
+          {user && (
+            <span className="text-sm text-gray-400">{user.email}</span>
+          )}
+          <button
+            onClick={signOut}
+            className="px-4 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          >
+            Sign Out
+          </button>
+        </div>
+      </header>
+
           {/* Help Button */}
           <button className="text-gray-400 hover:text-white transition-colors p-2" title="Help coming soon!">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12 a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
-        </nav>
+        </div>
       </motion.header>
 
       <AnimatePresence mode="wait">
         {statusMessage && (
-          <motion.section
+          <motion.div
             className={`px-6 py-2 text-sm text-center border-b ${
               isErrorMessage
                 ? 'bg-red-600/20 text-red-400 border-red-600/30'
@@ -427,7 +416,7 @@ function HomeContent() {
             transition={{ duration: 0.2 }}
           >
             {statusMessage}
-          </motion.section>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -441,8 +430,8 @@ function HomeContent() {
             uploadStatus={processingStep}
           />
         ) : (
-          <section className="flex h-full">
-            <section className="w-1/2 border-r border-gray-800">
+          <div className="flex h-full">
+            <div className="w-1/2 border-r border-gray-800">
               {showEditor ? (
                 <TranscriptEditor
                   transcript={transcript}
@@ -454,12 +443,12 @@ function HomeContent() {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">
-                  <span className="text-gray-400">Loading transcript...</span>
+                  <p className="text-gray-400">Loading transcript...</p>
                 </div>
               )}
-            </section>
+            </div>
 
-            <section className="w-1/2 flex flex-col">
+            <div className="w-1/2 flex flex-col">
               {showEditor ? (
                 <>
                   <div className="flex-1">
@@ -478,18 +467,18 @@ function HomeContent() {
                 </>
               ) : (
                 <div className="flex items-center justify-center flex-1">
-                  <span className="text-gray-400">Loading video...</span>
+                  <p className="text-gray-400">Loading video...</p>
                 </div>
               )}
-            </section>
-          </section>
+            </div>
+          </div>
         )}
       </main>
 
       {showEditor && (
         <MagicBox onSendMessage={handleSendMessage} isProcessing={isProcessing} />
       )}
-    </section>
+    </div>
   )
 }
 

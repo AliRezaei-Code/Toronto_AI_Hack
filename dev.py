@@ -556,7 +556,7 @@ def main():
     # Discover tools
     log_header("Discovering Tools")
     python_cmd = find_python()
-    pkg_manager = find_node_package_manager()
+    pkg_manager = None
 
     # Build service list
     services = get_services(python_cmd, pkg_manager)
@@ -578,8 +578,8 @@ def main():
     # Install dependencies
     force_install = "--install" in sys.argv
     if force_install or needs_install():
-        if not install_workspace_deps(pkg_manager):
-            sys.exit(1)
+       # if not install_workspace_deps(pkg_manager):
+       #     sys.exit(1)
         if not install_python_deps(python_cmd, services):
             sys.exit(1)
     else:
