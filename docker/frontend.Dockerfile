@@ -11,7 +11,7 @@ RUN pnpm run build
 RUN npm run build
 
 # Default port for Next.js
-ENV PORT=3000
-EXPOSE 3000
+ENV PORT=3010
+EXPOSE 3010
 
 CMD ["npm", "start"]
