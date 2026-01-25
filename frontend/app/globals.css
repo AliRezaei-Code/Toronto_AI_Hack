@@ -2,8 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * RENTENTIO BRAND COLOR SYSTEM
+ * Per Lightweight Brand Kit - Black, White & Gold
+ */
+@layer base {
+  :root {
+    /* Core Palette */
+    --color-rich-black: 10 10 10;
+    --color-pure-white: 255 255 255;
+    --color-luxury-gold: 212 175 55;
+
+    /* Extended Palette */
+    --color-charcoal: 26 26 26;
+    --color-soft-white: 248 248 248;
+    --color-muted-gold: 184 148 30;
+    --color-pale-gold: 244 231 195;
+    --color-dark-gold: 139 112 40;
+
+    /* Functional Colors */
+    --color-divider-dark: 42 42 42;
+    --color-divider-light: 229 229 229;
+    --color-text-secondary-dark: 160 160 160;
+    --color-text-secondary-light: 102 102 102;
+
+    /* Decorative */
+    --color-grid-dot: 255 255 255;
+  }
+
+  /* Light mode: swaps core surfaces and text while preserving brand accents */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --color-rich-black: 248 248 248; /* soft white background */
+      --color-pure-white: 10 10 10;    /* rich black text */
+      --color-charcoal: 255 255 255;   /* card surfaces */
+      --color-divider-dark: 229 229 229;
+      --color-text-secondary-dark: 102 102 102;
+      --color-grid-dot: 10 10 10;
+
+      /* Accent adjustments for contrast on light backgrounds */
+      --color-luxury-gold: 139 112 40; /* dark gold for AA text */
+      --color-muted-gold: 184 148 30;
+      --color-pale-gold: 212 175 55;
+      --color-dark-gold: 139 112 40;
+    }
+  }
+
+  /* Optional manual override */
+  .theme-light {
+    --color-rich-black: 248 248 248;
+    --color-pure-white: 10 10 10;
+    --color-charcoal: 255 255 255;
+    --color-divider-dark: 229 229 229;
+    --color-text-secondary-dark: 102 102 102;
+    --color-grid-dot: 10 10 10;
+    --color-luxury-gold: 139 112 40;
+    --color-muted-gold: 184 148 30;
+    --color-pale-gold: 212 175 55;
+    --color-dark-gold: 139 112 40;
+  }
+}
+
 body {
-  @apply bg-gray-900 text-white font-sans antialiased;
+  @apply bg-rich-black text-pure-white font-inter antialiased;
 }
 
 * {
@@ -77,6 +138,23 @@ body {
   }
 }
 
+@keyframes scan {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
 .transcript-panel {
   animation: transcript-rise 0.45s ease-out both;
 }
@@ -95,4 +173,8 @@ body {
 
 .timeline-bar {
   animation: word-reveal 0.3s ease-out both;
+}
+
+.animate-scan {
+  animation: scan 3s linear infinite;
 }

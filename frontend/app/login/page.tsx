@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import LoginForm from '@/components/LoginForm';
+import BrandedLoginForm from '@/components/BrandedLoginForm';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export default function LoginPage() {
   const { user, loading } = useAuth();
@@ -16,16 +17,12 @@ export default function LoginPage() {
   }, [user, loading, router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (user) {
     return null;
   }
 
-  return <LoginForm />;
+  return <BrandedLoginForm />;
 }

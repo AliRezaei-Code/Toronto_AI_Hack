@@ -7,17 +7,9 @@ import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
 import { WaveformTimeline } from '@/components/WaveformTimeline'
 import { uploadVideos, getJobStatus, processEdit, startDemoJob } from '@/lib/api-client'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { LandingPage } from '@/components/LandingPage'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { useAuth } from '@/contexts/AuthContext'
-
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-      <p className="mt-4 text-gray-400">Loading...</p>
-    </div>
-  </div>
-)
 
 interface Word {
   word: string
@@ -274,10 +266,25 @@ function HomeContent() {
   )
 }
 
+/**
+ * ROOT PAGE - Conditional rendering based on auth state
+ *
+ * UX RULE (Business Ethos): Speed to value
+ * - Unauthenticated users: See landing page immediately
+ * - Authenticated users: Go directly to app (no landing friction)
+ *
+ * This enforces the principle that the landing page's one job
+ * is to get users to sign in/start (Landing Page Spec Rule #1)
+ */
 export default function Home() {
-  return (
-    <ProtectedRoute>
-      <HomeContent />
-    </ProtectedRoute>
-  )
+  const { user, loading } = useAuth()
+
+  // Show loading state during auth check
+  if (loading) {
+    return <LoadingSpinner />
+  }
+
+  // Authenticated: show app
+  // Unauthenticated: show landing page
+  return user ? <HomeContent /> : <LandingPage />
 }
