@@ -191,7 +191,7 @@ export function VideoPreview({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
     >
-      <div className="flex-1 flex items-center justify-center bg-black rounded-lg overflow-hidden relative group">
+      <div className="flex-1 flex items-center justify-center bg-rich-black rounded-lg overflow-hidden relative group">
         <video
           ref={videoRef}
           src={videoUrl}
@@ -209,7 +209,7 @@ export function VideoPreview({
           }}
         />
 
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 bg-rich-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
           <motion.button
             onClick={(event) => {
               emitParticleBurstFromEvent(event, {
@@ -218,21 +218,21 @@ export function VideoPreview({
               });
               togglePlay();
             }}
-            className="p-4 bg-white/20 hover:bg-white/30 rounded-full pointer-events-auto"
+            className="p-4 bg-pure-white/20 hover:bg-pure-white/30 rounded-full pointer-events-auto"
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
           >
             {isPlaying ? (
-              <Pause className="w-8 h-8 text-white" />
+              <Pause className="w-8 h-8 text-pure-white" />
             ) : (
-              <Play className="w-8 h-8 text-white ml-1" />
+              <Play className="w-8 h-8 text-pure-white ml-1" />
             )}
           </motion.button>
         </div>
       </div>
 
       <motion.div
-        className="mt-3 flex flex-col gap-2 bg-gray-800/50 rounded-lg p-3 backdrop-blur-sm"
+        className="mt-3 flex flex-col gap-2 bg-charcoal/50 rounded-lg p-3 backdrop-blur-sm"
         animate={{ opacity: showControls ? 1 : 0.7 }}
         transition={{ duration: 0.2 }}
       >

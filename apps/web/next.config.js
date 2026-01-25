@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverComponentsExternalPackages: ['@remotion/renderer', '@remotion/bundler'],
+  },
   serverExternalPackages: [
     '@remotion/renderer',
     '@remotion/bundler',

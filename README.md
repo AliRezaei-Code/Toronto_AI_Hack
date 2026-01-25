@@ -22,7 +22,8 @@ An AI-powered single-page video editor for the HackAI x Stanford hackathon. Uplo
 
 ```
 /project-root
-├── frontend/              # Next.js App
+├── apps/web/              # Next.js App (source of truth)
+├── frontend/              # Legacy Next.js app (to be archived)
 │   ├── app/              # App Router pages
 │   ├── components/       # React components
 │   └── lib/              # API client
@@ -125,9 +126,9 @@ The LangGraph agent processes edit requests through these steps:
 
 **Frontend (Development Mode)**
 ```bash
-cd frontend
-npm install
-npm run dev
+cd apps/web
+pnpm install
+pnpm dev
 ```
 
 **Backend**

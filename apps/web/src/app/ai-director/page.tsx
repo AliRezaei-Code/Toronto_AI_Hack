@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { BrandedHeader } from '@/src/components/BrandedHeader';
+import { ProtectedRoute } from '@/src/components/ProtectedRoute';
 import { 
   Upload, 
   Play, 
@@ -61,14 +63,14 @@ interface DirectorJob {
 type JobStatus = 'queued' | 'transcribing' | 'diarizing' | 'selecting_clips' | 'tracking_faces' | 'generating_layout' | 'rendering' | 'completed' | 'failed';
 
 const STATUS_CONFIG: Record<JobStatus, { color: string; icon: LucideIcon; label: string }> = {
-  queued: { color: 'bg-gray-500', icon: Clock, label: 'Queued' },
-  transcribing: { color: 'bg-blue-500', icon: MessageSquare, label: 'Transcribing' },
-  diarizing: { color: 'bg-indigo-500', icon: Users, label: 'Identifying Speakers' },
-  selecting_clips: { color: 'bg-purple-500', icon: Sparkles, label: 'Finding Viral Moments' },
-  tracking_faces: { color: 'bg-pink-500', icon: Video, label: 'Tracking Faces' },
-  generating_layout: { color: 'bg-orange-500', icon: Film, label: 'Generating Layout' },
-  rendering: { color: 'bg-yellow-500', icon: Zap, label: 'Rendering' },
-  completed: { color: 'bg-green-500', icon: CheckCircle, label: 'Completed' },
+  queued: { color: 'bg-charcoal', icon: Clock, label: 'Queued' },
+  transcribing: { color: 'bg-dark-gold', icon: MessageSquare, label: 'Transcribing' },
+  diarizing: { color: 'bg-muted-gold', icon: Users, label: 'Identifying Speakers' },
+  selecting_clips: { color: 'bg-luxury-gold', icon: Sparkles, label: 'Finding Viral Moments' },
+  tracking_faces: { color: 'bg-pale-gold', icon: Video, label: 'Tracking Faces' },
+  generating_layout: { color: 'bg-dark-gold', icon: Film, label: 'Generating Layout' },
+  rendering: { color: 'bg-muted-gold', icon: Zap, label: 'Rendering' },
+  completed: { color: 'bg-luxury-gold', icon: CheckCircle, label: 'Completed' },
   failed: { color: 'bg-red-500', icon: XCircle, label: 'Failed' },
 };
 
@@ -77,7 +79,7 @@ function StatusBadge({ status }: { status: string }) {
   const config = STATUS_CONFIG[status as JobStatus] || STATUS_CONFIG.queued;
   
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-white ${config.color}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-pure-white ${config.color}`}>
       <Icon icon={config.icon} size={16} />
       {config.label}
     </span>
@@ -89,12 +91,12 @@ function ProgressBar({ progress, status }: { progress: number; status: string })
   const isActive = !['completed', 'failed'].includes(status);
   
   return (
-    <div className="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
-      <div 
+    <div className="w-full bg-charcoal rounded-full h-2 overflow-hidden">
+      <div
         className={`h-full transition-all duration-500 ${
-          status === 'failed' ? 'bg-red-500' : 
-          status === 'completed' ? 'bg-green-500' : 
-          'bg-blue-500'
+          status === 'failed' ? 'bg-red-500' :
+          status === 'completed' ? 'bg-luxury-gold' :
+          'bg-muted-gold'
         } ${isActive ? 'animate-pulse' : ''}`}
         style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
       />
@@ -105,22 +107,22 @@ function ProgressBar({ progress, status }: { progress: number; status: string })
 // Viral Clip Card Component
 function ViralClipCard({ clip, onRender }: { clip: ViralClip; onRender: (clipId: string) => void }) {
   const hookColors: Record<string, string> = {
-    question: 'bg-blue-500',
-    shock: 'bg-red-500',
-    story: 'bg-purple-500',
-    result: 'bg-green-500',
-    controversy: 'bg-orange-500',
-    promise: 'bg-pink-500',
+    question: 'bg-muted-gold',
+    shock: 'bg-dark-gold',
+    story: 'bg-luxury-gold',
+    result: 'bg-pale-gold',
+    controversy: 'bg-dark-gold',
+    promise: 'bg-muted-gold',
   };
   
   return (
-    <div className="bg-slate-800 rounded-lg p-4 hover:bg-slate-750 transition-colors border border-slate-700">
+    <div className="bg-charcoal/40 border border-divider-dark/30 rounded-xl p-4 hover:bg-charcoal/60 transition-colors backdrop-blur-sm">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className={`px-2 py-0.5 rounded text-xs font-medium text-white ${hookColors[clip.hook_type] || 'bg-gray-500'}`}>
+          <span className={`px-2 py-0.5 rounded text-xs font-medium text-pure-white ${hookColors[clip.hook_type] || 'bg-gray-500'}`}>
             {clip.hook_type.toUpperCase()}
           </span>
-          <span className="text-slate-400 text-sm">
+          <span className="text-text-secondary-dark text-sm">
             {Math.floor(clip.duration)}s
           </span>
         </div>
@@ -133,21 +135,21 @@ function ViralClipCard({ clip, onRender }: { clip: ViralClip; onRender: (clipId:
         </div>
       </div>
       
-      <h4 className="text-white font-medium mb-2 line-clamp-2">
+      <h4 className="text-pure-white font-playfair font-medium mb-2 line-clamp-2">
         {clip.suggested_titles[0] || clip.summary}
       </h4>
-      
-      <p className="text-slate-400 text-sm mb-3 line-clamp-2">
+
+      <p className="text-text-secondary-dark font-formula text-sm mb-3 line-clamp-2">
         {clip.transcript_text.substring(0, 100)}...
       </p>
-      
+
       <div className="flex items-center justify-between">
-        <span className="text-slate-500 text-xs">
+        <span className="text-text-secondary-dark font-formula text-xs">
           {formatTime(clip.start_time)} - {formatTime(clip.end_time)}
         </span>
-        <button 
+        <button
           onClick={() => onRender(clip.id)}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+          className="bg-luxury-gold hover:bg-muted-gold text-rich-black font-formula px-3 py-1 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-1"
         >
           {/* @ts-ignore - React type version mismatch in pnpm workspace */}
           <Film size={14} />
@@ -185,8 +187,8 @@ function UploadZone({ onUpload, isUploading }: { onUpload: (file: File) => void;
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
       className={`
-        border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer
-        ${isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-slate-600 hover:border-slate-500'}
+        border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer
+        ${isDragging ? 'border-luxury-gold bg-luxury-gold/10' : 'border-divider-dark hover:border-luxury-gold/40'}
         ${isUploading ? 'opacity-50 pointer-events-none' : ''}
       `}
     >
@@ -200,14 +202,14 @@ function UploadZone({ onUpload, isUploading }: { onUpload: (file: File) => void;
       />
       <label htmlFor="video-upload" className="cursor-pointer">
         {/* @ts-ignore - React type version mismatch in pnpm workspace */}
-        <Upload size={48} className={`mx-auto mb-4 ${isDragging ? 'text-blue-500' : 'text-slate-500'}`} />
-        <h3 className="text-xl font-semibold text-white mb-2">
+        <Upload size={48} className={`mx-auto mb-4 ${isDragging ? 'text-luxury-gold' : 'text-text-secondary-dark'}`} />
+        <h3 className="text-xl font-playfair font-semibold text-pure-white mb-2">
           {isUploading ? 'Uploading...' : 'Upload Video'}
         </h3>
-        <p className="text-slate-400 mb-4">
+        <p className="text-text-secondary-dark font-formula mb-4">
           Drag and drop your interview or podcast video, or click to browse
         </p>
-        <p className="text-slate-500 text-sm">
+        <p className="text-text-secondary-dark font-formula text-sm">
           Supports MP4, MOV, WebM up to 2GB
         </p>
       </label>
@@ -234,10 +236,10 @@ function JobCard({
   onToggle: () => void;
 }) {
   return (
-    <div className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700">
+    <div className="bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 rounded-2xl overflow-hidden backdrop-blur-sm">
       {/* Header */}
-      <div 
-        className="p-4 cursor-pointer hover:bg-slate-750 transition-colors"
+      <div
+        className="p-4 cursor-pointer hover:bg-charcoal/40 transition-colors"
         onClick={onToggle}
       >
         <div className="flex items-center justify-between">
@@ -245,14 +247,14 @@ function JobCard({
             {/* @ts-ignore - React type version mismatch in pnpm workspace */}
             <ChevronRight
               size={20} 
-              className={`text-slate-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+              className={`text-text-secondary-dark transition-transform ${isExpanded ? 'rotate-90' : ''}`}
             />
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-white font-medium">Job {job.job_id.substring(0, 8)}</span>
+                <span className="text-pure-white font-medium">Job {job.job_id.substring(0, 8)}</span>
                 <StatusBadge status={job.status} />
               </div>
-              <p className="text-slate-400 text-sm mt-1">
+              <p className="text-text-secondary-dark text-sm mt-1">
                 {job.current_step || 'Processing...'}
               </p>
             </div>
@@ -260,12 +262,12 @@ function JobCard({
           
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <div className="text-white font-bold">{job.viral_clips_found}</div>
-              <div className="text-slate-400 text-xs">clips found</div>
+              <div className="text-pure-white font-bold">{job.viral_clips_found}</div>
+              <div className="text-text-secondary-dark text-xs">clips found</div>
             </div>
             <div className="text-right">
-              <div className="text-white font-bold">{job.shorts_rendered}</div>
-              <div className="text-slate-400 text-xs">rendered</div>
+              <div className="text-pure-white font-bold">{job.shorts_rendered}</div>
+              <div className="text-text-secondary-dark text-xs">rendered</div>
             </div>
           </div>
         </div>
@@ -273,8 +275,8 @@ function JobCard({
         {/* Progress */}
         <div className="mt-4">
           <div className="flex items-center justify-between text-sm mb-1">
-            <span className="text-slate-400">Progress</span>
-            <span className="text-white font-medium">{job.progress_percent.toFixed(0)}%</span>
+            <span className="text-text-secondary-dark">Progress</span>
+            <span className="text-pure-white font-medium">{job.progress_percent.toFixed(0)}%</span>
           </div>
           <ProgressBar progress={job.progress_percent} status={job.status} />
         </div>
@@ -282,10 +284,10 @@ function JobCard({
       
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="border-t border-slate-700 p-4">
+        <div className="border-t border-divider-dark/30 p-4">
           {/* Error Message */}
           {job.error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4 flex items-start gap-2">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-4 flex items-start gap-2">
               {/* @ts-ignore - React type version mismatch in pnpm workspace */}
               <AlertCircle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
               <p className="text-red-400 text-sm">{job.error}</p>
@@ -295,7 +297,7 @@ function JobCard({
           {/* Viral Clips */}
           {clips.length > 0 && (
             <div className="mb-4">
-              <h4 className="text-white font-medium mb-3">Viral Clips</h4>
+              <h4 className="text-pure-white font-medium mb-3">Viral Clips</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {clips.map((clip) => (
                   <ViralClipCard 
@@ -309,10 +311,10 @@ function JobCard({
           )}
           
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-2 border-t border-slate-700">
+          <div className="flex items-center gap-2 pt-2 border-t border-divider-dark/30">
             <button
               onClick={(e) => { e.stopPropagation(); onRefresh(); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-charcoal/60 hover:bg-charcoal text-text-secondary-dark text-sm transition-colors"
             >
               {/* @ts-ignore - React type version mismatch in pnpm workspace */}
               <RefreshCw size={14} />
@@ -341,7 +343,8 @@ function formatTime(seconds: number): string {
 }
 
 // Main AI Director Page
-export default function AIDirectorPage() {
+function AIDirectorContent() {
+  const [isClient, setIsClient] = useState(false);
   const [jobs, setJobs] = useState<DirectorJob[]>([]);
   const [clips, setClips] = useState<Record<string, ViralClip[]>>({});
   const [isUploading, setIsUploading] = useState(false);
@@ -350,13 +353,27 @@ export default function AIDirectorPage() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-  // Fetch jobs on mount
+  // Client-side rendering check
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Fetch jobs on mount - must be called unconditionally before any early returns
+  useEffect(() => {
+    if (!isClient) return;
     fetchJobs();
     const interval = setInterval(fetchJobs, 5000); // Poll every 5 seconds
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isClient]);
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-rich-black flex items-center justify-center">
+        <div className="text-pure-white font-formula">Loading AI Director...</div>
+      </div>
+    );
+  }
 
   const fetchJobs = async () => {
     try {
@@ -460,37 +477,25 @@ export default function AIDirectorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-rich-black">
+      <BrandedHeader />
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             {/* @ts-ignore - React type version mismatch in pnpm workspace */}
-            <Sparkles className="text-purple-500" size={32} />
-            <h1 className="text-4xl font-bold text-white">AI Director</h1>
+            <Sparkles className="text-luxury-gold" size={32} />
+            <h1 className="text-4xl font-playfair font-bold text-pure-white">AI Director</h1>
           </div>
-          <p className="text-slate-400">
+          <p className="text-text-secondary-dark font-formula">
             Automatically transform long-form interviews into viral short-form content
           </p>
         </div>
 
-        {/* Navigation */}
-        <div className="flex items-center gap-4 mb-8">
-          {/* @ts-ignore - React type version mismatch in pnpm workspace */}
-          <Link 
-            href="/"
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            Home
-          </Link>
-          {/* @ts-ignore - React type version mismatch in pnpm workspace */}
-          <ChevronRight size={16} className="text-slate-600" />
-          <span className="text-white">AI Director</span>
-        </div>
-
         {/* Error Message */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6 flex items-start gap-3">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 flex items-start gap-3">
             {/* @ts-ignore - React type version mismatch in pnpm workspace */}
             <AlertCircle size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
             <div>
@@ -513,23 +518,23 @@ export default function AIDirectorPage() {
         {/* Jobs List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-white">Processing Jobs</h2>
+            <h2 className="text-xl font-playfair font-semibold text-pure-white">Processing Jobs</h2>
             <button
               onClick={fetchJobs}
-              className="flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors text-sm"
+              className="flex items-center gap-1.5 text-text-secondary-dark hover:text-luxury-gold transition-colors text-sm font-formula"
             >
-              {/* @ts-expect-error - React type version mismatch in pnpm workspace */}
+              {/* @ts-ignore - React type version mismatch in pnpm workspace */}
               <RefreshCw size={14} />
               Refresh All
             </button>
           </div>
 
           {jobs.length === 0 ? (
-            <div className="bg-slate-800 rounded-xl p-8 text-center border border-slate-700">
+            <div className="bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 rounded-2xl p-8 text-center backdrop-blur-sm">
               {/* @ts-ignore - React type version mismatch in pnpm workspace */}
-              <Film size={48} className="mx-auto mb-4 text-slate-600" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Jobs Yet</h3>
-              <p className="text-slate-400">
+              <Film size={48} className="mx-auto mb-4 text-text-secondary-dark" />
+              <h3 className="text-xl font-playfair font-semibold text-pure-white mb-2">No Jobs Yet</h3>
+              <p className="text-text-secondary-dark font-formula">
                 Upload a video to get started with AI-powered clip generation
               </p>
             </div>
@@ -553,40 +558,48 @@ export default function AIDirectorPage() {
 
         {/* Features Section */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 rounded-xl p-6 border border-divider-dark/30">
+            <div className="w-12 h-12 bg-luxury-gold/20 rounded-xl flex items-center justify-center mb-4">
               {/* @ts-ignore - React type version mismatch in pnpm workspace */}
               <MessageSquare className="text-blue-500" size={24} />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Smart Transcription</h3>
-            <p className="text-slate-400 text-sm">
+            <h3 className="text-lg font-semibold text-pure-white mb-2">Smart Transcription</h3>
+            <p className="text-text-secondary-dark text-sm">
               Speaker diarization identifies who&apos;s talking and when, enabling multi-speaker layouts.
             </p>
           </div>
           
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-            <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 rounded-xl p-6 border border-divider-dark/30">
+            <div className="w-12 h-12 bg-muted-gold/20 rounded-xl flex items-center justify-center mb-4">
               {/* @ts-ignore - React type version mismatch in pnpm workspace */}
               <Sparkles className="text-purple-500" size={24} />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Viral Detection</h3>
-            <p className="text-slate-400 text-sm">
+            <h3 className="text-lg font-semibold text-pure-white mb-2">Viral Detection</h3>
+            <p className="text-text-secondary-dark text-sm">
               AI identifies the most engaging moments with hooks, stories, and emotional peaks.
             </p>
           </div>
           
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-            <div className="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 rounded-2xl p-6 backdrop-blur-sm">
+            <div className="w-12 h-12 bg-luxury-gold/20 rounded-xl flex items-center justify-center mb-4">
               {/* @ts-ignore - React type version mismatch in pnpm workspace */}
-              <Video className="text-pink-500" size={24} />
+              <Video className="text-luxury-gold" size={24} />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Smart Cropping</h3>
-            <p className="text-slate-400 text-sm">
+            <h3 className="text-lg font-playfair font-semibold text-pure-white mb-2">Smart Cropping</h3>
+            <p className="text-text-secondary-dark font-formula text-sm">
               Face tracking keeps speakers in frame with dynamic 9:16 cropping for vertical video.
             </p>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AIDirectorPage() {
+  return (
+    <ProtectedRoute>
+      <AIDirectorContent />
+    </ProtectedRoute>
   );
 }
