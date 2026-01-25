@@ -32,7 +32,7 @@ export default function RootLayout() {
     // Initialize API client with auth
     initApiClient({
       baseUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000',
-      getToken: async () => getToken(),
+      getToken: () => getToken(),
       onUnauthorized: () => {
         // Handle unauthorized - redirect to login
         useAuthStore.getState().logout();
