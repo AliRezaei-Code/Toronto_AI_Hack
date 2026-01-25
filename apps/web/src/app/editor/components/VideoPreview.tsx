@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useCallback } from "react";
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2 } from "lucide-react";
+import { LucideIcon } from "@/lib/lucide-icon";
 
 interface VideoPreviewProps {
   videoUrl: string | null;
@@ -147,7 +148,7 @@ export function VideoPreview({
             className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
           >
             <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-              <Play size={32} className="text-white ml-1" />
+              <LucideIcon Icon={Play} size={32} className="text-white ml-1" />
             </div>
           </button>
         )}
@@ -181,7 +182,7 @@ export function VideoPreview({
               className="p-2 rounded-lg hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 transition-colors"
               title="Skip back 5s"
             >
-              <SkipBack size={20} />
+              <LucideIcon Icon={SkipBack} size={20} />
             </button>
 
             <button
@@ -189,7 +190,11 @@ export function VideoPreview({
               disabled={!videoUrl}
               className="p-3 rounded-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white transition-colors"
             >
-              {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
+              {isPlaying ? (
+                <LucideIcon Icon={Pause} size={20} />
+              ) : (
+                <LucideIcon Icon={Play} size={20} className="ml-0.5" />
+              )}
             </button>
 
             <button
@@ -214,7 +219,11 @@ export function VideoPreview({
               disabled={!videoUrl}
               className="p-2 rounded-lg hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 transition-colors"
             >
-              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+              {isMuted ? (
+                <LucideIcon Icon={VolumeX} size={20} />
+              ) : (
+                <LucideIcon Icon={Volume2} size={20} />
+              )}
             </button>
 
             <button
@@ -222,7 +231,7 @@ export function VideoPreview({
               disabled={!videoUrl}
               className="p-2 rounded-lg hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 transition-colors"
             >
-              <Maximize2 size={20} />
+              <LucideIcon Icon={Maximize2} size={20} />
             </button>
           </div>
         </div>

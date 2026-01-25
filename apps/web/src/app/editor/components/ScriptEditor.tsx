@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { Undo2, Trash2, Type } from "lucide-react";
+import { LucideIcon } from "@/lib/lucide-icon";
 import { EditableWord } from "../hooks/useEditor";
 
 interface ScriptEditorProps {
@@ -144,7 +145,7 @@ export function ScriptEditor({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Type size={20} className="text-purple-500" />
+          <LucideIcon Icon={Type} size={20} className="text-purple-500" />
           <h3 className="text-lg font-semibold text-white">Script Editor</h3>
         </div>
         <div className="flex items-center gap-2">
@@ -167,7 +168,7 @@ export function ScriptEditor({
               className="flex items-center gap-1.5 px-2 py-1 rounded bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs transition-colors"
               title="Delete selected (Delete key)"
             >
-              <Trash2 size={14} />
+              <LucideIcon Icon={Trash2} size={14} />
               Cut ({selectedWordIds.size})
             </button>
           )}

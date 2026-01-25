@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { ParticleBackground } from '@/components/ParticleBackground'
-import { AuthProvider } from '@/contexts/AuthContext'
+import { ParticleBackground } from '../../components/ParticleBackground'
+import { AuthProvider } from '../../contexts/AuthContext'
 
 export const metadata: Metadata = {
   title: 'Script-Based Video Editor',
@@ -16,13 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="app-body">
-        <div className="app-shell">
-          <ParticleBackground />
-          <div className="app-content">{children}</div>
-        </div>
-      <body>
         <AuthProvider>
-          {children}
+          <div className="app-shell">
+            <ParticleBackground />
+            <div className="app-content">{children}</div>
+          </div>
         </AuthProvider>
       </body>
     </html>

@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { Send, Wand2, Loader2, Sparkles } from "lucide-react";
+import { LucideIcon } from "@/lib/lucide-icon";
 
 interface PromptBoxProps {
   onSubmit: (prompt: string) => Promise<void>;
@@ -71,7 +72,7 @@ export function PromptBox({
     <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
-        <Wand2 size={20} className="text-blue-500" />
+        <LucideIcon Icon={Wand2} size={20} className="text-blue-500" />
         <h3 className="text-lg font-semibold text-white">AI Edit</h3>
       </div>
 
@@ -112,9 +113,9 @@ export function PromptBox({
           className="absolute right-3 bottom-3 p-2 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white transition-colors"
         >
           {isLoading ? (
-            <Loader2 size={18} className="animate-spin" />
+            <LucideIcon Icon={Loader2} size={18} className="animate-spin" />
           ) : (
-            <Send size={18} />
+            <LucideIcon Icon={Send} size={18} />
           )}
         </button>
       </form>
@@ -129,7 +130,7 @@ export function PromptBox({
       {/* Loading State */}
       {isLoading && (
         <div className="mt-3 flex items-center gap-2 text-slate-400 text-sm">
-          <Loader2 size={14} className="animate-spin" />
+          <LucideIcon Icon={Loader2} size={14} className="animate-spin" />
           <span>Processing edit...</span>
         </div>
       )}

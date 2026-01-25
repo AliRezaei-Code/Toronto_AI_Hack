@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Download, ChevronRight, Film, AlertCircle, X } from "lucide-react";
+import { LucideIcon } from "@/lib/lucide-icon";
 import { useEditor } from "./hooks/useEditor";
 import { MultiClipUpload } from "./components/MultiClipUpload";
 import { ScriptEditor } from "./components/ScriptEditor";
@@ -91,7 +92,7 @@ export default function EditorPage() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
-              <Film className="text-purple-500" size={32} />
+              <LucideIcon Icon={Film} className="text-purple-500" size={32} />
               <h1 className="text-4xl font-bold text-white">Quick Cut Editor</h1>
             </div>
             <div className="flex items-center gap-3">
@@ -100,7 +101,7 @@ export default function EditorPage() {
                   onClick={() => handleDownload(exportedUrl!, "edited-video.mp4")}
                   className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
-                  <Download size={18} />
+                  <LucideIcon Icon={Download} size={18} />
                   Download
                 </button>
               )}
@@ -117,7 +118,7 @@ export default function EditorPage() {
                     </>
                   ) : (
                     <>
-                      <Download size={18} />
+                      <LucideIcon Icon={Download} size={18} />
                       Export 9:16
                     </>
                   )}
@@ -138,21 +139,22 @@ export default function EditorPage() {
           >
             Home
           </Link>
-          <ChevronRight size={16} className="text-slate-600" />
+          <LucideIcon Icon={ChevronRight} size={16} className="text-slate-600" />
           <Link
             href="/ai-director"
             className="text-slate-400 hover:text-white transition-colors"
           >
             AI Director
           </Link>
-          <ChevronRight size={16} className="text-slate-600" />
+          <LucideIcon Icon={ChevronRight} size={16} className="text-slate-600" />
           <span className="text-white">Editor</span>
         </div>
 
         {/* Error Message */}
         {jobError && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6 flex items-start gap-3">
-            <AlertCircle
+            <LucideIcon
+              Icon={AlertCircle}
               size={20}
               className="text-red-500 flex-shrink-0 mt-0.5"
             />
@@ -163,7 +165,7 @@ export default function EditorPage() {
               onClick={() => setJobError(null)}
               className="text-red-500 hover:text-red-400 transition-colors"
             >
-              <X size={18} />
+              <LucideIcon Icon={X} size={18} />
             </button>
           </div>
         )}

@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef } from "react";
 import { Upload, X, GripVertical, Play, Trash2, Loader2 } from "lucide-react";
+import { LucideIcon } from "@/lib/lucide-icon";
 import { UploadedClip } from "../hooks/useEditor";
 
 interface MultiClipUploadProps {
@@ -103,7 +104,7 @@ export function MultiClipUpload({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Upload size={20} className="text-blue-500" />
+          <LucideIcon Icon={Upload} size={20} className="text-blue-500" />
           <h3 className="text-lg font-semibold text-white">Video Clips</h3>
         </div>
         <div className="text-slate-400 text-sm">
@@ -128,7 +129,7 @@ export function MultiClipUpload({
           onClick={() => fileInputRef.current?.click()}
         >
           <input
-            ref={fileInputRef.current}
+            ref={fileInputRef}
             type="file"
             accept="video/*"
             multiple
@@ -136,7 +137,8 @@ export function MultiClipUpload({
             className="hidden"
             disabled={isUploading}
           />
-          <Upload
+          <LucideIcon
+            Icon={Upload}
             size={32}
             className={`mx-auto mb-2 ${isDragging ? "text-blue-500" : "text-slate-500"}`}
           />
@@ -179,7 +181,7 @@ export function MultiClipUpload({
                   muted
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-slate-800/50">
-                  <Play size={16} className="text-slate-400" />
+                  <LucideIcon Icon={Play} size={16} className="text-slate-400" />
                 </div>
               </div>
 
@@ -230,12 +232,12 @@ export function MultiClipUpload({
         >
           {isUploading ? (
             <>
-              <Loader2 size={18} className="animate-spin" />
+              <LucideIcon Icon={Loader2} size={18} className="animate-spin" />
               Processing Videos...
             </>
           ) : (
             <>
-              <Upload size={18} />
+              <LucideIcon Icon={Upload} size={18} />
               Process {clips.length} {clips.length === 1 ? "Clip" : "Clips"}
             </>
           )}
