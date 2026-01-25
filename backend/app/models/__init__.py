@@ -1,5 +1,39 @@
 """AI Director Models Package"""
 
+from app.models.core_models import (
+    # Core Models
+    Word,
+    Segment,
+    Clip,
+    Transcript,
+    EditInstruction,
+    # Request Models
+    EditRequest,
+    AgentQueryRequest,
+    TranscriptEditRequest,
+    # Response Models
+    EditResponse,
+    UploadResponse,
+    JobStatus,
+    HealthResponse,
+    RootResponse,
+    LimitsInfo,
+    RecommendationsResponse,
+    DeleteJobResponse,
+    JobSummary,
+    ListJobsResponse,
+    ErrorResponse,
+    # Smart Merge Models
+    CreatorContext,
+    SmartMergeRequest,
+    SmartMergeSegment,
+    SmartMergeResponse,
+    # Internal Models
+    AgentState,
+    WordEdit,
+    TimeRangeAnalysis,
+)
+
 from app.models.director_models import (
     # Enums
     HookType,
@@ -43,6 +77,37 @@ from app.models.director_models import (
 )
 
 __all__ = [
+    # Core Models
+    "Word",
+    "Segment",
+    "Clip",
+    "Transcript",
+    "EditInstruction",
+    # Request Models
+    "EditRequest",
+    "AgentQueryRequest",
+    "TranscriptEditRequest",
+    # Response Models
+    "EditResponse",
+    "UploadResponse",
+    "JobStatus",
+    "HealthResponse",
+    "RootResponse",
+    "LimitsInfo",
+    "RecommendationsResponse",
+    "DeleteJobResponse",
+    "JobSummary",
+    "ListJobsResponse",
+    "ErrorResponse",
+    # Smart Merge Models
+    "CreatorContext",
+    "SmartMergeRequest",
+    "SmartMergeSegment",
+    "SmartMergeResponse",
+    # Internal Models
+    "AgentState",
+    "WordEdit",
+    "TimeRangeAnalysis",
     # Enums
     "HookType",
     "LayoutType",

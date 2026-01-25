@@ -12,7 +12,7 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     volumes:
       - ./apps/web:/app
-      - /app/node_modules
+      - web-node-modules:/app/node_modules
       - shared-data:/shared-data
       - ./.env:/app/.env:ro
     depends_on:
@@ -85,6 +85,8 @@ volumes:
   shared-data:
     driver: local
   video-processor-temp:
+    driver: local
+  web-node-modules:
     driver: local
 
 networks:

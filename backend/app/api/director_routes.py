@@ -62,7 +62,7 @@ async def upload_for_ai_director(
     caption_style: CaptionStyle = CaptionStyle.HORMOZI,
     target_platform: Platform = Platform.TIKTOK,
     max_clips: int = 5,
-    min_clip_duration: float = 30.0,
+    min_clip_duration: float = 15.0,
     max_clip_duration: float = 90.0,
     remove_fillers: bool = True,
 ):
@@ -128,7 +128,7 @@ async def process_director_job(
     job_id: str,
     video_path: str,
     max_clips: int = 5,
-    min_duration: float = 30.0,
+    min_duration: float = 15.0,
     max_duration: float = 90.0,
     remove_fillers: bool = True,
 ):

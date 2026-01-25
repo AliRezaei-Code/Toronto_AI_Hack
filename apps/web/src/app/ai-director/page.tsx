@@ -144,13 +144,80 @@ function ProgressBar({
   );
 }
 
+// Rendered Short interface
+interface RenderedShort {
+  clip_id: string;
+  video_url: string;
+  status: "rendering" | "completed" | "failed";
+}
+
+// Video Preview Modal Component
+function VideoPreviewModal({
+  videoUrl,
+  title,
+  onClose,
+  onDownload,
+}: {
+  videoUrl: string;
+  title: string;
+  onClose: () => void;
+  onDownload: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+      <div className="bg-slate-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b border-slate-700">
+          <h3 className="text-white font-semibold truncate">{title}</h3>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-white transition-colors"
+          >
+            <XCircle size={24} />
+          </button>
+        </div>
+        <div className="p-4">
+          <video
+            src={videoUrl}
+            controls
+            autoPlay
+            className="w-full rounded-lg bg-black max-h-[60vh]"
+          />
+        </div>
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-slate-700">
+          <button
+            onClick={onDownload}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            <Download size={18} />
+            Download
+          </button>
+          <button
+            onClick={onClose}
+            className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Viral Clip Card Component
 function ViralClipCard({
   clip,
+  renderedShort,
   onRender,
+  onPreview,
+  onDownload,
+  apiUrl,
 }: {
   clip: ViralClip;
+  renderedShort?: RenderedShort;
   onRender: (clipId: string) => void;
+  onPreview: (videoUrl: string, title: string) => void;
+  onDownload: (videoUrl: string, filename: string) => void;
+  apiUrl: string;
 }) {
   const hookColors: Record<string, string> = {
     question: "bg-blue-500",
@@ -160,6 +227,11 @@ function ViralClipCard({
     controversy: "bg-orange-500",
     promise: "bg-pink-500",
   };
+
+  const isRendered = renderedShort?.status === "completed";
+  const isRendering = renderedShort?.status === "rendering";
+  const videoUrl = renderedShort?.video_url ? `${apiUrl}${renderedShort.video_url}` : null;
+  const title = clip.suggested_titles[0] || clip.summary;
 
   return (
     <div className="bg-slate-800 rounded-lg p-4 hover:bg-slate-750 transition-colors border border-slate-700">
@@ -183,7 +255,7 @@ function ViralClipCard({
       </div>
 
       <h4 className="text-white font-medium mb-2 line-clamp-2">
-        {clip.suggested_titles[0] || clip.summary}
+        {title}
       </h4>
 
       <p className="text-slate-400 text-sm mb-3 line-clamp-2">
@@ -194,13 +266,39 @@ function ViralClipCard({
         <span className="text-slate-500 text-xs">
           {formatTime(clip.start_time)} - {formatTime(clip.end_time)}
         </span>
-        <button
-          onClick={() => onRender(clip.id)}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
-        >
-          <Film size={14} />
-          Render
-        </button>
+
+        <div className="flex items-center gap-2">
+          {isRendered && videoUrl ? (
+            <>
+              <button
+                onClick={() => onPreview(videoUrl, title)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+              >
+                <Play size={14} />
+                Preview
+              </button>
+              <button
+                onClick={() => onDownload(videoUrl, `${clip.id}.mp4`)}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+              >
+                <Download size={14} />
+              </button>
+            </>
+          ) : isRendering ? (
+            <span className="text-yellow-400 text-sm flex items-center gap-1">
+              <RefreshCw size={14} className="animate-spin" />
+              Rendering...
+            </span>
+          ) : (
+            <button
+              onClick={() => onRender(clip.id)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+            >
+              <Film size={14} />
+              Render
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -284,19 +382,27 @@ function UploadZone({
 function JobCard({
   job,
   clips,
+  renderedShorts,
   onRefresh,
   onDelete,
   onRenderClip,
+  onPreview,
+  onDownload,
   isExpanded,
   onToggle,
+  apiUrl,
 }: {
   job: DirectorJob;
   clips: ViralClip[];
+  renderedShorts: Record<string, RenderedShort>;
   onRefresh: () => void;
   onDelete: () => void;
   onRenderClip: (clipId: string) => void;
+  onPreview: (videoUrl: string, title: string) => void;
+  onDownload: (videoUrl: string, filename: string) => void;
   isExpanded: boolean;
   onToggle: () => void;
+  apiUrl: string;
 }) {
   return (
     <div className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700">
@@ -373,7 +479,11 @@ function JobCard({
                   <ViralClipCard
                     key={clip.id}
                     clip={clip}
+                    renderedShort={renderedShorts[clip.id]}
                     onRender={onRenderClip}
+                    onPreview={onPreview}
+                    onDownload={onDownload}
+                    apiUrl={apiUrl}
                   />
                 ))}
               </div>
@@ -420,9 +530,11 @@ function formatTime(seconds: number): string {
 export default function AIDirectorPage() {
   const [jobs, setJobs] = useState<DirectorJob[]>([]);
   const [clips, setClips] = useState<Record<string, ViralClip[]>>({});
+  const [renderedShorts, setRenderedShorts] = useState<Record<string, RenderedShort>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [expandedJob, setExpandedJob] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [previewVideo, setPreviewVideo] = useState<{ url: string; title: string } | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -504,6 +616,12 @@ export default function AIDirectorPage() {
 
   const handleRenderClip = async (jobId: string, clipId: string) => {
     try {
+      // Mark as rendering
+      setRenderedShorts((prev) => ({
+        ...prev,
+        [clipId]: { clip_id: clipId, video_url: "", status: "rendering" },
+      }));
+
       const response = await fetch(`${API_URL}/api/director/render-short`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -516,10 +634,49 @@ export default function AIDirectorPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        setRenderedShorts((prev) => ({
+          ...prev,
+          [clipId]: {
+            clip_id: clipId,
+            video_url: data.video_url,
+            status: "completed",
+          },
+        }));
         fetchJobs();
+      } else {
+        setRenderedShorts((prev) => ({
+          ...prev,
+          [clipId]: { clip_id: clipId, video_url: "", status: "failed" },
+        }));
       }
     } catch (err) {
       console.error("Failed to render clip:", err);
+      setRenderedShorts((prev) => ({
+        ...prev,
+        [clipId]: { clip_id: clipId, video_url: "", status: "failed" },
+      }));
+    }
+  };
+
+  const handlePreview = (videoUrl: string, title: string) => {
+    setPreviewVideo({ url: videoUrl, title });
+  };
+
+  const handleDownload = async (videoUrl: string, filename: string) => {
+    try {
+      const response = await fetch(videoUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error("Failed to download:", err);
     }
   };
 
@@ -617,13 +774,17 @@ export default function AIDirectorPage() {
                   key={job.job_id}
                   job={job}
                   clips={clips[job.job_id] || []}
+                  renderedShorts={renderedShorts}
                   onRefresh={() => handleRefreshJob(job.job_id)}
                   onDelete={() => handleDeleteJob(job.job_id)}
                   onRenderClip={(clipId) =>
                     handleRenderClip(job.job_id, clipId)
                   }
+                  onPreview={handlePreview}
+                  onDownload={handleDownload}
                   isExpanded={expandedJob === job.job_id}
                   onToggle={() => handleToggleJob(job.job_id)}
+                  apiUrl={API_URL}
                 />
               ))}
             </div>
@@ -672,6 +833,18 @@ export default function AIDirectorPage() {
           </div>
         </div>
       </div>
+
+      {/* Video Preview Modal */}
+      {previewVideo && (
+        <VideoPreviewModal
+          videoUrl={previewVideo.url}
+          title={previewVideo.title}
+          onClose={() => setPreviewVideo(null)}
+          onDownload={() => {
+            handleDownload(previewVideo.url, "video.mp4");
+          }}
+        />
+      )}
     </div>
   );
 }
