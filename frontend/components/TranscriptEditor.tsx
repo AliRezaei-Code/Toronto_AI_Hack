@@ -10,6 +10,7 @@ import {
   getAllWords
 } from '@/lib/transcript-utils'
 import { useEffect, useState, useRef, useCallback, KeyboardEvent } from 'react'
+import { motion } from 'framer-motion'
 import { editTranscriptText } from '@/lib/api-client'
 
 interface Word {
@@ -350,30 +351,64 @@ export function TranscriptEditor({
 
   if (isProcessing) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent mb-3"></div>
+      <motion.div
+        className="flex items-center justify-center h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          className="text-center"
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
+          <motion.div
+            className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent mb-3"
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+          />
           <p className="text-gray-400">Processing transcript...</p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     )
   }
 
   if (isTranscriptEmpty(transcript)) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-400 text-center">
+      <motion.div
+        className="flex items-center justify-center h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.p
+          className="text-gray-400 text-center"
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
           No transcript available.<br />Upload videos to generate transcript.
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     )
   }
 
   const wordCount = transcript ? getWordCount(transcript) : 0
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+    <motion.div
+      className="flex flex-col h-full"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+    >
+      <motion.div
+        className="p-4 border-b border-gray-700 flex justify-between items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.05, duration: 0.3 }}
+      >
         <div>
           <h3 className="text-lg font-semibold">Transcript</h3>
           <p className="text-sm text-gray-400">
@@ -385,40 +420,48 @@ export function TranscriptEditor({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <motion.button
             type="button"
             onClick={handleUndo}
             disabled={!canUndo || disableHistoryControls}
             className="px-3 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
             Undo
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             type="button"
             onClick={handleRedo}
             disabled={!canRedo || disableHistoryControls}
             className="px-3 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
             Redo
-          </button>
+          </motion.button>
           {!isEditing && (
-            <button
+            <motion.button
               onClick={handleStartEdit}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
             >
               Edit Text
-            </button>
+            </motion.button>
           )}
           {isEditing && !isSidebarEdit && (
-            <button
+            <motion.button
               onClick={handleStartEdit}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
             >
               Full Text Edit
-            </button>
+            </motion.button>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {isEditing && isSidebarEdit ? (
         <div className="flex-1 flex flex-col p-4">
@@ -438,30 +481,36 @@ export function TranscriptEditor({
           )}
 
           <div className="flex gap-2 mt-4">
-            <button
+            <motion.button
               onClick={handleSaveEdit}
               disabled={isSaving}
               className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               {isSaving ? 'Saving...' : 'Apply Changes'}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={handleCancelEdit}
               disabled={isSaving}
               className="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               Cancel
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => {
                 setIsSidebarEdit(false)
                 setEditedWordIndex(null)
               }}
               disabled={isSaving}
               className="px-6 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-600 disabled:opacity-50 transition-colors"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               Inline Edit
-            </button>
+            </motion.button>
           </div>
         </div>
       ) : (
@@ -555,7 +604,7 @@ export function TranscriptEditor({
                     <span className="w-3 h-3 bg-yellow-600/80 border border-yellow-400 rounded"></span>
                     <span className="text-gray-300">Modified ({editedWordIndices.size})</span>
                   </span>
-                  <button
+                  <motion.button
                     onClick={() => {
                       if (!transcript) return
                       setEditedWordIndices(new Set())
@@ -563,15 +612,17 @@ export function TranscriptEditor({
                     }}
                     disabled={isSaving}
                     className="text-gray-400 hover:text-white disabled:opacity-50 transition-colors"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                   >
                     Reset Changes
-                  </button>
+                  </motion.button>
                 </div>
               )}
             </>
           )}
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
