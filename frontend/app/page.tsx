@@ -10,6 +10,10 @@ import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary, Transcrip
 import { createEmptyTranscript, getAllWords } from '@/lib/transcript-utils'
 import { WaveformTimeline } from '@/components/WaveformTimeline';
 import { emitParticleBurst } from '@/lib/particle-events'
+import { WaveformTimeline } from '@/components/WaveformTimeline'
+import { uploadVideos, getJobStatus, processEdit, startDemoJob } from '@/lib/api-client'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { useAuth } from '@/contexts/AuthContext'
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -21,6 +25,14 @@ const LoadingSpinner = () => (
 )
 
 export default function Home() {
+interface Word {
+  word: string
+  start: number
+  end: number
+}
+
+function HomeContent() {
+  const { user, signOut } = useAuth()
   const [jobId, setJobId] = useState<string | null>(null)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [transcript, setTranscript] = useState<Transcript | null>(null)
@@ -366,6 +378,18 @@ export default function Home() {
               <span className="text-sm">New Project</span>
             </button>
           )}
+        <div className="flex items-center gap-4">
+          {user && (
+            <span className="text-sm text-gray-400">{user.email}</span>
+          )}
+          <button
+            onClick={signOut}
+            className="px-4 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          >
+            Sign Out
+          </button>
+        </div>
+      </header>
 
           {/* Help Button */}
           <button className="text-gray-400 hover:text-white transition-colors p-2" title="Help coming soon!">
@@ -455,5 +479,13 @@ export default function Home() {
         <MagicBox onSendMessage={handleSendMessage} isProcessing={isProcessing} />
       )}
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <ProtectedRoute>
+      <HomeContent />
+    </ProtectedRoute>
   )
 }
