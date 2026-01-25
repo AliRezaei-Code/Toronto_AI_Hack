@@ -1,16 +1,17 @@
 version: '3.8'
 
 services:
-  frontend:
+  # Web frontend (Next.js + Remotion)
+  web:
     build:
-      context: ./frontend
-      dockerfile: ../docker/frontend.Dockerfile
+      context: ./apps/web
+      dockerfile: ../../docker/frontend.Dockerfile
     ports:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     volumes:
-      - ./frontend:/app
+      - ./apps/web:/app
       - /app/node_modules
       - shared-data:/shared-data
       - ./.env:/app/.env:ro
@@ -31,7 +32,7 @@ services:
       - SHARED_DATA_DIR=/shared-data
       - MCP_SERVER_URL=http://mcp-server:9000
       - VIDEO_PROCESSOR_URL=http://video-processor:8001
-      - REMOTION_PROJECT_PATH=/frontend
+      - REMOTION_PROJECT_PATH=/apps/web
       - RENDERED_SHORTS_DIR=/shared-data/rendered_shorts
     volumes:
       - ./backend:/app
