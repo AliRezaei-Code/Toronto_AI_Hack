@@ -23,6 +23,13 @@ from app.services.remotion_composer import (
     get_composer,
 )
 
+from app.services.livekit_service import (
+    LiveKitService,
+    TrackSynchronizer,
+    get_livekit_service,
+    get_track_synchronizer,
+)
+
 __all__ = [
     # Deepgram
     "DeepgramService",
@@ -39,4 +46,9 @@ __all__ = [
     # Remotion Composer
     "RemotionComposer",
     "get_composer",
+    # LiveKit
+    "LiveKitService",
+    "TrackSynchronizer",
+    "get_livekit_service",
+    "get_track_synchronizer",
 ]

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Play, Edit3, Film, BarChart3 } from 'lucide-react';
+import { Play, Edit3, Film, BarChart3, Sparkles } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -12,7 +12,7 @@ export default function HomePage() {
           <p className="text-xl text-slate-400 mb-8">
             Create stunning videos with Remotion and Next.js
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 flex-wrap">
             <Link
               href="/video-editor"
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
@@ -21,8 +21,15 @@ export default function HomePage() {
               Start Editing
             </Link>
             <Link
-              href="/video-player"
+              href="/ai-director"
               className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <Sparkles size={20} />
+              AI Director
+            </Link>
+            <Link
+              href="/video-player"
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
             >
               <Play size={20} />
               Watch Videos
@@ -30,7 +37,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="bg-slate-800 rounded-lg p-6 hover:bg-slate-700 transition-colors">
             <div className="flex items-center gap-3 mb-4">
               <Edit3 className="text-blue-500" size={24} />
@@ -79,6 +86,24 @@ export default function HomePage() {
             <div className="text-green-400 font-mono text-sm">
               /api/render
             </div>
+          </div>
+
+          <div className="bg-slate-800 rounded-lg p-6 hover:bg-slate-700 transition-colors">
+            <div className="flex items-center gap-3 mb-4">
+              <Sparkles className="text-pink-500" size={24} />
+              <h3 className="text-xl font-semibold text-white">AI Director</h3>
+            </div>
+            <p className="text-slate-300 mb-4">
+              Automatically transform interviews into viral shorts with 
+              AI-powered clip selection and smart cropping.
+            </p>
+            <Link
+              href="/ai-director"
+              className="text-pink-400 hover:text-pink-300 font-medium flex items-center gap-1"
+            >
+              Launch AI Director
+              <BarChart3 size={16} />
+            </Link>
           </div>
         </div>
 
