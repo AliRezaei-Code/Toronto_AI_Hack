@@ -48,11 +48,8 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
 })
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-inter',
-})
+// Use PP Formula SemiExtended for UI/body
+// Provide local font files and wire via next/font/local
 ```
 
 ### Typography Scale
@@ -62,13 +59,13 @@ const inter = Inter({
 | **Page Title** | Playfair Display | Bold (700) | 48-64px | Main page headings |
 | **Section Header** | Playfair Display | SemiBold (600) | 32-40px | Section titles |
 | **Card Title** | Playfair Display | SemiBold (600) | 24px | Card headings |
-| **Body Large** | Inter | Regular (400) | 18-20px | Subheadings, emphasis |
-| **Body Default** | Inter | Regular (400) | 16px | Standard text |
-| **Body Small** | Inter | Regular (400) | 14px | Supporting text |
-| **Caption** | Inter | Light (300) | 12px | Labels, metadata |
-| **Button** | Inter | SemiBold (600) | 14px | ALL CAPS, +0.1em tracking |
-| **Form Input** | Inter | Regular (400) | 16px | Input fields |
-| **Form Label** | Inter | Medium (500) | 14px | Field labels |
+| **Body Large** | PP Formula SemiExtended | Regular (400) | 18-20px | Subheadings, emphasis |
+| **Body Default** | PP Formula SemiExtended | Regular (400) | 16px | Standard text |
+| **Body Small** | PP Formula SemiExtended | Regular (400) | 14px | Supporting text |
+| **Caption** | PP Formula SemiExtended | Light (300) | 12px | Labels, metadata |
+| **Button** | PP Formula SemiExtended | SemiBold (600) | 14px | ALL CAPS, +0.1em tracking |
+| **Form Input** | PP Formula SemiExtended | Regular (400) | 16px | Input fields |
+| **Form Label** | PP Formula SemiExtended | Medium (500) | 14px | Field labels |
 
 ### Typography Classes
 
@@ -82,18 +79,18 @@ const TYPOGRAPHY = {
   cardTitle: "font-playfair font-semibold text-2xl",
 
   // Body
-  bodyLarge: "font-inter text-lg md:text-xl leading-inter-body",
-  bodyDefault: "font-inter text-base leading-inter-body",
-  bodySmall: "font-inter text-sm",
-  caption: "font-inter font-light text-xs",
+  bodyLarge: "font-formula text-lg md:text-xl leading-inter-body",
+  bodyDefault: "font-formula text-base leading-inter-body",
+  bodySmall: "font-formula text-sm",
+  caption: "font-formula font-light text-xs",
 
   // Interactive
-  button: "font-inter font-semibold text-sm tracking-button uppercase",
-  link: "font-inter font-medium text-sm hover:text-luxury-gold transition-colors",
+  button: "font-formula font-semibold text-sm tracking-button uppercase",
+  link: "font-formula font-medium text-sm hover:text-luxury-gold transition-colors",
 
   // Forms
-  input: "font-inter text-base",
-  label: "font-inter font-medium text-sm",
+  input: "font-formula text-base",
+  label: "font-formula font-medium text-sm",
 }
 ```
 
@@ -212,7 +209,7 @@ These are applied via CSS variables in `frontend/app/globals.css`:
 
 #### Primary Button (Gold)
 ```tsx
-<button className="px-10 py-4 bg-luxury-gold hover:bg-muted-gold text-rich-black font-inter font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300 shadow-xl shadow-luxury-gold/30 hover:shadow-2xl hover:shadow-luxury-gold/60 hover:scale-[1.03] relative overflow-hidden">
+<button className="px-10 py-4 bg-luxury-gold hover:bg-muted-gold text-rich-black font-formula font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300 shadow-xl shadow-luxury-gold/30 hover:shadow-2xl hover:shadow-luxury-gold/60 hover:scale-[1.03] relative overflow-hidden">
   {/* Optional shimmer effect */}
   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
@@ -224,14 +221,14 @@ These are applied via CSS variables in `frontend/app/globals.css`:
 
 #### Secondary Button (Outlined Gold)
 ```tsx
-<button className="px-10 py-4 bg-transparent hover:bg-luxury-gold/10 text-luxury-gold border-2 border-luxury-gold/40 hover:border-luxury-gold font-inter font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-luxury-gold/20">
+<button className="px-10 py-4 bg-transparent hover:bg-luxury-gold/10 text-luxury-gold border-2 border-luxury-gold/40 hover:border-luxury-gold font-formula font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-luxury-gold/20">
   ACTION TEXT
 </button>
 ```
 
 #### Tertiary Button (Ghost)
 ```tsx
-<button className="px-6 py-2 text-text-secondary-dark hover:text-luxury-gold font-inter font-medium text-sm transition-colors">
+<button className="px-6 py-2 text-text-secondary-dark hover:text-luxury-gold font-formula font-medium text-sm transition-colors">
   Action Text
 </button>
 ```
@@ -248,7 +245,7 @@ These are applied via CSS variables in `frontend/app/globals.css`:
 #### Text Input
 ```tsx
 <div className="space-y-2">
-  <label htmlFor="field" className="block font-inter font-medium text-sm text-pure-white">
+  <label htmlFor="field" className="block font-formula font-medium text-sm text-pure-white">
     Field Label
   </label>
   <input
@@ -263,13 +260,13 @@ These are applied via CSS variables in `frontend/app/globals.css`:
 #### Input with Error
 ```tsx
 <div className="space-y-2">
-  <label className="block font-inter font-medium text-sm text-pure-white">
+  <label className="block font-formula font-medium text-sm text-pure-white">
     Field Label
   </label>
   <input
     className="w-full px-4 py-3 bg-charcoal border border-red-500 rounded-xl text-pure-white focus:outline-none focus:ring-2 focus:ring-red-500"
   />
-  <p className="text-sm text-red-400 font-inter">Error message here</p>
+  <p className="text-sm text-red-400 font-formula">Error message here</p>
 </div>
 ```
 
@@ -311,7 +308,7 @@ These are applied via CSS variables in `frontend/app/globals.css`:
 ```tsx
 <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-charcoal/80 border border-luxury-gold/20 backdrop-blur-md shadow-lg shadow-luxury-gold/10">
   <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold animate-pulse" />
-  <span className="text-sm font-inter font-light text-pale-gold tracking-wide italic">
+  <span className="text-sm font-formula font-light text-pale-gold tracking-wide italic">
     Info text here
   </span>
 </div>
@@ -384,7 +381,7 @@ These are applied via CSS variables in `frontend/app/globals.css`:
       <h1 className="font-playfair font-bold text-4xl text-pure-white">
         Page Title
       </h1>
-      <p className="font-inter text-text-secondary-dark">
+      <p className="font-formula text-text-secondary-dark">
         Supporting text
       </p>
     </div>
@@ -422,7 +419,7 @@ These are applied via CSS variables in `frontend/app/globals.css`:
     <nav className="flex items-center gap-8">
       <Link
         href="/login"
-        className="text-sm font-inter font-medium tracking-wide text-text-secondary-dark hover:text-luxury-gold transition-colors"
+        className="text-sm font-formula font-medium tracking-wide text-text-secondary-dark hover:text-luxury-gold transition-colors"
       >
         Sign in
       </Link>
@@ -550,9 +547,9 @@ const RENTENTIO_TOKENS = {
 
   // Buttons
   button: {
-    primary: "px-10 py-4 bg-luxury-gold hover:bg-muted-gold text-rich-black font-inter font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300 shadow-xl shadow-luxury-gold/30",
-    secondary: "px-10 py-4 bg-transparent hover:bg-luxury-gold/10 text-luxury-gold border-2 border-luxury-gold/40 hover:border-luxury-gold font-inter font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300",
-    ghost: "px-6 py-2 text-text-secondary-dark hover:text-luxury-gold font-inter font-medium text-sm transition-colors",
+    primary: "px-10 py-4 bg-luxury-gold hover:bg-muted-gold text-rich-black font-formula font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300 shadow-xl shadow-luxury-gold/30",
+    secondary: "px-10 py-4 bg-transparent hover:bg-luxury-gold/10 text-luxury-gold border-2 border-luxury-gold/40 hover:border-luxury-gold font-formula font-semibold text-sm tracking-button uppercase rounded-xl transition-all duration-300",
+    ghost: "px-6 py-2 text-text-secondary-dark hover:text-luxury-gold font-formula font-medium text-sm transition-colors",
   },
 
   // Typography
@@ -560,9 +557,9 @@ const RENTENTIO_TOKENS = {
     h1: "font-playfair font-bold text-5xl md:text-6xl tracking-playfair-tight",
     h2: "font-playfair font-semibold text-3xl md:text-4xl",
     h3: "font-playfair font-semibold text-2xl",
-    body: "font-inter text-base leading-inter-body",
-    small: "font-inter text-sm",
-    caption: "font-inter font-light text-xs",
+    body: "font-formula text-base leading-inter-body",
+    small: "font-formula text-sm",
+    caption: "font-formula font-light text-xs",
   },
 }
 ```
@@ -576,7 +573,7 @@ When creating a new page, ensure:
 - [ ] Uses Rich Black (#0A0A0A) background
 - [ ] Includes Vanta.js or animated background
 - [ ] Uses Playfair Display for headlines
-- [ ] Uses Inter for body text and UI
+- [ ] Uses PP Formula SemiExtended for body text and UI
 - [ ] Primary CTAs use Luxury Gold
 - [ ] Focus states use Luxury Gold
 - [ ] All interactive elements have hover states

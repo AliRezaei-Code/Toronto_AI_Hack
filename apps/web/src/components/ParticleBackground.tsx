@@ -25,16 +25,30 @@ const usePrefersReducedMotion = () => {
 export function ParticleBackground() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [isMounted, setIsMounted] = useState(false)
+  const [isLight, setIsLight] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
+  useEffect(() => {
+    if (!isMounted) return
+
+    const root = document.documentElement
+    const updateTheme = () => setIsLight(root.classList.contains('theme-light'))
+
+    updateTheme()
+    const observer = new MutationObserver(updateTheme)
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] })
+
+    return () => observer.disconnect()
+  }, [isMounted])
+
   const starCount = useMemo(() => (prefersReducedMotion ? 320 : 1600), [prefersReducedMotion])
   const sparkleCount = useMemo(() => (prefersReducedMotion ? 20 : 180), [prefersReducedMotion])
   const sparkleSpeed = prefersReducedMotion ? 0.2 : 0.7
 
-  if (!isMounted) {
+  if (!isMounted || isLight) {
     return null
   }
 
@@ -45,10 +59,10 @@ export function ParticleBackground() {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         dpr={[1, 1.5]}
       >
-        <fog attach="fog" args={['#0b1020', 6, 24]} />
-        <ambientLight intensity={0.4} />
-        <pointLight position={[6, 4, 8]} intensity={0.5} color="#93c5fd" />
-        <pointLight position={[-6, -4, 6]} intensity={0.35} color="#f472b6" />
+        <fog attach="fog" args={['#0a0a0a', 6, 24]} />
+        <ambientLight intensity={0.35} />
+        <pointLight position={[6, 4, 8]} intensity={0.5} color="#D4AF37" />
+        <pointLight position={[-6, -4, 6]} intensity={0.35} color="#B8941E" />
         <Stars
           radius={100}
           depth={60}
@@ -64,8 +78,8 @@ export function ParticleBackground() {
           size={prefersReducedMotion ? 0.05 : 0.08}
           speed={0.08}
           drift={0.5}
-          colorStart="#60a5fa"
-          colorEnd="#f472b6"
+          colorStart="#D4AF37"
+          colorEnd="#8B7028"
           opacity={0.45}
         />
         <ParticleField
@@ -74,15 +88,15 @@ export function ParticleBackground() {
           size={prefersReducedMotion ? 0.06 : 0.11}
           speed={0.16}
           drift={0.4}
-          colorStart="#38bdf8"
-          colorEnd="#818cf8"
+          colorStart="#F4E7C3"
+          colorEnd="#B8941E"
           opacity={0.7}
         />
         <Sparkles
           count={sparkleCount}
           speed={sparkleSpeed}
           opacity={0.6}
-          color="#7dd3fc"
+          color="#F4E7C3"
           size={prefersReducedMotion ? 1 : 1.4}
           scale={[10, 10, 10]}
           noise={[1, 2, 1]}

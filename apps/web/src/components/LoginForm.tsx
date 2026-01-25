@@ -35,7 +35,7 @@ function ResetPasswordForm({
             Reset your password
           </h2>
           <p className="mt-2 text-center text-gray-400">
-            Enter your email and we'll send you a link to reset your password.
+            Enter your email and we&apos;ll send you a link to reset your password.
           </p>
         </div>
 
@@ -50,12 +50,12 @@ function ResetPasswordForm({
             <div className="bg-green-500/10 border border-green-500 text-green-400 px-4 py-3 rounded">
               <p className="font-medium">Check your email!</p>
               <p className="mt-1 text-sm">
-                We've sent a password reset link to <strong>{email}</strong>.
+                We&apos;ve sent a password reset link to <strong>{email}</strong>.
                 Click the link in the email to create a new password.
               </p>
             </div>
             <div className="text-center text-sm text-gray-400">
-              <p>Didn't receive the email? Check your spam folder or</p>
+              <p>Didn&apos;t receive the email? Check your spam folder or</p>
               <button
                 type="button"
                 onClick={onTryAgain}

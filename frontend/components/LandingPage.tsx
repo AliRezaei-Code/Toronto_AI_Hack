@@ -252,12 +252,23 @@ export function LandingPage() {
                   </div>
                 </div>
 
-                {/* Editor interface placeholder - more impressive */}
+                {/* Editor interface demo */}
                 <div className="relative p-8">
-                  <div className="aspect-video rounded-xl bg-gradient-to-br from-charcoal via-rich-black to-charcoal border border-divider-dark/30 flex items-center justify-center overflow-hidden relative group">
-                    {/* Animated grid in background */}
+                  <div className="aspect-video rounded-xl bg-gradient-to-br from-charcoal via-rich-black to-charcoal border border-divider-dark/30 overflow-hidden relative group">
+                    {/* Demo video */}
+                    <video
+                      className="absolute inset-0 w-full h-full object-cover"
+                      src="/Retentio-hero-video.mov"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                    />
+
+                    {/* Animated grid overlay */}
                     <div
-                      className="absolute inset-0 opacity-[0.08] transition-opacity group-hover:opacity-[0.12]"
+                      className="absolute inset-0 opacity-[0.08] transition-opacity group-hover:opacity-[0.12] pointer-events-none"
                       style={{
                         backgroundImage: `
                           linear-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px),
@@ -265,10 +276,11 @@ export function LandingPage() {
                         `,
                         backgroundSize: '40px 40px',
                       }}
+                      aria-hidden="true"
                     />
 
                     {/* Scanning line effect */}
-                    <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
                       <div
                         className="absolute w-full h-px bg-gradient-to-r from-transparent via-luxury-gold/40 to-transparent animate-scan"
                         style={{
@@ -278,24 +290,13 @@ export function LandingPage() {
                     </div>
 
                     {/* Editor UI elements floating */}
-                    <div className="absolute top-6 left-6 flex gap-2 opacity-50">
+                    <div className="absolute top-6 left-6 flex gap-2 opacity-50 pointer-events-none" aria-hidden="true">
                       <div className="w-16 h-2 rounded-full bg-luxury-gold/30" />
                       <div className="w-12 h-2 rounded-full bg-luxury-gold/20" />
                       <div className="w-20 h-2 rounded-full bg-luxury-gold/25" />
                     </div>
 
-                    <div className="absolute bottom-6 left-6 right-6 h-12 rounded-lg bg-charcoal/60 border border-luxury-gold/10 backdrop-blur-sm opacity-50" />
-
-                    <div className="relative text-center space-y-4 text-text-secondary-dark z-10">
-                      <div className="w-24 h-24 mx-auto bg-charcoal/80 rounded-2xl flex items-center justify-center border border-luxury-gold/30 backdrop-blur-sm shadow-xl shadow-luxury-gold/10 group-hover:border-luxury-gold/50 transition-all group-hover:scale-105">
-                        <svg className="w-12 h-12 text-luxury-gold" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      </div>
-                      <p className="text-base font-playfair italic text-pale-gold/60">
-                        Professional editing workspace
-                      </p>
-                    </div>
+                    <div className="absolute bottom-6 left-6 right-6 h-12 rounded-lg bg-charcoal/60 border border-luxury-gold/10 backdrop-blur-sm opacity-50 pointer-events-none" aria-hidden="true" />
                   </div>
 
                   {/* Stats bar - editor metrics */}

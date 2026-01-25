@@ -214,4 +214,4 @@ jobs:
             echo "========================================"
             echo ""
             echo "Service status:"
-            dockercompose -f docker-compose.deployed.yml ps
+            docker compose -f docker-compose.deployed.yml ps
