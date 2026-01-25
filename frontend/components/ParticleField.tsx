@@ -2,7 +2,7 @@
 
 import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
-import { BufferAttribute, Color, Points } from 'three'
+import { AdditiveBlending, BufferAttribute, Color, Points } from 'three'
 
 interface ParticleFieldProps {
   count?: number
@@ -115,6 +115,7 @@ export function ParticleField({
         transparent
         opacity={opacity}
         vertexColors
+        blending={AdditiveBlending}
         depthWrite={false}
         sizeAttenuation
       />
