@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Upload, Film, FileVideo, X } from 'lucide-react'
+import { emitParticleBurstFromElement, emitParticleBurstFromEvent } from '@/lib/particle-events'
 
 interface UploadZoneProps {
   onUpload: (files: File[]) => void
@@ -26,6 +27,7 @@ export function UploadZone({
 }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState<FileWithInfo[]>([])
+  const dropZoneRef = useRef<HTMLDivElement>(null)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -39,6 +41,8 @@ export function UploadZone({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
+
+    emitParticleBurstFromEvent(e, { color: '#38bdf8', intensity: 1.2 })
     
     const files = Array.from(e.dataTransfer.files).filter(
       file => file.type.startsWith('video/')
@@ -71,6 +75,10 @@ export function UploadZone({
 
   const handleUpload = () => {
     if (selectedFiles.length >= 3 && selectedFiles.length <= 5) {
+      emitParticleBurstFromElement(dropZoneRef.current, {
+        color: '#60a5fa',
+        intensity: 1.4,
+      })
       onUpload(selectedFiles.map(f => f.file))
       setSelectedFiles([])
     }
@@ -159,6 +167,7 @@ export function UploadZone({
               ? 'border-blue-500 bg-blue-500/10'
               : 'border-gray-600 hover:border-gray-500 bg-gray-800/50'
           }`}
+          ref={dropZoneRef}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -188,6 +197,12 @@ export function UploadZone({
                 />
                 <motion.div
                   className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
+                  onClick={(event) =>
+                    emitParticleBurstFromEvent(event, {
+                      color: '#3b82f6',
+                      intensity: 0.9,
+                    })
+                  }
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
                 >
@@ -197,7 +212,10 @@ export function UploadZone({
               {onDemo && (
                 <motion.button
                   type="button"
-                  onClick={onDemo}
+                  onClick={(event) => {
+                    emitParticleBurstFromEvent(event, { color: '#a78bfa', intensity: 1.05 })
+                    onDemo()
+                  }}
                   disabled={isUploading}
                   className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors disabled:opacity-50"
                   whileHover={{ scale: 1.03 }}
