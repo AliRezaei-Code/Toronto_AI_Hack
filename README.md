@@ -65,6 +65,7 @@ An AI-powered single-page video editor for the HackAI x Stanford hackathon. Uplo
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8000/docs (Swagger UI)
    - MCP Server: http://localhost:9000
+   - **Android App**: [Download APK](https://github.com/Chiheb-Bejaoui/https-f8f0628e1371.ngrok-free.app-)
 
 ## Usage
 
