@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thumbnail Service</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Space+Grotesk:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <header>
+          <p class="eyebrow">Gemini Thumbnail Service</p>
+          <h1>Minimal, cinematic thumbnails from your audio.</h1>
+          <p class="subhead">
+            Upload audio/video or provide a URL. We will transcribe, plan, and
+            generate a vertical 9:16 thumbnail preview.
+          </p>
+        </header>
+        <form id="thumbnail-form" class="form">
+          <label class="field">
+            <span>Audio URL</span>
+            <input type="url" name="audioUrl" placeholder="https://..." />
+          </label>
+          <label class="field">
+            <span>Or upload audio/video</span>
+            <input type="file" name="audio" accept="audio/*,video/*" />
+          </label>
+          <button type="submit">Generate Plan + Image</button>
+        </form>
+      </section>
+      <section class="panel output">
+        <div class="output-stack">
+          <div id="image-preview" class="image-preview">No image yet.</div>
+          <pre id="output">Waiting for audio input.</pre>
+        </div>
+      </section>
+    </main>
+    <script type="module">
+      const form = document.querySelector("#thumbnail-form");
+      const output = document.querySelector("#output");
+      const imagePreview = document.querySelector("#image-preview");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        output.textContent = "Working...";
+        imagePreview.textContent = "No image yet.";
+
+        const formData = new FormData(form);
+        const endpoint = "/thumbnail/generate";
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          output.textContent = JSON.stringify(data, null, 2);
+
+          if (data?.image?.b64_json) {
+            const mime = data.image.mime_type || "image/png";
+            const img = document.createElement("img");
+            img.alt = "Generated thumbnail";
+            img.src = `data:${mime};base64,${data.image.b64_json}`;
+            imagePreview.innerHTML = "";
+            imagePreview.appendChild(img);
+          } else if (data?.error) {
+            imagePreview.textContent = data.error;
+          } else {
+            imagePreview.textContent = "No image returned.";
+          }
+        } catch (error) {
+          output.textContent = error instanceof Error ? error.message : "Error";
+        }
+      });
+    </script>
+  </body>
+</html>
