@@ -2,10 +2,9 @@ FROM node:18-alpine AS base
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm i
+COPY apps/web/ ./
 
-COPY . .
+RUN npm i
 RUN npm run build
 
 EXPOSE 3000
