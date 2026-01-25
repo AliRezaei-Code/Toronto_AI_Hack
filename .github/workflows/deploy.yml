@@ -44,17 +44,17 @@ jobs:
       matrix:
         include:
           - service: frontend
-            dockerfile: docker/frontend.Dockerfile
-            context: ./apps/web
+            dockerfile: docker-deployment/frontend.Dockerfile
+            context: .
           - service: backend
-            dockerfile: docker/backend.Dockerfile
-            context: ./backend
+            dockerfile: docker-deployment/backend.Dockerfile
+            context: .
           - service: mcp-server
-            dockerfile: docker/mcp-server.Dockerfile
-            context: ./mcp-server
+            dockerfile: docker-deployment/mcp-server.Dockerfile
+            context: .
           - service: video-processor
-            dockerfile: docker/video-processor.Dockerfile
-            context: ./video-processor
+            dockerfile: docker-deployment/video-processor.Dockerfile
+            context: .
 
     steps:
       - name: Checkout repository

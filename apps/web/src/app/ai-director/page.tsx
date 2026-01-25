@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Upload,
   Play,
-  Pause,
   RefreshCw,
   Trash2,
   Download,
@@ -20,6 +19,7 @@ import {
   Video,
   MessageSquare,
   Users,
+  type LucideIcon,
 } from "lucide-react";
 
 // Types matching backend models
@@ -63,56 +63,64 @@ type JobStatus =
 
 const STATUS_CONFIG: Record<
   JobStatus,
-  { color: string; icon: React.ReactNode; label: string }
+  { color: string; icon: LucideIcon; label: string }
 > = {
-  queued: { color: "bg-gray-500", icon: <Clock size={16} />, label: "Queued" },
+  queued: { color: "bg-gray-500", icon: Clock, label: "Queued" },
   transcribing: {
     color: "bg-blue-500",
-    icon: <MessageSquare size={16} />,
+    icon: MessageSquare,
     label: "Transcribing",
   },
   diarizing: {
     color: "bg-indigo-500",
-    icon: <Users size={16} />,
+    icon: Users,
     label: "Identifying Speakers",
   },
   selecting_clips: {
     color: "bg-purple-500",
-    icon: <Sparkles size={16} />,
+    icon: Sparkles,
     label: "Finding Viral Moments",
   },
   tracking_faces: {
     color: "bg-pink-500",
-    icon: <Video size={16} />,
+    icon: Video,
     label: "Tracking Faces",
   },
   generating_layout: {
     color: "bg-orange-500",
-    icon: <Film size={16} />,
+    icon: Film,
     label: "Generating Layout",
   },
   rendering: {
     color: "bg-yellow-500",
-    icon: <Zap size={16} />,
+    icon: Zap,
     label: "Rendering",
   },
   completed: {
     color: "bg-green-500",
-    icon: <CheckCircle size={16} />,
+    icon: CheckCircle,
     label: "Completed",
   },
-  failed: { color: "bg-red-500", icon: <XCircle size={16} />, label: "Failed" },
+  failed: {
+    color: "bg-red-500",
+    icon: XCircle,
+    label: "Failed"
+  },
 };
+
+// Helper to render Lucide icons in a consistent way
+function LucideIconComponent(Icon: LucideIcon, props: React.ComponentProps<"svg"> & { size?: number; className?: string }) {
+  return React.createElement(Icon as any, { ...props });
+}
 
 // Job Status Badge Component
 function StatusBadge({ status }: { status: string }) {
   const config = STATUS_CONFIG[status as JobStatus] || STATUS_CONFIG.queued;
-
   return (
     <span
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-white ${config.color}`}
     >
-      {config.icon}
+      {LucideIconComponent(config.icon, { size: 16 })}
       {config.label}
     </span>
   );
@@ -171,8 +179,11 @@ function VideoPreviewModal({
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-white transition-colors"
+            title="Close"
+            aria-label="Close"
+            type="button"
           >
-            <XCircle size={24} />
+            {LucideIconComponent(XCircle, { size: 24 })}
           </button>
         </div>
         <div className="p-4">
@@ -187,13 +198,19 @@ function VideoPreviewModal({
           <button
             onClick={onDownload}
             className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            title="Download"
+            aria-label="Download"
+            type="button"
           >
-            <Download size={18} />
+            {LucideIconComponent(Download, { size: 18 })}
             Download
           </button>
           <button
             onClick={onClose}
             className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            title="Close"
+            aria-label="Close"
+            type="button"
           >
             Close
           </button>
@@ -247,7 +264,7 @@ function ViralClipCard({
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <Sparkles size={14} className="text-yellow-400" />
+          {LucideIconComponent(Sparkles, { size: 14, className: "text-yellow-400" })}
           <span className="text-yellow-400 font-bold text-sm">
             {clip.virality_score.toFixed(0)}
           </span>
@@ -273,28 +290,37 @@ function ViralClipCard({
               <button
                 onClick={() => onPreview(videoUrl, title)}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+                title="Preview"
+                aria-label="Preview"
+                type="button"
               >
-                <Play size={14} />
+                {LucideIconComponent(Play, { size: 14 })}
                 Preview
               </button>
               <button
                 onClick={() => onDownload(videoUrl, `${clip.id}.mp4`)}
                 className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+                title="Download"
+                aria-label="Download"
+                type="button"
               >
-                <Download size={14} />
+                {LucideIconComponent(Download, { size: 14 })}
               </button>
             </>
           ) : isRendering ? (
             <span className="text-yellow-400 text-sm flex items-center gap-1">
-              <RefreshCw size={14} className="animate-spin" />
+              {LucideIconComponent(RefreshCw, { size: 14, className: "animate-spin" })}
               Rendering...
             </span>
           ) : (
             <button
               onClick={() => onRender(clip.id)}
               className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+              title="Render"
+              aria-label="Render"
+              type="button"
             >
-              <Film size={14} />
+              {LucideIconComponent(Film, { size: 14 })}
               Render
             </button>
           )}

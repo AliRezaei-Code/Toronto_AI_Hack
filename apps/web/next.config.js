@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone', // Enable standalone output for optimized Docker builds
   typescript: {
     // Temporarily ignore build errors due to React types conflict with lucide-react
     // This is caused by multiple versions of @types/react in the dependency tree
