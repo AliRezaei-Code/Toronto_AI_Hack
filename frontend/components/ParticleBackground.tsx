@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { Sparkles, Stars } from '@react-three/drei'
 import { useEffect, useMemo, useState } from 'react'
 import { ParticleField } from './ParticleField'
+import { ParticleBurstLayer } from './ParticleBurstLayer'
 
 const usePrefersReducedMotion = () => {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
@@ -86,6 +87,7 @@ export function ParticleBackground() {
           scale={[10, 10, 10]}
           noise={[1, 2, 1]}
         />
+        {!prefersReducedMotion && <ParticleBurstLayer />}
       </Canvas>
       <div className="particle-vignette" />
       <div className="particle-glow" />
