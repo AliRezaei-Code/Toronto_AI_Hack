@@ -203,10 +203,10 @@ jobs:
 
             # Pull and deploy services
             echo "Pulling latest images..."
-            docker compose -f docker-compose.deployed.yml pull
+            docker-compose -f docker-compose.deployed.yml pull
 
             echo "Starting services..."
-            docker compose -f docker-compose.deployed.yml up -d
+            docker-compose -f docker-compose.deployed.yml up -d
 
             echo ""
             echo "========================================"
@@ -214,4 +214,4 @@ jobs:
             echo "========================================"
             echo ""
             echo "Service status:"
-            docker compose -f docker-compose.deployed.yml ps
+            docker-compose -f docker-compose.deployed.yml ps
