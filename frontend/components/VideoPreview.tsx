@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { Play, Pause, Download, Volume2, VolumeX, Maximize2, SkipForward, SkipBack } from 'lucide-react'
 
 interface VideoPreviewProps {
@@ -165,11 +166,14 @@ export function VideoPreview({
   const handleMouseLeave = () => setShowControls(false)
 
   return (
-    <div 
+    <motion.div
       ref={containerRef}
       className="flex flex-col h-full"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
     >
       <div className="flex-1 flex items-center justify-center bg-black rounded-lg overflow-hidden relative group">
         <video
@@ -184,40 +188,52 @@ export function VideoPreview({
         />
         
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-          <button 
+          <motion.button
             onClick={togglePlay}
             className="p-4 bg-white/20 hover:bg-white/30 rounded-full pointer-events-auto"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
           >
             {isPlaying ? <Pause className="w-8 h-8 text-white" /> : <Play className="w-8 h-8 text-white ml-1" />}
-          </button>
+          </motion.button>
         </div>
       </div>
 
-      <div className="mt-3 flex flex-col gap-2 bg-gray-800/50 rounded-lg p-3 backdrop-blur-sm">
+      <motion.div
+        className="mt-3 flex flex-col gap-2 bg-gray-800/50 rounded-lg p-3 backdrop-blur-sm"
+        animate={{ opacity: showControls ? 1 : 0.7 }}
+        transition={{ duration: 0.2 }}
+      >
         <div className="flex items-center gap-3">
-          <button
+          <motion.button
             onClick={() => seekRelative(-5)}
             className="p-2 hover:bg-gray-700 rounded-full transition-colors"
             title="Skip back 5s (←)"
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
           >
             <SkipBack className="w-4 h-4" />
-          </button>
+          </motion.button>
           
-          <button
+          <motion.button
             onClick={togglePlay}
             className="p-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
             title="Play/Pause (Space)"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.94 }}
           >
             {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
-          </button>
+          </motion.button>
           
-          <button
+          <motion.button
             onClick={() => seekRelative(5)}
             className="p-2 hover:bg-gray-700 rounded-full transition-colors"
             title="Skip forward 5s (→)"
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
           >
             <SkipForward className="w-4 h-4" />
-          </button>
+          </motion.button>
           
           <div className="flex-1 flex items-center gap-2">
             <span className="text-sm text-gray-400 w-12 text-right tabular-nums">
@@ -237,30 +253,36 @@ export function VideoPreview({
             </span>
           </div>
           
-          <button
+          <motion.button
             onClick={toggleMute}
             className="p-2 hover:bg-gray-700 rounded-full transition-colors"
             title={`Toggle mute (M) - Volume: ${Math.round(volume * 100)}%`}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
           >
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-          </button>
+          </motion.button>
           
-          <button
+          <motion.button
             onClick={toggleFullscreen}
             className="p-2 hover:bg-gray-700 rounded-full transition-colors"
             title="Fullscreen (F)"
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
           >
             <Maximize2 className="w-4 h-4" />
-          </button>
+          </motion.button>
           
-          <button
+          <motion.button
             onClick={handleDownload}
             className="px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg flex items-center gap-2 transition-colors text-sm font-medium"
             title="Export video"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
           >
             <Download className="w-4 h-4" />
             <span className="hidden sm:inline">Export</span>
-          </button>
+          </motion.button>
         </div>
         
         <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
@@ -270,7 +292,7 @@ export function VideoPreview({
           <span>M: Mute</span>
           <span>F: Fullscreen</span>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
