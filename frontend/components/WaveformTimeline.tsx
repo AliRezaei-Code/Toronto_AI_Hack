@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
+import { emitParticleBurstFromEvent } from '@/lib/particle-events'
 
 interface Word {
   word: string
@@ -90,7 +91,10 @@ export function WaveformTimeline({
             <button
               key={bar.key}
               type="button"
-              onClick={() => onSeek(bar.time)}
+              onClick={(event) => {
+                emitParticleBurstFromEvent(event, { color: '#38bdf8', intensity: 0.7 })
+                onSeek(bar.time)
+              }}
               className="flex-1 flex items-end group"
             >
               <span
