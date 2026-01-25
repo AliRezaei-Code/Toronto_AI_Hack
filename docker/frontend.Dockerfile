@@ -3,7 +3,8 @@ FROM node:18-alpine AS base
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 RUN pnpm run build
