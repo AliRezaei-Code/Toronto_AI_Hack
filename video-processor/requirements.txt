@@ -1,0 +1,20 @@
+# Video Processor Sidecar Service
+#
+# Core dependencies
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.9.0
+
+# Video processing
+opencv-python>=4.9.0
+mediapipe>=0.10.9
+
+# Kalman filtering for smooth face tracking
+filterpy>=1.4.5
+
+# HTTP client for video downloads
+httpx>=0.27.0
+
+# Utilities
+numpy>=1.26.0
+python-multipart>=0.0.9

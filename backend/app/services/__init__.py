@@ -18,6 +18,11 @@ from app.services.jump_cut_processor import (
     create_jump_cut_edl,
 )
 
+from app.services.remotion_composer import (
+    RemotionComposer,
+    get_composer,
+)
+
 __all__ = [
     # Deepgram
     "DeepgramService",
@@ -31,4 +36,7 @@ __all__ = [
     "JumpCutProcessor",
     "get_zoom_cut_points",
     "create_jump_cut_edl",
+    # Remotion Composer
+    "RemotionComposer",
+    "get_composer",
 ]
