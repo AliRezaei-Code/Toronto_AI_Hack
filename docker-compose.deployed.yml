@@ -1,17 +1,14 @@
 version: '3.8'
 
-# Production docker-compose for deployed services
-# Uses pre-built images from GitHub Container Registry (ghcr.io)
-# Environment variables: IMAGE_PREFIX, IMAGE_TAG (default: latest)
-
 services:
   # Web frontend (Next.js + Remotion)
   web:
     image: ghcr.io/${IMAGE_PREFIX}/frontend:${IMAGE_TAG:-latest}
     ports:
-      - "${FRONTEND_PORT:-3000}:3010"
+      - "127.0.0.1:3010:3010"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      # Browser-safe URL (clients call your domain, Caddy routes to backend)
+      - NEXT_PUBLIC_API_URL=https://retentio.ca/api
     volumes:
       - shared-data:/shared-data
     depends_on:
@@ -23,7 +20,7 @@ services:
   backend:
     image: ghcr.io/${IMAGE_PREFIX}/backend:${IMAGE_TAG:-latest}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - DEEPGRAM_API_KEY=${DEEPGRAM_API_KEY}
@@ -44,7 +41,7 @@ services:
   mcp-server:
     image: ghcr.io/${IMAGE_PREFIX}/mcp-server:${IMAGE_TAG:-latest}
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - SHARED_DATA_DIR=/shared-data
@@ -54,11 +51,10 @@ services:
       - video-editor-network
     restart: unless-stopped
 
-  # AI Director: Face tracking and video analysis sidecar
   video-processor:
     image: ghcr.io/${IMAGE_PREFIX}/video-processor:${IMAGE_TAG:-latest}
     ports:
-      - "8001:8001"
+      - "127.0.0.1:8001:8001"
     environment:
       - TEMP_DIR=/tmp/video-processor
     volumes:
