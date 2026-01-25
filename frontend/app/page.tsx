@@ -9,6 +9,7 @@ import { MagicBox } from '@/components/MagicBox'
 import { uploadVideos, getJobStatus, processEdit, getJobs, JobSummary, Transcript, startDemoJob } from '@/lib/api-client'
 import { createEmptyTranscript, getAllWords } from '@/lib/transcript-utils'
 import { WaveformTimeline } from '@/components/WaveformTimeline';
+import { emitParticleBurst } from '@/lib/particle-events'
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -42,6 +43,7 @@ export default function Home() {
   
   const pollingRef = useRef<NodeJS.Timeout>()
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const editStartRef = useRef<number | null>(null)
 
   const handleUpload = async (files: File[]) => {
     setIsProcessing(true)
@@ -217,6 +219,7 @@ export default function Home() {
   const handleSendMessage = async (message: string) => {
     if (!jobId) return
     
+    editStartRef.current = Date.now()
     setIsProcessing(true)
     setProcessingStep('Processing your edit...')
     setStatusMessage(`Processing: "${message}"`)
@@ -235,12 +238,29 @@ export default function Home() {
       setStatusMessage('')
       setUploadProgress(100)
       setProcessingStep('')
+
+      const elapsedMs = editStartRef.current ? Date.now() - editStartRef.current : 0
+      const elapsedSeconds = elapsedMs / 1000
+      const intensity = Math.min(1.7, Math.max(0.7, 0.7 + elapsedSeconds / 4))
+      if (typeof window !== 'undefined') {
+        emitParticleBurst(window.innerWidth * 0.5, window.innerHeight * 0.8, {
+          color: '#34d399',
+          intensity,
+        })
+      }
     } catch (error) {
       console.error('Edit processing failed:', error)
       setStatusMessage('Edit failed. Please try again.')
       setIsProcessing(false)
       setUploadProgress(0)
       setProcessingStep('')
+
+      if (typeof window !== 'undefined') {
+        emitParticleBurst(window.innerWidth * 0.5, window.innerHeight * 0.8, {
+          color: '#f87171',
+          intensity: 0.9,
+        })
+      }
     } finally {
       setIsProcessing(false)
     }
