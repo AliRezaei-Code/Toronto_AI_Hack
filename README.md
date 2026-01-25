@@ -224,11 +224,276 @@ All MCP tools are accessible via the MCP protocol at `/tools` endpoint.
 
 ## License
 
-MIT License - HackAI x Stanford 2026
+MIT License - HackAI x stan 2026
+
+## Remotion: Programmatic Video Creation
+
+### What is Remotion?
+
+**Remotion** is an open-source React framework that allows developers to create videos programmatically using familiar React components and concepts. Instead of traditional timeline-based video editing, Remotion treats videos as functions of images over time, where each frame is rendered as a React component.
+
+#### Core Philosophy
+- **Code-Driven Creation**: Write React components to define video content
+- **Component-Based Architecture**: Reusable elements like text, images, and effects
+- **Frame-Based Rendering**: Videos are composed of individual frames (30 fps = 30 frames per second)
+- **Dynamic Content**: Videos can respond to data, API calls, and user input
+
+### How Remotion Works
+
+#### Fundamental Concepts
+1. **Compositions**: A combination of React component + video metadata
+   ```tsx
+   <Composition
+     id="MyVideo"
+     durationInFrames={300}  // 10 seconds at 30fps
+     fps={30}
+     width={1920}
+     height={1080}
+     component={MyComponent}
+   />
+   ```
+
+2. **Frame Control**: Access current frame number for animations
+   ```tsx
+   const frame = useCurrentFrame();
+   const opacity = Math.sin(frame * 0.05) * 0.5 + 0.5;
+   ```
+
+3. **Video Configuration**: Get video properties
+   ```tsx
+   const { fps, width, height, durationInFrames } = useVideoConfig();
+   ```
+
+#### Rendering Process
+```
+React Component → Frame Rendering → Canvas → Video Encoding → MP4 Output
+```
+
+### Remotion in This Project
+
+Our Remotion implementation is available on the `feature/add-remotion-video-editor` branch and includes:
+
+#### 🎬 Implemented Features
+- **Multi-Format Support**: Landscape (1920×1080) and Vertical (1080×1920) videos
+- **Advanced Animations**: Text effects, background gradients, transitions, audio visualizers
+- **Real-Time Preview**: Browser-based development with instant feedback
+- **Server-Side Rendering**: API endpoints for background video processing
+- **Component Library**: Reusable video components with TypeScript support
+
+#### 📁 Project Structure
+```
+frontend/src/remotion/
+├── components/
+│   ├── TextAnimation.tsx      # Text effects (fadeIn, slideUp, scaleIn, rotateIn)
+│   ├── BackgroundGradient.tsx  # Animated gradient backgrounds
+│   ├── AudioVisualizer.tsx    # Audio visualization bars
+│   └── Transition.tsx        # Scene transitions
+├── Root.tsx                 # Composition definitions
+├── VideoComposition.tsx       # Main video logic (3 scenes)
+└── index.ts                 # Entry point with registerRoot()
+```
+
+#### 🎨 Video Composition Structure
+Our main video includes 3 distinct scenes:
+- **Scene 1** (0-90 frames): Title screen with "Video Editor" branding
+- **Scene 2** (90-180 frames): Features showcase with audio visualizer
+- **Scene 3** (180-300 frames): Call-to-action with frame counter
+
+#### 🔧 Development Commands
+```bash
+# Preview video in browser
+npm run remotion:preview
+
+# Open visual editor
+npm run remotion:studio
+
+# Render landscape video
+npm run remotion:render
+
+# Render vertical short
+npm run remotion:render-short
+
+# Generate thumbnail
+npm run remotion:thumbnail
+```
+
+#### 🌐 API Integration
+- **`/api/render`**: Server-side video rendering to MP4
+- **`/api/compositions`**: List available video compositions
+- **`/api/thumbnail`**: Extract still frames from videos
+
+### When to Use Remotion vs Traditional Editing
+
+| Scenario | Traditional Editing | Remotion |
+|-----------|-------------------|------------|
+| **Quick cuts/trim** | ✅ Fast and intuitive | ❌ Overkill |
+| **Personalized videos** | ❌ Impractical | ✅ Perfect |
+| **Data-driven content** | ❌ Manual work | ✅ Automated |
+| **Batch generation** | ❌ Time consuming | ✅ Scalable |
+| **Complex animations** | ❌ Limited | ✅ Programmable |
+| **Social media variants** | ❌ Repetitive | ✅ Automated |
+
+### Use Cases in This Project
+
+#### Enhanced Video Creation
+- **Dynamic Intros**: Auto-generated video openings with user data
+- **Progress Visualizations**: Charts and graphs animated in video format
+- **Social Media Adaptation**: Auto-render vertical/horizontal versions
+- **Template Generation**: Create video templates from code
+
+#### Advanced Features
+- **Audio Synchronization**: Visual elements that respond to audio
+- **Real-time Data**: Live data feeds in video format
+- **Interactive Overlays**: Clickable elements in rendered videos
+- **Custom Effects**: Programmatic visual effects and filters
+
+### Getting Started with Remotion
+
+#### Installation
+```bash
+# In frontend directory
+npm install remotion @remotion/cli @remotion/player @remotion/renderer
+
+# Create new Remotion project
+npx create-video@latest
+
+# Add to existing Next.js project
+npm install remotion @remotion/cli @remotion/player
+```
+
+#### Basic Example
+```tsx
+// src/remotion/MyComposition.tsx
+import { useCurrentFrame, useVideoConfig, spring } from 'remotion';
+
+export const MyComposition = () => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  
+  const scale = spring({
+    frame,
+    fps: 30,
+    config: { damping: 20 },
+  });
+
+  return (
+    <div style={{
+      flex: 1,
+      backgroundColor: '#1a1a1a',
+      justifyContent: 'center',
+      alignItems: 'center',
+      display: 'flex',
+    }}>
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          fontSize: width / 10,
+          color: 'white',
+        }}
+      >
+        Frame: {frame}
+      </div>
+    </div>
+  );
+};
+```
+
+#### Register Composition
+```tsx
+// src/remotion/Root.tsx
+import { Composition } from 'remotion';
+import { MyComposition } from './MyComposition';
+
+export const RemotionRoot = () => {
+  return (
+    <Composition
+      id="MyVideo"
+      component={MyComposition}
+      durationInFrames={150}
+      fps={30}
+      width={1920}
+      height={1080}
+    />
+  );
+};
+```
+
+### Advanced Techniques
+
+#### Spring Animations
+```tsx
+const opacity = spring({
+  frame,
+  fps: 30,
+  config: { damping: 20, mass: 1, stiffness: 100 },
+});
+
+const scale = spring({
+  frame,
+  fps: 30,
+  config: { mass: 0.5 },
+});
+```
+
+#### Interpolation
+```tsx
+const rotate = interpolate(
+  frame,
+  [0, 30],
+  [0, Math.PI * 2],
+  {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  }
+);
+```
+
+#### Audio Visualization
+```tsx
+const audioData = useAudioData(); // Built-in hook
+const barHeight = interpolate(audioData[i], [0, 1], [0, 100]);
+```
+
+### Performance Tips
+
+#### Rendering Optimization
+- **Frame Caching**: Cache expensive calculations
+- **Asset Optimization**: Pre-load images and videos
+- **Minimal Rerenders**: Use useMemo for complex calculations
+- **Selective Updates**: Only update what changes between frames
+
+#### Server-Side Rendering
+- **Background Processing**: Use API endpoints for long renders
+- **Queue System**: Handle multiple render requests
+- **Progress Tracking**: Provide real-time render status
+- **Output Optimization**: Balance quality vs file size
+
+### Troubleshooting
+
+#### Common Issues
+1. **Installation**: Ensure Node.js 16+ and FFmpeg installed
+2. **Rendering**: Check if FFmpeg is in system PATH
+3. **Performance**: Reduce resolution or complexity for preview
+4. **Memory**: Increase Node.js heap for large videos
+
+#### Debug Tools
+- **Frame Inspector**: Use `console.log(frame)` for debugging
+- **Component Tree**: React DevTools for component structure
+- **Performance**: Chrome DevTools for rendering analysis
+
+### Resources
+
+- **Official Documentation**: [remotion.dev/docs](https://remotion.dev/docs)
+- **Community**: [Discord Server](https://remotion.dev/discord)
+- **Templates**: [remotion.dev/templates](https://remotion.dev/templates)
+- **Showcase**: [remotion.dev/showcase](https://remotion.dev/showcase)
+
+---
 
 ## Acknowledgments
 
 - OpenAI Whisper & GPT-4o for AI capabilities
 - FFmpeg for video processing
 - LangGraph for agent orchestration
-- Next.js & TailwindCSS for the frontend
+- Next.js & TailwindCSS for frontend
+- **Remotion** for programmatic video creation capabilities

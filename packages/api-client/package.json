@@ -1,0 +1,23 @@
+{
+  "name": "@repo/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf node_modules .turbo"
+  },
+  "dependencies": {
+    "@repo/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

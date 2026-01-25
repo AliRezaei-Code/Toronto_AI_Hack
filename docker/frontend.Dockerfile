@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
+RUN pnpm run build
 RUN npm run build
 
 # Default port for Next.js
