@@ -4,6 +4,7 @@
 
 body {
   @apply bg-gray-900 text-white font-sans antialiased;
+  min-height: 100vh;
 }
 
 * {
@@ -95,4 +96,46 @@ body {
 
 .timeline-bar {
   animation: word-reveal 0.3s ease-out both;
+}
+
+.app-body {
+  background: radial-gradient(1200px circle at 12% 12%, rgba(59, 130, 246, 0.12), transparent 60%),
+    radial-gradient(900px circle at 88% 18%, rgba(99, 102, 241, 0.12), transparent 55%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(3, 7, 18, 0.98));
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.app-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.particle-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.particle-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.08), transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.12), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(99, 102, 241, 0.16), transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle-background {
+    opacity: 0.25;
+  }
 }

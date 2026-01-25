@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { ParticleBackground } from '@/components/ParticleBackground'
 
 export const metadata: Metadata = {
   title: 'Script-Based Video Editor',
@@ -13,7 +14,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="app-body">
+        <div className="app-shell">
+          <ParticleBackground />
+          <div className="app-content">{children}</div>
+        </div>
+      </body>
     </html>
   )
 }
