@@ -15,17 +15,17 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 
 # Ports used by our services
-PORTS_TO_CLEAR = [3000, 8000, 9000]  # frontend, backend, mcp-server
+PORTS_TO_CLEAR = [3000, 8000, 8001, 9000]  # frontend, backend, video-processor, mcp-server
 
 # Use explicit Python path to avoid MSYS2/Windows Store conflicts
 PYTHON = r"C:\Users\Chris\AppData\Local\Python\bin\python.exe"
 
 SERVICES = [
     {
-        "name": "frontend",
-        "cwd": ROOT / "frontend",
-        "install": ["npm", "install"],
-        "run": ["npm", "run", "dev"],
+        "name": "web",
+        "cwd": ROOT / "apps" / "web",
+        "install": ["pnpm", "install"],
+        "run": ["pnpm", "run", "dev"],
         "color": "\033[36m",  # cyan
     },
     {
@@ -41,6 +41,13 @@ SERVICES = [
         "install": [PYTHON, "-m", "pip", "install", "-r", "requirements.txt"],
         "run": [PYTHON, "-m", "uvicorn", "server:app", "--reload", "--host", "0.0.0.0", "--port", "9000"],
         "color": "\033[35m",  # magenta
+    },
+    {
+        "name": "video-processor",
+        "cwd": ROOT / "video-processor",
+        "install": [PYTHON, "-m", "pip", "install", "-r", "requirements.txt"],
+        "run": [PYTHON, "-m", "uvicorn", "api:app", "--reload", "--host", "0.0.0.0", "--port", "8001"],
+        "color": "\033[32m",  # green
     },
 ]
 
@@ -348,7 +355,7 @@ def main():
     clear_shared_data()
 
     # Check for --install flag or if first run
-    if "--install" in sys.argv or not (ROOT / "frontend" / "node_modules").exists():
+    if "--install" in sys.argv or not (ROOT / "apps" / "web" / "node_modules").exists():
         install_deps()
 
     start_services()
