@@ -7,6 +7,8 @@ import { TranscriptEditor } from '@/components/TranscriptEditor'
 import { MagicBox } from '@/components/MagicBox'
 import { WaveformTimeline } from '@/components/WaveformTimeline'
 import { uploadVideos, getJobStatus, processEdit, startDemoJob } from '@/lib/api-client'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { useAuth } from '@/contexts/AuthContext'
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -23,7 +25,8 @@ interface Word {
   end: number
 }
 
-export default function Home() {
+function HomeContent() {
+  const { user, signOut } = useAuth()
   const [jobId, setJobId] = useState<string | null>(null)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [transcript, setTranscript] = useState<Word[]>([])
@@ -182,11 +185,17 @@ export default function Home() {
           </div>
           <h1 className="text-xl font-semibold">Script-Based Video Editor</h1>
         </div>
-        <button className="text-gray-400 hover:text-white transition-colors" title="Help coming soon!">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12 a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </button>
+        <div className="flex items-center gap-4">
+          {user && (
+            <span className="text-sm text-gray-400">{user.email}</span>
+          )}
+          <button
+            onClick={signOut}
+            className="px-4 py-2 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          >
+            Sign Out
+          </button>
+        </div>
       </header>
 
       {statusMessage && (
@@ -262,5 +271,13 @@ export default function Home() {
         <MagicBox onSendMessage={handleSendMessage} isProcessing={isProcessing} />
       )}
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <ProtectedRoute>
+      <HomeContent />
+    </ProtectedRoute>
   )
 }
