@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { ParticleBackground } from "@/src/components/ParticleBackground";
-import { AuthProvider } from "@/src/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "Script-Based Video Editor",
   description: "AI-powered video editor with transcript-based editing",
 };
+
+// removed auth temporarily
 
 export default function RootLayout({
   children,
@@ -19,7 +20,6 @@ export default function RootLayout({
           <ParticleBackground />
           <div className="app-content">{children}</div>
         </div>
-        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

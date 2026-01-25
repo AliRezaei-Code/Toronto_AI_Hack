@@ -1,85 +1,63 @@
-# ===========================================
-# Production Frontend Dockerfile
-# Multi-stage build for optimized image size
-# ===========================================
+# syntax=docker/dockerfile:1
 
-# Dependencies stage
 FROM node:18-alpine AS deps
-
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm@latest
+# pnpm
+RUN corepack enable
 
-# Copy root workspace files
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+# Copy only dependency manifests first (best caching)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
-# Copy web app package files
-COPY apps/web/package.json ./apps/web/
+# If monorepo, copy package.json files for workspaces (CHANGE ME as needed)
+# These lines are optional, but help pnpm resolve workspaces without copying all source yet.
+COPY apps/*/package.json ./apps/
+COPY packages/*/package.json ./packages/
 
-# Install all dependencies (including workspace dependencies)
 RUN pnpm install --frozen-lockfile
 
-# Build stage
 FROM node:18-alpine AS builder
-
 WORKDIR /app
+RUN corepack enable
 
-# Install pnpm globally
-RUN npm install -g pnpm@latest
-
-# Copy workspace configuration
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-
-# Copy node_modules from deps stage
+# deps from previous stage
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./package.json
+COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=deps /app/pnpm-workspace.yaml* ./
 
-# Copy workspace packages if they exist
-COPY packages/ ./packages/ 2>/dev/null || true
+# Now copy the full source (this is where your code comes in)
+COPY . .
 
-# Copy web application source
-COPY apps/web/ ./apps/web/
+# Build (CHANGE ME: use your real build command / filter)
+# Examples:
+# RUN pnpm -C apps/web build
+# RUN pnpm --filter web build
+RUN pnpm build
 
-# Set build environment
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-# Build Next.js application (standalone output enabled in next.config.js)
-WORKDIR /app/apps/web
-RUN pnpm run build
-
-# Production stage
 FROM node:18-alpine AS runner
-
 WORKDIR /app
-
-# Set production environment
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3010
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN corepack enable
 
-# Copy standalone output from builder
-# Next.js standalone output structure mirrors the project structure
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+# Copy only what you need to run
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
 
-# Set working directory to standalone root
-WORKDIR /app/apps/web
+# CHANGE ME: copy the built output for your Next app
+# If Next.js standalone output:
+# COPY --from=builder /app/apps/web/.next/standalone ./
+# COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+# COPY --from=builder /app/apps/web/public ./apps/web/public
+#
+# If not standalone, simplest:
+COPY --from=builder /app ./
 
-# Switch to non-root user
-USER nextjs
-
-# Expose port
+# Your container maps host:FRONTEND_PORT -> 3010, so expose 3010
 EXPOSE 3010
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3010/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
-
-# Start Next.js standalone server
-CMD ["node", "server.js"]
+# CHANGE ME: your start command
+# Examples:
+# CMD ["pnpm", "-C", "apps/web", "start", "--port", "3010"]
+CMD ["pnpm", "start", "--port", "3010"]
