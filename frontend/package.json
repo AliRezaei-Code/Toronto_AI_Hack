@@ -6,18 +6,34 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "remotion:preview": "remotion preview src/remotion/index.ts",
+    "remotion:render": "remotion render src/remotion/index.ts VideoEditor out/video.mp4",
+    "remotion:render-short": "remotion render src/remotion/index.ts ShortForm out/short.mp4",
+    "remotion:upgrade": "remotion upgrade",
+    "remotion:studio": "remotion studio src/remotion/index.ts",
+    "remotion:thumbnail": "remotion still src/remotion/index.ts VideoEditor out/thumbnail.png",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-three/drei": "^9.107.3",
+    "@react-three/fiber": "^8.15.19",
+    "@remotion/cli": "^4.0.409",
+    "@remotion/eslint-plugin": "^4.0.409",
+    "@remotion/player": "^4.0.409",
+    "@remotion/renderer": "^4.0.409",
+    "framer-motion": "^12.29.0",
+    "lucide-react": "^0.309.0",
     "next": "14.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "lucide-react": "^0.309.0"
+    "remotion": "^4.0.409",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",

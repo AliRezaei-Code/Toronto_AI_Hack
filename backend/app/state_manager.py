@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Any
 from pathlib import Path
 import aiofiles
 
-from app.models import AgentState, Transcript, Word, EditInstruction
+from app.models import AgentState, Transcript, Word, Segment, Clip, EditInstruction, CreatorContext
 
 class StateManager:
     """
@@ -43,14 +43,33 @@ class StateManager:
     
     async def save_transcript(self, job_id: str, transcript: Transcript) -> None:
         """
-        Save transcript to JSON file.
+        Save hierarchical transcript to JSON file.
+        Structure: Transcript -> Clips -> Segments -> Words
         """
         transcript_file = self.state_dir / f"{job_id}_transcript.json"
         
+        # Build hierarchical dict structure
+        clips_data = []
+        for clip in transcript.clips:
+            segments_data = []
+            for segment in clip.segments:
+                segments_data.append({
+                    'text': segment.text,
+                    'start': segment.start,
+                    'end': segment.end,
+                    'words': [w.model_dump() for w in segment.words]
+                })
+            clips_data.append({
+                'clip_index': clip.clip_index,
+                'duration': clip.duration,
+                'start_offset': clip.start_offset,
+                'segments': segments_data
+            })
+        
         transcript_dict = {
             'text': transcript.text,
-            'words': [w.model_dump() for w in transcript.words],
-            'duration': transcript.duration
+            'duration': transcript.duration,
+            'clips': clips_data
         }
         
         async with aiofiles.open(transcript_file, 'w') as f:
@@ -58,7 +77,8 @@ class StateManager:
     
     async def load_transcript(self, job_id: str) -> Optional[Transcript]:
         """
-        Load transcript from JSON file.
+        Load hierarchical transcript from JSON file.
+        Structure: Transcript -> Clips -> Segments -> Words
         """
         transcript_file = self.state_dir / f"{job_id}_transcript.json"
         
@@ -70,11 +90,53 @@ class StateManager:
         
         data = json.loads(content)
         
+        # Build hierarchical Pydantic models
+        clips = []
+        for clip_data in data.get('clips', []):
+            segments = []
+            for seg_data in clip_data.get('segments', []):
+                segments.append(Segment(
+                    text=seg_data['text'],
+                    start=seg_data['start'],
+                    end=seg_data['end'],
+                    words=[Word(**w) for w in seg_data.get('words', [])]
+                ))
+            clips.append(Clip(
+                clip_index=clip_data['clip_index'],
+                duration=clip_data['duration'],
+                start_offset=clip_data['start_offset'],
+                segments=segments
+            ))
+        
         return Transcript(
             text=data.get('text'),
-            words=[Word(**w) for w in data.get('words', [])],
-            duration=data.get('duration')
+            duration=data.get('duration'),
+            clips=clips
         )
+    
+    async def save_context(self, job_id: str, context: CreatorContext) -> None:
+        """
+        Save creator context to JSON file.
+        """
+        context_file = self.state_dir / f"{job_id}_context.json"
+        
+        async with aiofiles.open(context_file, 'w') as f:
+            await f.write(json.dumps(context.model_dump(), indent=2))
+    
+    async def load_context(self, job_id: str) -> Optional[CreatorContext]:
+        """
+        Load creator context from JSON file.
+        """
+        context_file = self.state_dir / f"{job_id}_context.json"
+        
+        if not context_file.exists():
+            return None
+        
+        async with aiofiles.open(context_file, 'r') as f:
+            content = await f.read()
+        
+        data = json.loads(content)
+        return CreatorContext(**data)
     
     async def save_job(self, job_id: str, job_data: Dict[str, Any]) -> None:
         """
@@ -110,7 +172,7 @@ class StateManager:
         """
         Delete all files associated with a job.
         """
-        for suffix in ['_state.json', '_transcript.json', '_job.json']:
+        for suffix in ['_state.json', '_transcript.json', '_job.json', '_context.json']:
             file_path = self.state_dir / f"{job_id}{suffix}"
             if file_path.exists():
                 file_path.unlink()

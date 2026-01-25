@@ -1,13 +1,45 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-interface Word {
+// ============================================================================
+// Hierarchical Transcript Types (Clips -> Segments -> Words)
+// ============================================================================
+
+export interface Word {
   word: string
   start: number
   end: number
 }
 
-interface Transcript {
+export interface Segment {
+  text: string
+  start: number
+  end: number
   words: Word[]
+}
+
+export interface Clip {
+  clip_index: number
+  duration: number
+  start_offset: number
+  segments: Segment[]
+}
+
+export interface Transcript {
+  text?: string
+  duration?: number
+  clips: Clip[]
+}
+
+// ============================================================================
+// Creator Context (auto-detected during processing)
+// ============================================================================
+
+export interface CreatorContext {
+  industry: string
+  role: string
+  target_audience: string
+  tone: string
+  suggested_hook_style: string
 }
 
 interface EditResponse {
@@ -125,6 +157,7 @@ export async function getJobStatus(jobId: string): Promise<{
   status: 'processing' | 'completed' | 'error'
   video_url?: string
   transcript?: Transcript
+  creator_context?: CreatorContext
   error?: string
   warning?: string
 }> {
@@ -132,6 +165,22 @@ export async function getJobStatus(jobId: string): Promise<{
   
   if (!response.ok) {
     throw new Error('Failed to get job status')
+  }
+
+  return response.json()
+}
+
+export interface JobSummary {
+  job_id: string
+  status: string
+  created_at: string
+}
+
+export async function getJobs(): Promise<{ jobs: JobSummary[] }> {
+  const response = await fetch(`${API_URL}/api/jobs`)
+  
+  if (!response.ok) {
+    throw new Error('Failed to get jobs')
   }
 
   return response.json()

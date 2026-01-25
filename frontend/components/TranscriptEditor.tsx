@@ -1,7 +1,18 @@
 'use client'
 
+import { processEdit, Transcript } from '@/lib/api-client'
+import { 
+  findWordAtTime, 
+  formatTimestamp, 
+  isTranscriptEmpty,
+  getFullText,
+  getWordCount,
+  getAllWords
+} from '@/lib/transcript-utils'
 import { useEffect, useState, useRef, useCallback, KeyboardEvent } from 'react'
+import { motion } from 'framer-motion'
 import { editTranscriptText } from '@/lib/api-client'
+import { emitParticleBurstFromEvent } from '@/lib/particle-events'
 
 interface Word {
   word: string
@@ -10,12 +21,12 @@ interface Word {
 }
 
 interface TranscriptEditorProps {
-  transcript: Word[]
+  transcript: Transcript | null
   currentTime: number
   onWordClick: (time: number) => void
   jobId: string
   isProcessing?: boolean
-  onTranscriptUpdate?: (transcript: Word[]) => void
+  onTranscriptUpdate?: (transcript: Transcript) => void
 }
 
 export function TranscriptEditor({
@@ -26,7 +37,11 @@ export function TranscriptEditor({
   isProcessing = false,
   onTranscriptUpdate,
 }: TranscriptEditorProps) {
-  const [highlightedWordIndex, setHighlightedWordIndex] = useState(-1)
+  const [currentWordLocation, setCurrentWordLocation] = useState<{
+    clipIndex: number
+    segmentIndex: number
+    wordIndex: number
+  } | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [isSidebarEdit, setIsSidebarEdit] = useState(false)
   const [editedText, setEditedText] = useState('')
@@ -43,11 +58,20 @@ export function TranscriptEditor({
   const baselineWordsRef = useRef<Word[]>([])
   const historyIndexRef = useRef(-1)
 
+  // Track current word based on playback time
   useEffect(() => {
-    const index = transcript.findIndex(
-      word => currentTime >= word.start && currentTime <= word.end
-    )
-    setHighlightedWordIndex(index)
+    if (!transcript) return
+    
+    const location = findWordAtTime(transcript, currentTime)
+    if (location) {
+      setCurrentWordLocation({
+        clipIndex: location.clipIndex,
+        segmentIndex: location.segmentIndex,
+        wordIndex: location.wordIndex
+      })
+    } else {
+      setCurrentWordLocation(null)
+    }
   }, [currentTime, transcript])
 
   useEffect(() => {
@@ -72,17 +96,17 @@ export function TranscriptEditor({
   }, [])
 
   useEffect(() => {
-    if (!isEditing) {
-      baselineWordsRef.current = transcript
+    if (!isEditing && transcript) {
+      baselineWordsRef.current = getAllWords(transcript)
     }
   }, [isEditing, transcript])
 
   useEffect(() => {
-    if (!transcript.length) {
+    if (!transcript) {
       return
     }
 
-    const text = transcript.map(word => word.word).join(' ')
+    const text = getFullText(transcript)
     setHistory((prev) => {
       const currentIndex = historyIndexRef.current
       if (currentIndex >= 0 && prev[currentIndex] === text) {
@@ -113,7 +137,7 @@ export function TranscriptEditor({
           const result = await editTranscriptText(jobId, newText)
 
           if (onTranscriptUpdate) {
-            onTranscriptUpdate(result.transcript.words)
+            onTranscriptUpdate(result.transcript)
           }
 
           baselineWordsRef.current = words
@@ -139,13 +163,16 @@ export function TranscriptEditor({
   )
 
   const handleStartInlineEdit = (index: number) => {
+    if (!transcript) return
+    
     setIsEditing(true)
     setIsSidebarEdit(false)
     setEditedWordIndex(index)
-    setInlineEditedWords([...transcript])
+    const allWords = getAllWords(transcript)
+    setInlineEditedWords([...allWords])
     setEditedWordIndices(new Set())
-    setEditedText(transcript.map(word => word.word).join(' '))
-    baselineWordsRef.current = transcript
+    setEditedText(getFullText(transcript))
+    baselineWordsRef.current = allWords
 
     setTimeout(() => {
       inlineInputRef.current?.focus()
@@ -153,8 +180,11 @@ export function TranscriptEditor({
   }
 
   const handleInlineWordChange = (index: number, newWord: string) => {
-    const updatedWords = inlineEditedWords.length ? [...inlineEditedWords] : [...transcript]
-    const baselineWords = baselineWordsRef.current.length ? baselineWordsRef.current : transcript
+    if (!transcript) return
+    
+    const allWords = getAllWords(transcript)
+    const updatedWords = inlineEditedWords.length ? [...inlineEditedWords] : [...allWords]
+    const baselineWords = baselineWordsRef.current.length ? baselineWordsRef.current : allWords
 
     updatedWords[index] = {
       ...updatedWords[index],
@@ -186,8 +216,10 @@ export function TranscriptEditor({
 
     if (event.key === 'Tab') {
       event.preventDefault()
+      if (!transcript) return
+      const allWords = getAllWords(transcript)
       const nextIndex = index + 1
-      if (nextIndex < transcript.length) {
+      if (nextIndex < allWords.length) {
         setEditedWordIndex(nextIndex)
         setTimeout(() => {
           const nextInput = document.querySelector(
@@ -201,15 +233,18 @@ export function TranscriptEditor({
 
     if (event.key === 'Enter') {
       event.preventDefault()
-      const wordsToSave = inlineEditedWords.length ? inlineEditedWords : transcript
+      if (!transcript) return
+      const allWords = getAllWords(transcript)
+      const wordsToSave = inlineEditedWords.length ? inlineEditedWords : allWords
       queueInlineSave(wordsToSave, true)
     }
   }
 
   const handleStartEdit = () => {
+    if (!transcript) return
+    setEditedText(getFullText(transcript))
     setIsEditing(true)
     setIsSidebarEdit(true)
-    setEditedText(transcript.map(word => word.word).join(' '))
     setSaveError(null)
   }
 
@@ -231,7 +266,7 @@ export function TranscriptEditor({
       const result = await editTranscriptText(jobId, editedText)
 
       if (onTranscriptUpdate) {
-        onTranscriptUpdate(result.transcript.words)
+        onTranscriptUpdate(result.transcript)
       }
 
       setIsEditing(false)
@@ -245,6 +280,25 @@ export function TranscriptEditor({
     } finally {
       setIsSaving(false)
     }
+  }
+
+  // Check if a word is the current word
+  const isCurrentWord = (clipIdx: number, segIdx: number, wordIdx: number): boolean => {
+    if (!currentWordLocation) return false
+    return (
+      currentWordLocation.clipIndex === clipIdx &&
+      currentWordLocation.segmentIndex === segIdx &&
+      currentWordLocation.wordIndex === wordIdx
+    )
+  }
+
+  // Check if a word is near the current word (for subtle highlighting)
+  const isNearCurrentWord = (clipIdx: number, segIdx: number, wordIdx: number): boolean => {
+    if (!currentWordLocation) return false
+    if (currentWordLocation.clipIndex !== clipIdx) return false
+    if (currentWordLocation.segmentIndex !== segIdx) return false
+    return Math.abs(currentWordLocation.wordIndex - wordIdx) <= 2 && 
+           Math.abs(currentWordLocation.wordIndex - wordIdx) > 0
   }
 
   const canUndo = historyIndex > 0
@@ -264,7 +318,7 @@ export function TranscriptEditor({
       const result = await editTranscriptText(jobId, targetText)
       historyIndexRef.current = targetIndex
       setHistoryIndex(targetIndex)
-      onTranscriptUpdate?.(result.transcript.words)
+      onTranscriptUpdate?.(result.transcript)
       setIsEditing(false)
       setIsSidebarEdit(false)
       setEditedWordIndex(null)
@@ -294,32 +348,68 @@ export function TranscriptEditor({
   const displayWords =
     isEditing && !isSidebarEdit && inlineEditedWords.length > 0
       ? inlineEditedWords
-      : transcript
+      : transcript ? getAllWords(transcript) : []
 
   if (isProcessing) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent mb-3"></div>
+      <motion.div
+        className="flex items-center justify-center h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          className="text-center"
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
+          <motion.div
+            className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent mb-3"
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+          />
           <p className="text-gray-400">Processing transcript...</p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     )
   }
 
-  if (!transcript || transcript.length === 0) {
+  if (isTranscriptEmpty(transcript)) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-400 text-center">
+      <motion.div
+        className="flex items-center justify-center h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.p
+          className="text-gray-400 text-center"
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
           No transcript available.<br />Upload videos to generate transcript.
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     )
   }
+
+  const wordCount = transcript ? getWordCount(transcript) : 0
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+    <motion.div
+      className="flex flex-col h-full"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+    >
+      <motion.div
+        className="p-4 border-b border-gray-700 flex justify-between items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.05, duration: 0.3 }}
+      >
         <div>
           <h3 className="text-lg font-semibold">Transcript</h3>
           <p className="text-sm text-gray-400">
@@ -331,40 +421,48 @@ export function TranscriptEditor({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <motion.button
             type="button"
             onClick={handleUndo}
             disabled={!canUndo || disableHistoryControls}
             className="px-3 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
             Undo
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             type="button"
             onClick={handleRedo}
             disabled={!canRedo || disableHistoryControls}
             className="px-3 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
             Redo
-          </button>
+          </motion.button>
           {!isEditing && (
-            <button
+            <motion.button
               onClick={handleStartEdit}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
             >
               Edit Text
-            </button>
+            </motion.button>
           )}
           {isEditing && !isSidebarEdit && (
-            <button
+            <motion.button
               onClick={handleStartEdit}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
             >
               Full Text Edit
-            </button>
+            </motion.button>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {isEditing && isSidebarEdit ? (
         <div className="flex-1 flex flex-col p-4">
@@ -384,39 +482,55 @@ export function TranscriptEditor({
           )}
 
           <div className="flex gap-2 mt-4">
-            <button
+            <motion.button
               onClick={handleSaveEdit}
               disabled={isSaving}
               className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               {isSaving ? 'Saving...' : 'Apply Changes'}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={handleCancelEdit}
               disabled={isSaving}
               className="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               Cancel
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => {
                 setIsSidebarEdit(false)
                 setEditedWordIndex(null)
               }}
               disabled={isSaving}
               className="px-6 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-600 disabled:opacity-50 transition-colors"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               Inline Edit
-            </button>
+            </motion.button>
           </div>
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
           <div className="text-lg leading-relaxed transcript-panel">
-            {displayWords.map((word, index) => {
-              const isHighlighted = highlightedWordIndex === index
-              const isNearCurrent =
-                index >= highlightedWordIndex - 2 && index <= highlightedWordIndex + 2
+            {displayWords && displayWords.map((word, index) => {
+              // Find which clip/segment/word this corresponds to for highlighting
+              const wordLocation = transcript ? findWordAtTime(transcript, word.start) : null
+              const isHighlighted = wordLocation && currentWordLocation
+                ? wordLocation.clipIndex === currentWordLocation.clipIndex &&
+                  wordLocation.segmentIndex === currentWordLocation.segmentIndex &&
+                  wordLocation.wordIndex === currentWordLocation.wordIndex
+                : false
+              const isNearCurrent = wordLocation && currentWordLocation
+                ? wordLocation.clipIndex === currentWordLocation.clipIndex &&
+                  wordLocation.segmentIndex === currentWordLocation.segmentIndex &&
+                  Math.abs(wordLocation.wordIndex - currentWordLocation.wordIndex) <= 2 &&
+                  wordLocation.wordIndex !== currentWordLocation.wordIndex
+                : false
               const isBeingEdited = editedWordIndex === index
               const revealDelay = Math.min(index * 14, 280)
 
@@ -434,8 +548,21 @@ export function TranscriptEditor({
                       ? 'bg-blue-500/30 text-white cursor-pointer'
                       : 'text-gray-300 cursor-pointer hover:bg-gray-700'
                   }`}
-                  onClick={() => onWordClick(word.start)}
-                  onDoubleClick={() => handleStartInlineEdit(index)}
+                  onClick={(event) => {
+                    const burstColor = isBeingEdited
+                      ? '#22c55e'
+                      : isHighlighted
+                      ? '#60a5fa'
+                      : isNearCurrent
+                      ? '#818cf8'
+                      : '#94a3b8'
+                    emitParticleBurstFromEvent(event, { color: burstColor, intensity: 0.8 })
+                    onWordClick(word.start)
+                  }}
+                  onDoubleClick={(event) => {
+                    emitParticleBurstFromEvent(event, { color: '#c084fc', intensity: 1.1 })
+                    handleStartInlineEdit(index)
+                  }}
                   title={`${word.start.toFixed(2)}s - ${word.end.toFixed(2)}s${
                     isEditing ? ' (Double-click to edit word)' : ''
                   }`}
@@ -491,22 +618,25 @@ export function TranscriptEditor({
                     <span className="w-3 h-3 bg-yellow-600/80 border border-yellow-400 rounded"></span>
                     <span className="text-gray-300">Modified ({editedWordIndices.size})</span>
                   </span>
-                  <button
+                  <motion.button
                     onClick={() => {
+                      if (!transcript) return
                       setEditedWordIndices(new Set())
-                      setInlineEditedWords([...transcript])
+                      setInlineEditedWords([...getAllWords(transcript)])
                     }}
                     disabled={isSaving}
                     className="text-gray-400 hover:text-white disabled:opacity-50 transition-colors"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                   >
                     Reset Changes
-                  </button>
+                  </motion.button>
                 </div>
               )}
             </>
           )}
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

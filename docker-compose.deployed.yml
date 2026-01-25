@@ -1,0 +1,57 @@
+version: '3.8'
+
+# Production docker-compose for deployed services
+# Uses pre-built images from GitHub Container Registry (ghcr.io)
+# Environment variables: IMAGE_PREFIX, IMAGE_TAG (default: latest)
+
+services:
+  frontend:
+    image: ghcr.io/${IMAGE_PREFIX}/frontend:${IMAGE_TAG:-latest}
+    ports:
+      - "${FRONTEND_PORT:-3010}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    volumes:
+      - shared-data:/shared-data
+    depends_on:
+      - backend
+    networks:
+      - video-editor-network
+    restart: unless-stopped
+
+  backend:
+    image: ghcr.io/${IMAGE_PREFIX}/backend:${IMAGE_TAG:-latest}
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SHARED_DATA_DIR=/shared-data
+      - MCP_SERVER_URL=http://mcp-server:9000
+    volumes:
+      - shared-data:/shared-data
+    depends_on:
+      - mcp-server
+    networks:
+      - video-editor-network
+    restart: unless-stopped
+
+  mcp-server:
+    image: ghcr.io/${IMAGE_PREFIX}/mcp-server:${IMAGE_TAG:-latest}
+    ports:
+      - "9000:9000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SHARED_DATA_DIR=/shared-data
+    volumes:
+      - shared-data:/shared-data
+    networks:
+      - video-editor-network
+    restart: unless-stopped
+
+volumes:
+  shared-data:
+    driver: local
+
+networks:
+  video-editor-network:
+    driver: bridge

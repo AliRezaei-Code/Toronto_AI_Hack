@@ -6,7 +6,21 @@ Allows direct HTTP access to MCP functionality.
 import os
 import sys
 import json
+import logging
+import asyncio
 from typing import Dict, Any, List
+
+# Fix for Windows: Use ProactorEventLoop which supports subprocesses
+# This must be set before any async code runs
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
+# Configure logging before importing tools
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -16,10 +30,15 @@ from tools.cutting import CuttingTool
 from tools.rendering import RenderingTool
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env from project root
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-SHARED_DATA_DIR = os.getenv('SHARED_DATA_DIR', './shared-data')
+_shared_data_env = os.getenv('SHARED_DATA_DIR')
+if _shared_data_env:
+    SHARED_DATA_DIR = os.path.abspath(_shared_data_env)
+else:
+    SHARED_DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'shared-data'))
 PROCESSED_DIR = os.path.join(SHARED_DATA_DIR, 'processed')
 TRANSCRIPTS_DIR = os.path.join(SHARED_DATA_DIR, 'transcripts')
 
@@ -48,18 +67,12 @@ async def handle_generate_transcript(params: Dict[str, Any]) -> Dict[str, Any]:
 async def handle_stitch_clips(params: Dict[str, Any]) -> Dict[str, Any]:
     """Handle stitch_clips tool call"""
     clip_paths = params.get('clip_paths', [])
-    transition_type = params.get('transition_type', 'crossfade')
-    transition_duration = params.get('transition_duration', 0.5)
     
     if not clip_paths:
         return {'status': 'error', 'error': 'Missing clip_paths parameter'}
     
     try:
-        result = await stitching_tool.stitch_clips(
-            clip_paths,
-            transition_type,
-            transition_duration
-        )
+        result = await stitching_tool.stitch_clips(clip_paths)
         return {'status': 'success', 'data': result}
     except Exception as e:
         return {'status': 'error', 'error': str(e)}
@@ -175,7 +188,7 @@ def get_available_tools() -> List[Dict[str, Any]]:
         },
         {
             'name': 'stitch_clips',
-            'description': 'Stitch multiple video clips together with transitions',
+            'description': 'Concatenate multiple video clips together',
             'parameters': {
                 'type': 'object',
                 'properties': {
@@ -183,16 +196,6 @@ def get_available_tools() -> List[Dict[str, Any]]:
                         'type': 'array',
                         'items': {'type': 'string'},
                         'description': 'List of video file paths'
-                    },
-                    'transition_type': {
-                        'type': 'string',
-                        'enum': ['crossfade', 'cut'],
-                        'default': 'crossfade'
-                    },
-                    'transition_duration': {
-                        'type': 'number',
-                        'default': 0.5,
-                        'description': 'Transition duration in seconds'
                     }
                 },
                 'required': ['clip_paths']

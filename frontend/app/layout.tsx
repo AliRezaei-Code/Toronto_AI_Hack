@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { ParticleBackground } from '@/components/ParticleBackground'
 import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
@@ -14,6 +15,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <body className="app-body">
+        <div className="app-shell">
+          <ParticleBackground />
+          <div className="app-content">{children}</div>
+        </div>
       <body>
         <AuthProvider>
           {children}

@@ -4,6 +4,8 @@ import asyncio
 import uuid
 from typing import Dict, Any
 
+from .utils import ffmpeg_safe_path
+
 class CuttingTool:
     def __init__(self, output_dir: str):
         self.output_dir = output_dir
@@ -51,40 +53,45 @@ class CuttingTool:
         duration: float
     ) -> Dict[str, Any]:
         """
-        Fast cut using stream copy (no re-encoding).
+        Frame-accurate cut with consistent A/V encoding.
+        Re-encodes both video AND audio to ensure all segments have identical
+        formats for seamless concatenation without A/V desync.
         """
         command = [
             'ffmpeg',
             '-ss', str(start_time),
             '-i', video_path,
             '-t', str(duration),
-            '-c', 'copy',
-            '-avoid_negative_ts', '1',
+            # Video: re-encode for frame-accurate cuts
+            '-c:v', 'libx264',
+            '-preset', 'veryfast',
+            '-crf', '18',
+            '-pix_fmt', 'yuv420p',
+            # Audio: re-encode to consistent format (fixes desync from mixed sources)
+            '-c:a', 'aac',
+            '-ar', '48000',            # Fixed sample rate
+            '-ac', '2',                # Stereo
+            '-b:a', '192k',
+            # Timestamp handling
+            '-avoid_negative_ts', 'make_zero',
+            '-async', '1',             # Sync audio to timestamps
             '-y',
             output_path
         ]
 
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True
         )
 
-        stdout, stderr = await process.communicate()
-
-        if process.returncode != 0:
-            error_msg = stderr.decode()
-            
-            fallback_result = await self._reencoded_cut(
-                video_path, output_path, start_time, duration
-            )
-            fallback_result['method'] = 'reencoded_fallback'
-            return fallback_result
+        if result.returncode != 0:
+            raise Exception(f"FFmpeg cut failed: {result.stderr}")
 
         return {
             'output_path': output_path,
             'duration': duration,
-            'method': 'smart_copy'
+            'method': 'full_reencode'
         }
 
     async def _reencoded_cut(
@@ -95,7 +102,7 @@ class CuttingTool:
         duration: float
     ) -> Dict[str, Any]:
         """
-        Cut with re-encoding for precision.
+        Cut with re-encoding for precision and universal playback compatibility.
         """
         command = [
             'ffmpeg',
@@ -103,24 +110,24 @@ class CuttingTool:
             '-i', video_path,
             '-t', str(duration),
             '-c:v', 'libx264',
-            '-preset', 'ultrafast',
+            '-pix_fmt', 'yuv420p',    # Force 8-bit 4:2:0 for universal playback
+            '-preset', 'medium',      # Good balance of speed and compression
+            '-crf', '23',             # Constant quality
             '-c:a', 'aac',
-            '-strict', 'experimental',
+            '-b:a', '192k',           # Audio bitrate
+            '-movflags', '+faststart', # Enable streaming
             '-y',
             output_path
         ]
 
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True
         )
 
-        stdout, stderr = await process.communicate()
-
-        if process.returncode != 0:
-            error_msg = stderr.decode()
-            raise Exception(f"FFmpeg cut failed: {error_msg}")
+        if result.returncode != 0:
+            raise Exception(f"FFmpeg cut failed: {result.stderr}")
 
         return {
             'output_path': output_path,
@@ -164,9 +171,9 @@ class CuttingTool:
                 await self._smart_cut(video_path, part2_path, end_time, part2_duration)
 
             with open(concat_file, 'w') as f:
-                f.write(f"file '{os.path.abspath(part1_path)}'\n")
+                f.write(f"file '{ffmpeg_safe_path(part1_path)}'\n")
                 if part2_duration > 0:
-                    f.write(f"file '{os.path.abspath(part2_path)}'\n")
+                    f.write(f"file '{ffmpeg_safe_path(part2_path)}'\n")
 
             command = [
                 'ffmpeg',
@@ -178,17 +185,14 @@ class CuttingTool:
                 output_path
             ]
 
-            process = await asyncio.create_subprocess_exec(
-                *command,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True
             )
 
-            stdout, stderr = await process.communicate()
-
-            if process.returncode != 0:
-                error_msg = stderr.decode()
-                raise Exception(f"Segment removal failed: {error_msg}")
+            if result.returncode != 0:
+                raise Exception(f"Segment removal failed: {result.stderr}")
 
             final_duration = await self._get_video_duration(output_path)
 
@@ -207,19 +211,16 @@ class CuttingTool:
         """
         Get video duration using FFprobe.
         """
-        command = [
-            'ffprobe',
-            '-v', 'error',
-            '-show_entries', 'format=duration',
-            '-of', 'default=noprint_wrappers=1:nokey=1',
-            video_path
-        ]
-
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+        result = subprocess.run(
+            [
+                'ffprobe',
+                '-v', 'error',
+                '-show_entries', 'format=duration',
+                '-of', 'default=noprint_wrappers=1:nokey=1',
+                video_path
+            ],
+            capture_output=True,
+            text=True
         )
 
-        stdout, _ = await process.communicate()
-        return float(stdout.decode().strip())
+        return float(result.stdout.strip())
