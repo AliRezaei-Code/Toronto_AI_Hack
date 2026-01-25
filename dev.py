@@ -369,16 +369,16 @@ def get_services(python_cmd: str, pkg_manager: str) -> List[Dict[str, Any]]:
     services = []
 
     # Web frontend (Next.js via workspace)
-    web_dir = ROOT / "apps" / "web"
-    if web_dir.exists():
-        services.append({
-            "name": "web",
-            "cwd": web_dir,
-            "run": [pkg_manager, "run", "dev"],
-            "color": CYAN,
-            "type": "node",
-            "port": 3000,
-        })
+  #web_dir = ROOT / "apps" / "web"
+  #if web_dir.exists():
+  #    services.append({
+  #        "name": "web",
+  #        "cwd": web_dir,
+  #        "run": [pkg_manager, "run", "dev"],
+  #        "color": CYAN,
+  #        "type": "node",
+  #        "port": 3000,
+  #    })
 
     # Backend API (FastAPI)
     backend_dir = ROOT / "backend"
