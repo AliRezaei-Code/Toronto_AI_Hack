@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  serverExternalPackages: ['@remotion/renderer'],
+  experimental: {
+    serverComponentsExternalPackages: [
+      '@remotion/renderer',
+      '@remotion/bundler',
+      '@remotion/media-parser',
+    ],
+  },
   async rewrites() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
     return [
