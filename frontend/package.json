@@ -16,15 +16,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-three/drei": "^9.107.3",
+    "@react-three/fiber": "^8.15.19",
     "@remotion/cli": "^4.0.409",
     "@remotion/eslint-plugin": "^4.0.409",
     "@remotion/player": "^4.0.409",
     "@remotion/renderer": "^4.0.409",
+    "framer-motion": "^12.29.0",
     "lucide-react": "^0.309.0",
     "next": "14.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remotion": "^4.0.409"
+    "remotion": "^4.0.409",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@types/node": "^20",
