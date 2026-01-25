@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Send } from 'lucide-react'
+import { emitParticleBurstFromElement, emitParticleBurstFromEvent } from '@/lib/particle-events'
 
 interface MagicBoxProps {
   onSendMessage: (message: string) => void
@@ -14,6 +15,7 @@ export function MagicBox({
   isProcessing = false,
 }: MagicBoxProps) {
   const [message, setMessage] = useState('')
+  const inputRowRef = useRef<HTMLDivElement>(null)
 
   const suggestions = [
     'Make it snappier',
@@ -25,6 +27,10 @@ export function MagicBox({
 
   const handleSend = () => {
     if (message.trim() && !isProcessing) {
+      emitParticleBurstFromElement(inputRowRef.current, {
+        color: '#38bdf8',
+        intensity: 1.2,
+      })
       onSendMessage(message.trim())
       setMessage('')
     }
@@ -37,8 +43,12 @@ export function MagicBox({
     }
   }
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    suggestion: string
+  ) => {
     if (!isProcessing) {
+      emitParticleBurstFromEvent(event, { color: '#a78bfa', intensity: 0.9 })
       onSendMessage(suggestion)
     }
   }
@@ -51,7 +61,7 @@ export function MagicBox({
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" ref={inputRowRef}>
           <input
             type="text"
             value={message}
@@ -74,11 +84,11 @@ export function MagicBox({
 
         <div className="flex flex-wrap gap-2">
           <span className="text-sm text-gray-500">Try:</span>
-          {suggestions.map((suggestion, index) => (
-            <motion.button
-              key={index}
-              onClick={() => handleSuggestionClick(suggestion)}
-              disabled={isProcessing}
+            {suggestions.map((suggestion, index) => (
+              <motion.button
+                key={index}
+                onClick={(event) => handleSuggestionClick(event, suggestion)}
+                disabled={isProcessing}
               className="px-3 py-1 text-sm bg-gray-800 hover:bg-gray-700 disabled:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-700 rounded-full transition-colors"
               whileHover={{ y: -2, scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
