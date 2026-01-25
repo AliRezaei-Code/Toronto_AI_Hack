@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import LoginForm from '@/components/LoginForm';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/contexts/AuthContext";
+import LoginForm from "@/src/components/LoginForm";
 
 export default function LoginPage() {
   const { user, loading } = useAuth();
@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/');
+      router.push("/");
     }
   }, [user, loading, router]);
 

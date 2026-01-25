@@ -1,122 +1,125 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Upload, Film, FileVideo, X } from 'lucide-react'
-import { emitParticleBurstFromElement, emitParticleBurstFromEvent } from '@/lib/particle-events'
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Upload, Film, FileVideo, X } from "lucide-react";
+import {
+  emitParticleBurstFromElement,
+  emitParticleBurstFromEvent,
+} from "@/src/lib/particle-events";
 
 interface UploadZoneProps {
-  onUpload: (files: File[]) => void
-  isUploading?: boolean
-  uploadProgress?: number
-  uploadStatus?: string
-  onDemo?: () => void
+  onUpload: (files: File[]) => void;
+  isUploading?: boolean;
+  uploadProgress?: number;
+  uploadStatus?: string;
+  onDemo?: () => void;
 }
 
 interface FileWithInfo {
-  file: File
-  id: string
+  file: File;
+  id: string;
 }
 
 export function UploadZone({
   onUpload,
   isUploading = false,
   uploadProgress = 0,
-  uploadStatus = '',
+  uploadStatus = "",
   onDemo,
 }: UploadZoneProps) {
-  const [isDragging, setIsDragging] = useState(false)
-  const [selectedFiles, setSelectedFiles] = useState<FileWithInfo[]>([])
-  const dropZoneRef = useRef<HTMLDivElement>(null)
-  const uploadCardRef = useRef<HTMLDivElement>(null)
-  const lastBurstRef = useRef(0)
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<FileWithInfo[]>([]);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
+  const uploadCardRef = useRef<HTMLDivElement>(null);
+  const lastBurstRef = useRef(0);
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
   const handleDragLeave = () => {
-    setIsDragging(false)
-  }
+    setIsDragging(false);
+  };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
+    e.preventDefault();
+    setIsDragging(false);
 
-    emitParticleBurstFromEvent(e, { color: '#38bdf8', intensity: 1.2 })
-    
-    const files = Array.from(e.dataTransfer.files).filter(
-      file => file.type.startsWith('video/')
-    )
-    
-    addFiles(files)
-  }
+    emitParticleBurstFromEvent(e, { color: "#38bdf8", intensity: 1.2 });
+
+    const files = Array.from(e.dataTransfer.files).filter((file) =>
+      file.type.startsWith("video/"),
+    );
+
+    addFiles(files);
+  };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).filter(
-      file => file.type.startsWith('video/')
-    )
-    
-    addFiles(files)
-  }
+    const files = Array.from(e.target.files || []).filter((file) =>
+      file.type.startsWith("video/"),
+    );
+
+    addFiles(files);
+  };
 
   const addFiles = (files: File[]) => {
-    const fileWithInfo = files.map(file => ({
+    const fileWithInfo = files.map((file) => ({
       file,
-      id: `${file.name}-${Date.now()}-${Math.random()}`
-    }))
-    
-    const newFiles = [...selectedFiles, ...fileWithInfo].slice(0, 5)
-    setSelectedFiles(newFiles)
-  }
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+    }));
+
+    const newFiles = [...selectedFiles, ...fileWithInfo].slice(0, 5);
+    setSelectedFiles(newFiles);
+  };
 
   const removeFile = (id: string) => {
-    setSelectedFiles(prev => prev.filter(f => f.id !== id))
-  }
+    setSelectedFiles((prev) => prev.filter((f) => f.id !== id));
+  };
 
   const handleUpload = () => {
     if (selectedFiles.length >= 3 && selectedFiles.length <= 5) {
       emitParticleBurstFromElement(dropZoneRef.current, {
-        color: '#60a5fa',
+        color: "#60a5fa",
         intensity: 1.4,
-      })
-      onUpload(selectedFiles.map(f => f.file))
-      setSelectedFiles([])
+      });
+      onUpload(selectedFiles.map((f) => f.file));
+      setSelectedFiles([]);
     }
-  }
+  };
 
   const getProgressColor = (progress: number) => {
-    if (progress < 30) return 'bg-blue-500'
-    if (progress < 70) return 'bg-blue-600'
-    return 'bg-green-500'
-  }
+    if (progress < 30) return "bg-blue-500";
+    if (progress < 70) return "bg-blue-600";
+    return "bg-green-500";
+  };
 
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024 * 1024) {
-      return `${(bytes / 1024).toFixed(1)} KB`
+      return `${(bytes / 1024).toFixed(1)} KB`;
     }
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
 
-  const isValidCount = selectedFiles.length >= 3 && selectedFiles.length <= 5
+  const isValidCount = selectedFiles.length >= 3 && selectedFiles.length <= 5;
 
   useEffect(() => {
     if (!isUploading) {
-      lastBurstRef.current = 0
-      return
+      lastBurstRef.current = 0;
+      return;
     }
 
-    const milestone = Math.floor(uploadProgress / 20) * 20
+    const milestone = Math.floor(uploadProgress / 20) * 20;
     if (milestone > 0 && milestone !== lastBurstRef.current) {
-      lastBurstRef.current = milestone
-      const intensity = Math.min(1.6, 0.6 + milestone / 100)
+      lastBurstRef.current = milestone;
+      const intensity = Math.min(1.6, 0.6 + milestone / 100);
       emitParticleBurstFromElement(uploadCardRef.current, {
-        color: milestone >= 80 ? '#22c55e' : '#38bdf8',
+        color: milestone >= 80 ? "#22c55e" : "#38bdf8",
         intensity,
-      })
+      });
     }
-  }, [isUploading, uploadProgress])
+  }, [isUploading, uploadProgress]);
 
   if (isUploading) {
     return (
@@ -126,16 +129,24 @@ export function UploadZone({
           ref={uploadCardRef}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <div className="text-center mb-8">
             <motion.div
               className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"
               animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{
+                duration: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             />
-            <h3 className="text-2xl font-semibold mb-2">Uploading & Processing</h3>
-            <p className="text-gray-400">{uploadStatus || 'Uploading your videos...'}</p>
+            <h3 className="text-2xl font-semibold mb-2">
+              Uploading & Processing
+            </h3>
+            <p className="text-gray-400">
+              {uploadStatus || "Uploading your videos..."}
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -144,7 +155,7 @@ export function UploadZone({
                 className={`h-full ${getProgressColor(uploadProgress)}`}
                 initial={{ width: 0 }}
                 animate={{ width: `${uploadProgress}%` }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
               />
             </div>
             <div className="flex justify-between text-sm">
@@ -165,7 +176,7 @@ export function UploadZone({
           </div>
         </motion.div>
       </div>
-    )
+    );
   }
 
   return (
@@ -174,7 +185,7 @@ export function UploadZone({
         className="w-full max-w-4xl p-8"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, ease: 'easeOut' }}
+        transition={{ duration: 0.45, ease: "easeOut" }}
       >
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">Script-Based Video Editor</h2>
@@ -184,8 +195,8 @@ export function UploadZone({
         <motion.div
           className={`mb-6 p-8 border-4 border-dashed rounded-2xl text-center transition-all ${
             isDragging
-              ? 'border-blue-500 bg-blue-500/10'
-              : 'border-gray-600 hover:border-gray-500 bg-gray-800/50'
+              ? "border-blue-500 bg-blue-500/10"
+              : "border-gray-600 hover:border-gray-500 bg-gray-800/50"
           }`}
           ref={dropZoneRef}
           onDragOver={handleDragOver}
@@ -198,14 +209,14 @@ export function UploadZone({
             <div className="p-4 bg-gray-700 rounded-full">
               <Upload className="w-10 h-10 text-gray-400" />
             </div>
-            
+
             <div>
               <h3 className="text-xl font-semibold mb-2">Drop videos here</h3>
               <p className="text-gray-400">
                 Drag and drop up to 10 clips, or click to browse
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <label className="cursor-pointer">
                 <input
@@ -219,7 +230,7 @@ export function UploadZone({
                   className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
                   onClick={(event) =>
                     emitParticleBurstFromEvent(event, {
-                      color: '#3b82f6',
+                      color: "#3b82f6",
                       intensity: 0.9,
                     })
                   }
@@ -233,8 +244,11 @@ export function UploadZone({
                 <motion.button
                   type="button"
                   onClick={(event) => {
-                    emitParticleBurstFromEvent(event, { color: '#a78bfa', intensity: 1.05 })
-                    onDemo()
+                    emitParticleBurstFromEvent(event, {
+                      color: "#a78bfa",
+                      intensity: 1.05,
+                    });
+                    onDemo();
                   }}
                   disabled={isUploading}
                   className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors disabled:opacity-50"
@@ -266,7 +280,7 @@ export function UploadZone({
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">
@@ -290,13 +304,15 @@ export function UploadZone({
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                   >
                     <div className="p-2 bg-gray-600 rounded-lg flex-shrink-0">
                       <Film className="w-6 h-6 text-gray-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{file.name}</p>
+                      <p className="text-sm font-medium truncate">
+                        {file.name}
+                      </p>
                       <p className="text-sm text-gray-400">
                         {formatFileSize(file.size)}
                       </p>
@@ -316,11 +332,10 @@ export function UploadZone({
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-sm text-gray-400">
                   {isValidCount
-                    ? 'Ready to upload!'
-                    : `Need ${3 - selectedFiles.length} more video${selectedFiles.length < 2 ? '' : 's'} to continue`
-                  }
+                    ? "Ready to upload!"
+                    : `Need ${3 - selectedFiles.length} more video${selectedFiles.length < 2 ? "" : "s"} to continue`}
                 </p>
-                
+
                 {isValidCount && (
                   <motion.button
                     onClick={handleUpload}
@@ -345,9 +360,9 @@ export function UploadZone({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { label: '3-5', description: 'Video clips' },
-            { label: 'AI', description: 'Auto transcription' },
-            { label: 'Edit', description: 'By editing text' },
+            { label: "3-5", description: "Video clips" },
+            { label: "AI", description: "Auto transcription" },
+            { label: "Edit", description: "By editing text" },
           ].map((item) => (
             <motion.div
               key={item.label}
@@ -355,12 +370,14 @@ export function UploadZone({
               whileHover={{ y: -4, scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="text-2xl font-bold text-blue-400 mb-1">{item.label}</div>
+              <div className="text-2xl font-bold text-blue-400 mb-1">
+                {item.label}
+              </div>
               <div className="text-sm text-gray-400">{item.description}</div>
             </motion.div>
           ))}
         </div>
       </motion.div>
     </div>
-  )
+  );
 }
