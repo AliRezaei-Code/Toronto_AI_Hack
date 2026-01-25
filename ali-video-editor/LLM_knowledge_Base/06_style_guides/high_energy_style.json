@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "title": "High Energy Style (Hyper-Retention)",
+    "category": "Style Guides",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pacing_rhythm.json", "kinetic_typography.json", "pattern_interrupts.json"]
+  },
+  "summary": "Hyper-paced, high-stimulation editing style optimized for younger audiences and broad appeal through extreme visual density and rapid cuts.",
+  "core_principles": [
+    {
+      "principle": "Cuts Every 1.5-3 Seconds",
+      "description": "Relentless visual change rate prevents boredom and maintains peak stimulation",
+      "importance": "high"
+    },
+    {
+      "principle": "Rule of Six Prioritization",
+      "description": "Prioritize Emotion (51%) and Story (23%) over technical continuity",
+      "importance": "high"
+    },
+    {
+      "principle": "High-Octane Visual Language",
+      "description": "VFX, green screen, explosions, large colorful subtitles create brain-stimulating aesthetic",
+      "importance": "high"
+    },
+    {
+      "principle": "Every Cut Must Advance Emotion",
+      "description": "No cuts without purpose; each must drive narrative forward or amplify emotional response",
+      "importance": "medium"
+    },
+    {
+      "principle": "Zero-Gap Dialogue",
+      "description": "Breaths and silence eliminated, minimal frames between sentences",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Hyper-Paced Visual Editing",
+      "description": "Rapid visual changes every 1.5-3 seconds with zero tolerance for static shots",
+      "implementation": [
+        "Cut or visual change every 1.5-3 seconds maximum",
+        "Use VFX, motion graphics, and green screen extensively",
+        "Quick cuts to maintain relentless energy",
+        "Punch-ins and zooms for emphasis",
+        "B-roll inserted constantly over dialogue",
+        "Music swells and drops aligned with content peaks",
+        "Colors: bright, saturated visuals"
+      ],
+      "timing": "Every 1.5-3 seconds continuously",
+      "examples": [
+        "Talking head (2s) → cut to reaction (1s) → b-roll (2s) → graphic (1s)",
+        "Challenge footage: rapid cuts between participants and results",
+        "Explanation: fast graphics pop in sync with speech"
+      ],
+      "tools": [
+        "Premiere Pro / DaVinci Resolve (rapid cutting)",
+        "After Effects (VFX and motion graphics)",
+        "Green screen workflows"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Maximum retention for younger audiences",
+          "con": "Can be exhausting for mature audiences"
+        },
+        {
+          "pro": "High stimulation prevents boredom",
+          "con": "May feel formulaic or 'soulless' without genuine content"
+        }
+      ]
+    },
+    {
+      "name": "Rule of Six Editing Philosophy",
+      "description": "Prioritize emotion and story over technical perfection in every cut decision",
+      "implementation": [
+        "Cut decisions prioritized: Emotion 51%, Story 23%, other 26%",
+        "Each cut must advance emotion or story",
+        "Technical perfection secondary to emotional impact",
+        "Use cuts to create emotional arcs",
+        "Jump continuity if it serves emotion",
+        "Focus on how cut makes viewer feel",
+        "Every scene must have emotional reason for existence"
+      ],
+      "timing": "Planning and execution throughout edit",
+      "examples": [
+        "Cut because punchline lands harder",
+        "Cut to reaction for emotional amplification",
+        "Cut away before shot feels 'done' to maintain energy"
+      ],
+      "tools": [
+        "Walter Murch Rule of Six reference",
+        "Emotional beat mapping",
+        "Timeline markers for emotional peaks"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Every cut serves clear purpose",
+          "con": "Requires strong emotional understanding from editor"
+        },
+        {
+          "pro": "Creates cohesive emotional experience",
+          "con": "May disregard technical continuity"
+        }
+      ]
+    },
+    {
+      "name": "Colorful Kinetic Typography",
+      "description": "Large, bold, shaking text with bright colors for maximum visibility and energy",
+      "implementation": [
+        "Large, bold fonts with heavy outlines",
+        "Bright colors: yellow, green, pink, orange",
+        "Animations: shaking, rotating, scaling",
+        "Pop-in, bounce, slide animations",
+        "Words appear exactly when spoken",
+        "Text adds to energy, not just displays",
+        "Use sparingly but effectively for emphasis"
+      ],
+      "timing": "Synced to key words and phrases",
+      "examples": [
+        "'WINNER!' - large shaking gold text",
+        "'1 MILLION DOLLARS' - bouncing bold yellow with outline",
+        "'FAIL' - red shaking text with lightning effect"
+      ],
+      "tools": [
+        "After Effects (custom kinetic typography)",
+        "Animation Composer (Mister Horse)",
+        "CapCut text effects for rapid iteration"
+      ],
+      "pros_cons": [
+        {
+          "pro": "High visibility, adds energy",
+          "con": "Can feel over-stimulating with overuse"
+        },
+        {
+          "pro": "Reinforces spoken words visually",
+          "con": "Distracting if not carefully timed"
+        }
+      ]
+    },
+    {
+      "name": "SFX-Driven Pacing",
+      "description": "Sound effects on every transition and emphasis point for tactile feedback",
+      "implementation": [
+        "Whoosh on every cut or transition",
+        "Impact sounds on emphasis moments",
+        "Pop sounds on text appearances",
+        "Swishes on camera movements",
+        "Layer SFX to match visual intensity",
+        "Use sound design to heighten impact",
+        "Sync SFX perfectly to visual frame accuracy"
+      ],
+      "timing": "Synced to every transition and emphasis",
+      "examples": [
+        "Cut: whoosh sound",
+        "Money reveal: cash register or impact sound",
+        "Winner announcement: triumph sound with swelling music"
+      ],
+      "tools": [
+        "SFX libraries with whooshes and impacts",
+        "Audio timeline sync tools",
+        "MIDI-triggered SFX workflows"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Enhances interactivity and impact",
+          "con": "Overuse becomes repetitive or annoying"
+        },
+        {
+          "pro": "Adds professional polish",
+          "con": "Requires extensive SFX library"
+        }
+      ]
+    },
+    {
+      "name": "High-Energy Music Integration",
+      "description": "Background music tracks that maintain high energy throughout with strategic drops",
+      "implementation": [
+        "Select upbeat, high-energy music throughout",
+        "Music peaks aligned with content climaxes",
+        "Music drops on key revelations or jokes",
+        "Use music swells before big reveals",
+        "Maintain engaging rhythm throughout",
+        "Avoid music that feels background-y",
+        "Music contributes to overall energy level"
+      ],
+      "timing": "Continuous with strategic drop moments",
+      "examples": [
+        "Buildup with rising music → reveal with drop",
+        "Challenge section: fast energetic track",
+        "Climax: music swells to maximum energy"
+      ],
+      "tools": [
+        "Music libraries with energy filters",
+        "Stem editing for dynamic control",
+        "Audio automation and ducking"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Drives emotional energy throughout",
+          "con": "May overwhelm delicate content if not balanced"
+        },
+        {
+          "pro": "Creates consistent high-energy experience",
+          "con": "High-energy music can become fatiguing in long videos"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "high_energy_style_profile": {
+      "target_audience": "younger_broad_appeal",
+      "cut_frequency": "every_1.5-3_seconds",
+      "visual_density": "maximum_hyper_stimulus",
+      "emotional_tone": "high_energy_excitement",
+      "primary_priorities": {
+        "emotion": "51%",
+        "story": "23%",
+        "technical": "26%"
+      },
+      "characteristics": {
+        "visuals": ["VFX", "green_screen", "vibrant_colors"],
+        "text": ["large", "bold", "colorful", "animated"],
+        "audio": ["high_energy", "SFX_heavy", "dynamic_music"],
+        "pacing": ["relentless", "hyper", "rapid"]
+      }
+    },
+    "cutting_priority_matrix": {
+      "emotion_first": {
+        "question": "Does this cut advance emotion?",
+        "yes": "Cut for emotional impact",
+        "no": "Reconsider cut"
+      },
+      "story_second": {
+        "question": "Does this cut advance story?",
+        "yes": "Cut for narrative",
+        "no": "May need revision"
+      },
+      "technical_last": {
+        "question": "Is technical continuity perfect?",
+        "no": "Still cut if emotion/story served"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

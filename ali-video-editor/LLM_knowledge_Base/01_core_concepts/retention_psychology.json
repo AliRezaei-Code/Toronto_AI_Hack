@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "title": "Retention Psychology and Cognitive Load Management",
+    "category": "core_concepts",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pattern_interrupts.json", "dopamine_engagement.json"]
+  },
+  "summary": "Retention is engineered by managing viewer cognitive load, leveraging dopamine feedback loops, and maintaining attention through strategic pacing. The human brain filters for relevance - viewers don't lack attention span, they lack relevant stimulation.",
+  "core_principles": [
+    {
+      "principle": "Dopamine Loop and Novelty Bias",
+      "description": "The brain releases dopamine when encountering novel visual stimuli or correctly predicting outcomes. This creates a reward cycle that reinforces continued watching.",
+      "importance": "high"
+    },
+    {
+      "principle": "Cognitive Load Management",
+      "description": "Under-stimulation causes boredom (click away), over-stimulation causes fatigue (quit). Optimal retention occupies a 'flow state' between extremes with dynamic pacing.",
+      "importance": "high"
+    },
+    {
+      "principle": "3-5 Second Habituation Threshold",
+      "description": "Visual stasis leads to brain disengagement. Static shots longer than 3-5 seconds cause attention drift. Visual novelty (pattern interrupts) re-engages predictive processing.",
+      "importance": "high"
+    },
+    {
+      "principle": "Click-Satisfaction Gap",
+      "description": "Viewers click with specific value expectations. If video doesn't validate that expectation immediately (first frame), cognitive dissonance causes abandonment.",
+      "importance": "high"
+    },
+    {
+      "principle": "First 30-Second Drop-off",
+      "description": "Statistically, most viewer drop-off occurs in first 30 seconds. This is the 'churn phase' where retention hooks must grab attention before viewer evaluates value.",
+      "importance": "medium"
+    },
+    {
+      "principle": "Breathing Room for Consolidation",
+      "description": "Over-editing causes cognitive exhaustion. Strategic use of lower visual density moments (3-5 seconds post-climax) allows information processing and emotional resonance.",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Dynamic Pacing Strategy",
+      "description": "Oscillate between fast editing (engages thinking brain/neocortex) and slow shots (engages feeling brain/limbic system) to prevent fatigue while maintaining engagement.",
+      "implementation": [
+        "Speed up during information-dense segments",
+        "Slow down for emotional processing or emphasis",
+        "Use rhythm that mirrors natural attention fluctuations"
+      ],
+      "timing": "Continuous throughout video",
+      "examples": [
+        "Fast cuts during explanation of complex topic",
+        "Lingling shot on face for emotional reaction",
+        "Speed ramping through boring setup, slow on reveal"
+      ],
+      "tools": [
+        "Any NLE with speed control",
+        "Premiere Pro Speed Ramping",
+        "DaVinci Resolve Retime Controls"
+      ],
+      "pros_cons": [
+        "Prevents both boredom and fatigue",
+        "Creates rhythmic viewing experience",
+        "Requires editorial skill to balance correctly"
+      ]
+    },
+    {
+      "name": "Cold Open with Visual Thesis",
+      "description": "Bypass introductions and logos. Start immediately with video's climax or strongest visual to create 'visual thesis statement' that validates thumbnail promise.",
+      "implementation": [
+        "Show climax briefly in first 3-5 seconds",
+        "Create 'curiosity gap' - viewer sees result but not method",
+        "Align with thumbnail promise instantly"
+      ],
+      "timing": "First 5 seconds critical",
+      "examples": [
+        "Show completed project before showing how to build it",
+        "Flash-forward to emotional peak, then cut back",
+        "Display shocking statistic before context"
+      ],
+      "tools": ["Standard video editing", "Preview clips"],
+      "pros_cons": [
+        "Validates click expectation immediately",
+        "Creates curiosity that compels viewing",
+        "Must deliver on promise or feels like clickbait"
+      ]
+    },
+    {
+      "name": "Context Switching Pattern Interrupt",
+      "description": "Reset viewer's brain by changing context when content becomes dry or complex. Prevents mental fatigue from prolonged processing.",
+      "implementation": [
+        "Identify complex or dry segments",
+        "Insert sudden change in setting or visual style",
+        "Return to main content refreshed state"
+      ],
+      "timing": "Every 30-60 seconds during complex content",
+      "examples": [
+        "Technical explanation → comedic skit → back to explanation",
+        "Screen recording → live action demonstration → back to screen",
+        "Serious topic → personal story → back to topic"
+      ],
+      "tools": ["Any video editor", "Green screen for easy context switches"],
+      "pros_cons": [
+        "Resets attention dramatically",
+        "Adds variety and entertainment value",
+        "Must remain thematically relevant"
+      ]
+    },
+    {
+      "name": "Hold Frame for Educational Content",
+      "description": "When displaying complex diagrams or information, hold shot longer than usual to allow cognitive processing and prevent information overload.",
+      "implementation": [
+        "Identify complex information displays",
+        "Hold shot 2-3x longer than typical",
+        "Use kinetic typography to guide eye through information"
+      ],
+      "timing": "During educational/instructional segments",
+      "examples": [
+        "Hold complex diagram while explaining",
+        "Keep formula on screen during calculation",
+        "Display process flowchart fully visible"
+      ],
+      "tools": ["Standard editing", "延长持续时间 beyond typical pacing"],
+      "pros_cons": [
+        "Prevents cognitive overload for learning",
+        "Allows information absorption",
+        "Can feel slow if overused in fast content"
+      ]
+    }
+  ],
+  "data_structures": {
+    "cognitive_load_matrix": {
+      "under_stimulation": {
+        "symptoms": ["Static visuals", "Long pauses", "Monotonous delivery"],
+        "result": "Boredom - brain seeks new stimulation",
+        "viewer_action": "Click away to more stimulating content"
+      },
+      "flow_state": {
+        "symptoms": ["Dynamic pacing", "Varied visual density", "Rhythmic editing"],
+        "result": "Engaged - sustained attention",
+        "viewer_action": "Continue watching, high retention"
+      },
+      "over_stimulation": {
+        "symptoms": ["Rapid cuts every <1s", "Constant flashing lights", "Loud noises"],
+        "result": "Sensory fatigue - cognitive exhaustion",
+        "viewer_action": "Exit due to overwhelming processing"
+      }
+    },
+    "retention_benchmarks_by_length": {
+      "short_videos": {
+        "duration": "< 5 minutes",
+        "target_retention": "> 70%"
+      },
+      "medium_videos": {
+        "duration": "5-15 minutes",
+        "target_retention": "> 50-60%"
+      },
+      "long_videos": {
+        "duration": "> 15 minutes",
+        "target_retention": "> 40-50%"
+      }
+    },
+    "critical_time_windows": {
+      "first_8_seconds": {
+        "importance": "Highest",
+        "function": "Hook viewer attention",
+        "technique": "Deploy strongest visual assets"
+      },
+      "first_30_seconds": {
+        "importance": "Very High",
+        "function": "Validate click expectation",
+        "technique": "Deliver on thumbnail promise immediately"
+      },
+      "30-60_seconds": {
+        "importance": "High",
+        "function": "Establish value proposition",
+        "technique": "Show what video will deliver"
+      },
+      "mid_video": {
+        "importance": "Medium",
+        "function": "Prevent dropout from boredom/fatigue",
+        "technique": "Use pattern interrupts, breathing room"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Retention Rabbit - Ultimate Guide to YouTube Audience Retention",
+      "url": "https://www.retentionrabbit.com/blog/ultimate-guide-youtube-audience-retention",
+      "relevance": "high"
+    },
+    {
+      "source": "Solveig Multimedia - YouTube Algorithm 2025",
+      "url": "https://www.solveigmm.com/blog/en/how-the-youtube-algorithm-works-in-2025/",
+      "relevance": "high"
+    },
+    {
+      "source": "Stream Creative - Video Pattern Interruption",
+      "url": "https://www.streamcreative.com/blog/what-is-video-pattern-interruption-with-examples",
+      "relevance": "medium"
+    },
+    {
+      "source": "AIR.io - Advanced Retention Editing",
+      "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8",
+      "relevance": "high"
+    }
+  ]
+}

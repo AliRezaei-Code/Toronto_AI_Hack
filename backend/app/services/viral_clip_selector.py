@@ -28,32 +28,24 @@ logger = logging.getLogger(__name__)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "your_openai_api_key_here")
 
 
-VIRAL_SELECTION_PROMPT = """You are an expert viral video editor for TikTok, Instagram Reels, and YouTube Shorts.
+VIRAL_SELECTION_PROMPT = """You are an expert video editor for short-form content (TikTok, Instagram Reels, YouTube Shorts).
 
-Your task is to analyze the transcript below and identify {max_clips} segments (each {min_duration}-{max_duration} seconds) that have the highest potential to go viral.
+Your task is to analyze the transcript below and identify {max_clips} interesting segments (ideally {min_duration}-{max_duration} seconds, but shorter is OK) that would work well as standalone clips.
 
-## Selection Criteria
+## Selection Criteria (in order of priority)
 
-1. **Strong Hook (First 3 Seconds)**
-   - Question hooks: "Did you know that...?" "What if I told you...?"
-   - Shock hooks: Surprising statistics, controversial opinions
-   - Story hooks: "So this one time..." "Here's what happened when..."
-   - Result hooks: "I made $X doing this..." "This increased our sales by..."
+1. **Self-Contained**: The segment makes sense on its own without additional context
 
-2. **Self-Contained Story Arc**
-   - Clear beginning, middle, and end
-   - No external context required (don't reference "this chart" without showing it)
-   - Complete thought that stands alone
+2. **Interesting Content**: Could be any of:
+   - A complete thought or idea
+   - A story or anecdote
+   - An insight or tip
+   - Something funny or emotional
+   - An explanation of something
 
-3. **High Emotional Energy**
-   - Excitement, surprise, controversy, humor
-   - Moments of tension or resolution
-   - Personal stories with emotional stakes
+3. **Good Start**: The segment begins at a natural starting point (not mid-sentence)
 
-4. **Quotable/Shareable**
-   - Contains memorable phrases
-   - Actionable advice or insight
-   - "I need to save this" factor
+4. **Good End**: The segment ends at a natural stopping point
 
 ## Output Format
 
@@ -63,18 +55,17 @@ Return a JSON object with this structure:
         {{
             "start_time": 45.2,
             "end_time": 102.5,
-            "virality_score": 85,
-            "hook_type": "result",
-            "hook_strength": 90,
-            "summary": "Speaker shares how they 10x'd their revenue with one change",
+            "virality_score": 70,
+            "hook_type": "story",
+            "hook_strength": 70,
+            "summary": "Speaker explains their approach to problem X",
             "suggested_titles": [
-                "This ONE change 10x'd my revenue",
-                "The secret to scaling your business",
-                "Why most entrepreneurs fail (and how to avoid it)"
+                "How I handle X",
+                "My approach to X"
             ],
-            "emphasis_words": ["10x", "revenue", "secret", "change"],
+            "emphasis_words": ["important", "key"],
             "speakers": [0],
-            "reasoning": "Strong result-driven hook with specific numbers. Complete story with clear takeaway."
+            "reasoning": "Complete explanation that stands alone well."
         }}
     ],
     "selection_reasoning": "Overall explanation of why these clips were selected..."
@@ -83,11 +74,10 @@ Return a JSON object with this structure:
 ## Important Rules
 
 1. Timestamps must be EXACT - use the word-level timestamps provided
-2. Each clip must be between {min_duration} and {max_duration} seconds
-3. Clips should NOT overlap
-4. Avoid segments that heavily reference visual content ("look at this graph")
-5. Prioritize segments where the speaker's energy is highest
-6. Virality score should reflect realistic viral potential (80+ is exceptional)
+2. ALWAYS return {max_clips} clips - pick the best available moments even if they're not perfect
+3. Prefer clips in the {min_duration}-{max_duration} second range, but shorter clips are acceptable
+4. Clips should NOT overlap
+5. Pick segments that START and END cleanly (not mid-thought)
 
 ## Speaker Information
 {speaker_info}
@@ -112,7 +102,7 @@ class ViralClipSelector:
         transcript: Transcript | DiarizationResult,
         job_id: str,
         max_clips: int = 5,
-        min_duration: float = 30.0,
+        min_duration: float = 1.0,
         max_duration: float = 90.0,
         hook_types: Optional[List[HookType]] = None,
     ) -> ViralClipSelection:
@@ -204,14 +194,13 @@ class ViralClipSelector:
                     transcript_text=clip_transcript,
                 )
 
-                # Validate duration
-                if min_duration <= clip.duration <= max_duration:
-                    clips.append(clip)
-                else:
-                    logger.warning(
+                # Log duration but always include the clip
+                if not (min_duration <= clip.duration <= max_duration):
+                    logger.info(
                         f"[ViralClipSelector] Clip duration {clip.duration}s "
-                        f"outside range {min_duration}-{max_duration}s, skipping"
+                        f"outside preferred range {min_duration}-{max_duration}s, but including anyway"
                     )
+                clips.append(clip)
 
             except Exception as e:
                 logger.warning(f"[ViralClipSelector] Failed to parse clip: {e}")
@@ -299,7 +288,7 @@ async def select_viral_clips(
     transcript: Transcript | DiarizationResult,
     job_id: str,
     max_clips: int = 5,
-    min_duration: float = 30.0,
+    min_duration: float = 15.0,
     max_duration: float = 90.0,
 ) -> ViralClipSelection:
     """

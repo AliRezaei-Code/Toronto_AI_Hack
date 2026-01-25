@@ -1,0 +1,286 @@
+{
+  "meta": {
+    "title": "Spatial Dynamics: Zoom, Scale, and Maps",
+    "category": "Visual Editing",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pattern_interrupts.json", "visual_cues.json"]
+  },
+  "summary": "Camera manipulation and spatial visualization techniques that control viewer focus, create immersion, and provide context through scale and movement.",
+  "core_principles": [
+    {
+      "principle": "Continuous Motion",
+      "description": "Static shots create zero new visual information; subtle continuous motion keeps visual cortex engaged",
+      "importance": "high"
+    },
+    {
+      "principle": "Spatial Psychology",
+      "description": "Zoom in signals importance and intimacy; zoom out reveals context and signals segment conclusion",
+      "importance": "high"
+    },
+    {
+      "principle": "3D Spatial Environment",
+      "description": "Treating 2D graphics as 3D objects with depth, lighting, and camera movement creates immersion",
+      "importance": "medium"
+    },
+    {
+      "principle": "Grounding in Reality",
+      "description": "Maps, textures, and physical object treatments ground digital content in reality, increasing perceived value",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Dynamic Zoom (Ken Burns Effect)",
+      "description": "Subtle continuous scale change (5-10%) on static clips to create perpetual motion",
+      "implementation": [
+        "Apply keyframed scale from 100% to 105-110% over clip duration",
+        "Use ease-in and ease-out for organic start/stop",
+        "Focus on subject, maintain composition integrity",
+        "Apply to any static image or tripod shot",
+        "Vary speed based on emotional content (slower for emotion, faster for energy)",
+        "Combine with subtle position keyframes for push/pull effect"
+      ],
+      "timing": "Continuous throughout static shots",
+      "examples": [
+        "Talking head: 100% → 107% over 30 seconds",
+        "Photo: 100% → 108% zoom toward face over 8 seconds",
+        "Screenshare: 105% → 110% subtle push during explanation"
+      ],
+      "tools": [
+        "DaVinci Resolve (Dynamic Zoom tool, Inspector panel)",
+        "Premiere Pro (Scale keyframes, ease-in/out)",
+        "Final Cut Pro (Ken Burns effect)",
+        "CapCut (Auto-zoom style effects)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents static boredom, organic feel",
+          "con": "Over-zoom can soften image quality"
+        },
+        {
+          "pro": "Subtle, subconscious engagement",
+          "con": "Requires careful keyframing for smooth results"
+        }
+      ]
+    },
+    {
+      "name": "Punch-In/Cut Zoom",
+      "description": "Rapid, deliberate camera zoom (100% → 130%+) used for emphasis, jokes, or dramatic moments",
+      "implementation": [
+        "Cut on significant word or beat",
+        "Rapid zoom (1-2 frame punch",
+        "Use for punchlines, revelations, or emphasis",
+        "Combine with subtle rotation for dynamic feel",
+        "Return to wide shot for relaxation",
+        "Can be achieved with camera zoom or digital crop",
+        "Consider audio impact on cut"
+      ],
+      "timing": "Instant, 1-2 frame animation",
+      "examples": [
+        "Speech: 'THIS matters' → punch-in to close-up",
+        "Joke delivery → punch-in at punchline",
+        "Revelation: zoom to 140% on the reveal"
+      ],
+      "tools": [
+        "Premiere Pro (Transform effect, keyframes)",
+        "DaVinci Resolve (Zoom controls, inspector)",
+        "Camera (optical zoom during recording)",
+        "CapCut (Zoom effects presets)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Creates dramatic emphasis and urgency",
+          "con": "Overuse becomes jarring or comical"
+        },
+        {
+          "pro": "Effective for emphasis and humor",
+          "con": "Can reduce image quality with digital zoom"
+        }
+      ]
+    },
+    {
+      "name": "Vox/Johnny Harris Map Animations",
+      "description": "Cinematic 3D map animations with texture, lighting, and virtual camera movement",
+      "implementation": [
+        "Use real geographic data (OpenStreetMap)",
+        "Apply paper texture, folds, grain for physical object look",
+        "Add lighting vignettes and drop shadows for depth",
+        "Create 3D camera movement: swoops, rotations, zooms",
+        "Animate paths and routes dynamically",
+        "Pop labels and markers with smooth animations",
+        "Ground narrative with spatial context"
+      ],
+      "timing": "Throughout section, 8-30 second shots",
+      "examples": [
+        "Migration story: camera swoops across map following route",
+        "Conflict region: rotating camera reveals geography",
+        "Travel vlog: animated line draws path between destinations"
+      ],
+      "tools": [
+        "After Effects (GEOlayers 3 plugin, 3D camera tracker)",
+        "CapCut (Travel Route animation)",
+        "Filmora (Travel Route features)",
+        "Blender (3D map projection)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Creates high-value, professional appearance",
+          "con": "Requires significant skill and time"
+        },
+        {
+          "pro": "Grounds content in reality, adds production value",
+          "con": "Learning curve for advanced techniques"
+        }
+      ]
+    },
+    {
+      "name": "Mixed Media Collage Style",
+      "description": "Combining video, photography, paper textures, and hand-drawn elements for tactile visual aesthetic",
+      "implementation": [
+        "Combine video clips with still photos and graphics",
+        "Apply paper grain, texture overlays, film effects",
+        "Use paper tear transitions between scenes",
+        "Add scan lines, light leaks, or analog artifacts",
+        "Draw glowing lines or circles over footage (rotoscoping)",
+        "Treat digital assets as physical objects with wear",
+        "Mix frame rates (lower fps for hand-drawn look)"
+      ],
+      "timing": "Throughout video for stylistic consistency",
+      "examples": [
+        "Scene A → paper tears away → Scene B",
+        "Video background → photo with paper texture overlays",
+        "Tutorial footage → hand-drawn arrows highlight elements"
+      ],
+      "tools": [
+        "After Effects (textures, masking, rotoscoping)",
+        "DaVinci Resolve (film effects, overlays)",
+        "CapCut (paper tear presets, texture effects)",
+        "Green screen paper tear assets"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Stands out from pristine 4K digital content",
+          "con": "Visual noise may distract from core message"
+        },
+        {
+          "pro": "Builds unique brand identity",
+          "con": "Time-consuming to execute consistently"
+        }
+      ]
+    },
+    {
+      "name": "3D Projection Mapping",
+      "description": "Converting 2D archival photos into 3D scenes by projecting onto 3D geometry",
+      "implementation": [
+        "Import flat archival image",
+        "Create or match 3D geometry (walls, planes, terrain)",
+        "Project image onto 3D geometry in software",
+        "Animate virtual camera through the 3D scene",
+        "Add subtle parallax and depth effects",
+        "Match perspective to create immersive environment",
+        "Use for historical content, documentary storytelling"
+      ],
+      "timing": "10-30 second sequences",
+      "examples": [
+        "Old building photo → camera moves through entrance",
+        "Battle scene → camera pans across battlefield",
+        "Portrait → camera circles subject"
+      ],
+      "tools": [
+        "Blender (projection mapping, 3D modeling)",
+        "After Effects (3D camera, camera projection effect)",
+        "Nuke (3D projection toolset)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Brings static history to life, creates immersion",
+          "con": "Highly technical, requires 3D skills"
+        },
+        {
+          "pro": "Dramatically increases production value",
+          "con": "Time-intensive workflow"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "dynamic_zoom_parameters": {
+      "scale_range": {
+        "start": 100,
+        "end": 105,
+        "maximum": 110
+      },
+      "duration_factor": "clip_length",
+      "easing": {
+        "type": "bezier",
+        "start": "slow",
+        "middle": "linear",
+        "end": "slow"
+      },
+      "subject_tracking": "maintain_focus_center",
+      "quality_preservation": "max_zoom_110%"
+    },
+    "zoom_psychology_map": {
+      "zoom_in": {
+        "signal": "importance, intimacy, urgency, emphasis",
+        "scale": "100-130%",
+        "duration": "instant-2s",
+        "use_case": "punchlines, secrets, revelations"
+      },
+      "zoom_out": {
+        "signal": "context, conclusion, relaxation, transition",
+        "scale": "130-100%",
+        "duration": "1-3s",
+        "use_case": "segment endings, reveals, context"
+      },
+      "dynamic_zoom": {
+        "signal": "continuous engagement, subtle motion",
+        "scale": "100-107%",
+        "duration": "clip_length",
+        "use_case": "static shots, photos, talking head"
+      }
+    },
+    "vox_map_animation_schema": {
+      "visual_elements": {
+        "texture": "paper_grain, folds, scan_lines",
+        "lighting": "vignette, drop_shadow, gradient",
+        "depth": "parallax, multi-layer_projection"
+      },
+      "camera_movement": {
+        "type": ["swoop", "rotate", "zoom", "pan", "tilt"],
+        "speed": "smooth_ease-in-out",
+        "trajectory": "follow_path_or_route"
+      },
+      "animation_elements": {
+        "path": "animated_line_draw",
+        "markers": "pop_in_with_scale",
+        "labels": "slide_reveal",
+        "regions": "highlight_scale"
+      },
+      "data_source": "OpenStreetMap, real_geographic_data"
+    },
+    "mixed_media_elements": {
+      "texture_overlays": ["grain", "paper", "film_scan", "light_leak", "dust"],
+      "transition_styles": ["paper_tear", "tape_reveal", "slide_paper", "dissolve_with_noise"],
+      "hand_drawn_elements": ["glowing_lines", "arrows", "circles", "underlines", "doodles"],
+      "frame_rates": {
+        "video": "24-60fps",
+        "animated_assets": "12-24fps (for stop-motion look)",
+        "photos": "digital_zoom_animation"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "medium"
+    }
+  ]
+}

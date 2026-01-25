@@ -1,0 +1,273 @@
+{
+  "meta": {
+    "title": "AV Script Format and Scripting Structures",
+    "category": "scripting",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["narrative_techniques.json", "visual_cues.json", "pattern_interrupts.json"]
+  },
+  "summary": "A/V (Audio-Visual) script format separates auditory information from visual directives, forcing writer to visualize video before filming. This reveals visual gaps and ensures dynamic editing potential throughout content.",
+  "core_principles": [
+    {
+      "principle": "Two-Column Structure Mandate",
+      "description": "Audio on left (voiceover, dialogue), Visuals on right (B-roll, graphics, camera moves). Separation forces visualization and prevents 'talking head' fatigue.",
+      "importance": "high"
+    },
+    {
+      "principle": "Visual Gap Identification",
+      "description": "AV format makes visual gaps obvious - sections where audio continues without visual change. These gaps must be filled with B-roll, graphics, or camera moves.",
+      "importance": "high"
+    },
+    {
+      "principle": "Pacing Engineered in Script",
+      "description": "Punctuation and spacing in script provide natural cutting points and pacing guides for editor. Commas, ellipses, bold text indicate delivery nuances.",
+      "importance": "medium"
+    },
+    {
+      "principle": "Motion Design Integration",
+      "description": "Script must explicitly call for kinetic typography, data visualization, overlays. 'Text on screen: [text] animates in sync with word' format.",
+      "importance": "medium"
+    },
+    {
+      "principle": "Say-See Synchronization Planning",
+      "description": "Plan B-roll injection to synchronize visuals with spoken words. Visual rhythm should match verbal rhythm through careful script timing.",
+      "importance": "high"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "A/V Two-Column Table Format",
+      "description": "Industry-standard format with Audio column (left) and Visual column (right). Forces visualization and visual gap detection.",
+      "implementation": [
+        "Create two-column table or document",
+        "Left column: Voiceover, dialogue, sound cues",
+        "Right column: Camera shots, B-roll, graphics, text",
+        "Synchronize timing - visual aligns with audio",
+        "Identify gaps where visual = 'continue shot'"
+      ],
+      "timing": "Pre-production scripting phase",
+      "examples": [
+        "Left: 'The best way to learn coding is through practice...' | Right: Close-up on computer screen, fingers typing",
+        "Left: 'Here are the three steps...' | Right: Text overlay 'Step 1', 'Step 2', 'Step 3' appears",
+        "Left: 'When I first started...' | Right: Match cut to old photo/video archive"
+      ],
+      "tools": [
+        "Google Docs (tables)",
+        "Microsoft Word (tables)",
+        "Final Draft (AV script template)",
+        "StudioBinder AV script tool"
+      ],
+      "pros_cons": [
+        "Forces visualization before filming",
+        "Reveals visual gaps clearly",
+        "Industry-standard format",
+        "More time to write than prose",
+        "Requires learning new format"
+      ]
+    },
+    {
+      "name": "B-Roll Injection Specification",
+      "description": "Replace vague B-roll instructions with specific, detailed shot descriptions that sync with spoken content.",
+      "implementation": [
+        "Avoid: 'Host talks about hiking'",
+        "Use: 'B-roll: Low angle shot of boots hitting mud, rapid cut to drone shot of summit'",
+        "Match visual action to spoken timing",
+        "Include camera moves, angles, transitions"
+      ],
+      "timing": "Scripting and pre-production planning",
+      "examples": [
+        "'Speaker mentions boiling water' → 'Close-up: Water reaches rolling boil, steam rising'",
+        "'Explains screen recording' → 'B-roll: Actual screen recording showing the process'",
+        "'Describes hiking trail' → 'Medium shot: Trail winding through forest, then aerial: Mountain view'",
+        "'Talks about tools' → 'Specific shots: Each named tool clearly shown with label overlay'"
+      ],
+      "tools": ["Script writing", "Shot planning", "Location scouting"],
+      "pros_cons": [
+        "Visual rhythm matches verbal rhythm",
+        "Say-See synchronization maximizes retention",
+        "Editor has clear instructions",
+        "Requires production planning and B-roll access",
+        "More preparation time needed"
+      ]
+    },
+    {
+      "name": "Motion Design Prompt Integration",
+      "description": "Script explicitly calls for kinetic typography and data visualization with timing specifications.",
+      "implementation": [
+        "Use format: 'Text on screen: [content] animates in sync with word'",
+        "Specify animation style (pop-in, slide, reveal)",
+        "Include timing relative to speech",
+        "Describe visual style if important"
+      ],
+      "timing": "As content is spoken in script",
+      "examples": [
+        "'Text on screen: \\\"50% Retention\\\" animates in sync with word \\\"retention\\\"'",
+        "'Chart appears: Bar graph showing retention percentages as discussed'",
+        "'Counter appears: Numbers count up as statistics are announced'",
+        "'Title overlay: \\\"Mistake #1\\\" pops in with shake effect'"
+      ],
+      "tools": ["Script writing", "After Effects planning", "Motion graphics template selection"],
+      "pros_cons": [
+        "Reinforces message through dual coding",
+        "Guarantees visual interest points",
+        "Editor has clear motion design instructions",
+        "Requires motion graphics skills or templates",
+        "Can clutter if overused"
+      ]
+    },
+    {
+      "name": "Pacing Notes through Punctuation",
+      "description": "Use punctuation and formatting in script to indicate delivery pacing, natural cuts, and editorial rhythm.",
+      "implementation": [
+        "Commas: Brief pauses, breathing room",
+        "Ellipses (...): Longer pauses, dramatic effect",
+        "Bold text: Emphasis, volume increase, energy spike",
+        "Line breaks/Natural pauses: Cut points",
+        "CAPS: Important emphasis"
+      ],
+      "timing": "Throughout script flow",
+      "examples": [
+        "'This one setting... actually fixed the audio completely.' (ellipses = dramatic pause)",
+        "'The three steps are: step 1, step 2, and step 3.' (commas = list pacing)",
+        "'**NEVER** do this mistake.' (bold = emphasis/cut point)",
+        "'When I first started... I made every mistake in the book.' (dramatic pause)"
+      ],
+      "tools": ["Text formatting", "Script planning"],
+      "pros_cons": [
+        "Provides natural cutting points for editor",
+        "Guides speaker delivery timing",
+        "Builds editorial rhythm into script",
+        "Speaker must understand notation",
+        "Editor may override timing"
+      ]
+    },
+    {
+      "name": "Shot Notation and Camera Direction",
+      "description": "Include technical shot notation in visual column to guide cinematography and editing decisions.",
+      "implementation": [
+        "Use shot notation: WS (Wide Shot), MCU (Medium Close-up), CU (Close-up)",
+        "Include camera moves: PAN, TILT, DOLLY, ZOOM",
+        "Note transitions: MATCH CUT, CUT ON ACTION",
+        "Specify camera angle changes"
+      ],
+      "timing": "As specified in script",
+      "examples": [
+        "'Speaker explains' → 'MCU shot, camera pushes in slightly as importance increases'",
+        "'Big reveal' → 'Slow ZOOM IN on product, hold for emphasis'",
+        "'Transition to B-roll' → 'PAN right from face to start of B-roll sequence'",
+        "'Emotional moment' → 'CU on eyes, slow push in'"
+      ],
+      "tools": ["Script writing", "Camera operation", "Editorial planning"],
+      "pros_cons": [
+        "Guides camera work and editing simultaneously",
+        "Professional-level planning",
+        "Clear communication with cinematographer",
+        "Requires knowledge of shot terminology",
+        "May limit spontaneity"
+      ]
+    }
+  ],
+  "data_structures": {
+    "script_format_comparison": [
+      {
+        "type": "Standard Prose",
+        "description": "Dialogue written in paragraphs with minimal visual notes",
+        "visual_planning": "Low",
+        "retention_advantage": "Low - leads to talking head fatigue",
+        "ideal_use": "Simple vlogs, stream-of-consciousness content"
+      },
+      {
+        "type": "A/V Two-Column",
+        "description": "Audio on left, detailed visuals on right",
+        "visual_planning": "High - forces visualization",
+        "retention_advantage": "High - visual changes planned",
+        "ideal_use": "Explainers, documentaries, tutorials"
+      },
+      {
+        "type": "Storyline/Hybrid",
+        "description": "Narrative blocks with interspersed visual tags",
+        "visual_planning": "Moderate/High",
+        "retention_advantage": "Moderate/High - balance flow & planning",
+        "ideal_use": "Narrative storytelling, MrBeast-style challenges"
+      }
+    ],
+    "av_script_template": {
+      "header": {
+        "video_title": "string",
+        "duration": "estimated_minutes",
+        "script_date": "YYYY-MM-DD"
+      },
+      "columns": {
+        "audio": {
+          "content": ["Voiceover text", "Dialogue", "Sound effects", "Music cues"],
+          "format": "Time-stamped dialogue or narration"
+        },
+        "visual": {
+          "content": ["Camera shots", "B-roll footage", "Graphics/text", "Transitions"],
+          "format": "Synchronized with audio timing"
+        }
+      },
+      "timing_markers": {
+        "timecode": "00:00:00",
+        "duration": "estimated per scene",
+        "running_total": "cumulative time"
+      }
+    },
+    "visual_gap_detection": {
+      "gap_indicators": [
+        "Continue shot (no visual change)",
+        "Talking head persists > 10 seconds",
+        "No B-roll specified for spoken content",
+        "Static shot notation without motion"
+      ],
+      "gap_solutions": [
+        "Add B-roll injection",
+        "Insert camera angle change",
+        "Plan motion graphics/text overlay",
+        "Specify zoom or camera move",
+        "Add archival footage or stock"
+      ],
+      "gap_severity": {
+        "0-5_seconds": "minor - single camera change sufficient",
+        "5-10_seconds": "moderate - B-roll or zoom required",
+        "10+_seconds": "major - multiple visual changes needed"
+      }
+    },
+    "shot_notation_reference": {
+      "wide_shot": "WS - Full body/scene establish",
+      "medium_shot": "MS - Waist up",
+      "medium_close_up": "MCU - Chest up, standard for talking head",
+      "close_up": "CU - Shoulders/head or detail shot",
+      "extreme_close_up": "ECU - Eyes, mouth, specific detail",
+      "pan": "Horizontal camera rotation",
+      "tilt": "Vertical camera rotation",
+      "dolly": "Camera moves forward/backward",
+      "truck": "Camera moves left/right",
+      "zoom": "Focal length change (in/out)",
+      "match_cut": "Visual match between shots",
+      "cut_on_action": "Cut during movement/action"
+    }
+  },
+  "references": [
+    {
+      "source": "StudioBinder - YouTube Script Template",
+      "url": "https://www.studiobinder.com/templates/av-scripts/youtube-script-template/",
+      "relevance": "high"
+    },
+    {
+      "source": "TechSmith - How to Write a Script for a Video",
+      "url": "https://www.techsmith.com/blog/how-to-write-script-for-video/",
+      "relevance": "high"
+    },
+    {
+      "source": "Think Branded Media - Video Scripting 101",
+      "url": "https://thinkbrandedmedia.com/blog/video-scripting-101-key-elements-every-script-should-have/",
+      "relevance": "medium"
+    },
+    {
+      "source": "Videodeck - Skyrocket Your YouTube Retention With Script",
+      "url": "https://www.videodeck.co/blog/how-to-skyrocket-your-youtube-retention-with-the-right-video-script",
+      "relevance": "high"
+    }
+  ]
+}

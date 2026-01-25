@@ -1,0 +1,203 @@
+{
+  "meta": {
+    "title": "Narrative Techniques for Retention",
+    "category": "Scripting",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": [
+      "retention_psychology.json",
+      "pattern_interrupts.json",
+      "dopamine_engagement.json"
+    ]
+  },
+  "summary": "Psychological narrative structures that compel continued viewing through unresolved questions, shifting contexts, and breaking the fourth wall.",
+  "core_principles": [
+    {
+      "principle": "Open Loops (Zeigarnik Effect)",
+      "description": "Raise questions or mysteries early that are resolved later, leveraging psychological need for closure",
+      "importance": "high"
+    },
+    {
+      "principle": "Daisy-Chaining Loops",
+      "description": "Nest multiple open loops so that as one question is answered, another is raised, eliminating exit points",
+      "importance": "high"
+    },
+    {
+      "principle": "Context Switching",
+      "description": "Abrupt changes in setting or content type to reset viewer attention during dense or complex sections",
+      "importance": "medium"
+    },
+    {
+      "principle": "Meta-Commentary",
+      "description": "Breaking the fourth wall to acknowledge the production process, creating authenticity and immediacy",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Open Loop Structure",
+      "description": "Introduce a question, promise, or teaser early that creates psychological tension requiring resolution",
+      "implementation": [
+        "Identify the main value proposition or solution as the loop to close",
+        "Open with teaser: 'I'll show you X, but first we need to understand Y'",
+        "Create sub-loops throughout the video",
+        "Resolve main loop near the conclusion (not always at the very end)",
+        "Use loop resolution as dopamine payoff moments"
+      ],
+      "timing": "Hook within first 30 seconds, loop resolution at 80-90% of video",
+      "examples": [
+        " 'I found one setting that fixed my audio forever, but first let me show you why it matters'",
+        " 'This trick changed my entire workflow, and by the end of this video you'll know exactly how to use it'",
+        " 'There's a problem with [X] that almost nobody notices, and here's the solution (to be revealed)'"
+      ],
+      "tools": [
+        "Scripting templates with loop placeholders",
+        "Outline with loop closure points marked",
+        "Teleprompter apps for timing hooks"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Psychologically compels continued viewing",
+          "con": "If loop payoff is weak, viewer feels betrayed"
+        },
+        {
+          "pro": "Creates natural narrative structure and pacing",
+          "con": "Requires careful planning and script writing"
+        }
+      ]
+    },
+    {
+      "name": "Context Switch Pattern Interrupt",
+      "description": "Sudden change in visual or narrative context to reset viewer attention during dense content",
+      "implementation": [
+        "Identify sections of high cognitive load or complex theory",
+        "Plan a shift to different visual setting (e.g., studio to outdoor, office to green screen)",
+        "Insert comedic skit or storytelling segment between technical explanations",
+        "Use music change to reinforce context shift",
+        "Return to original content with viewer's attention reset"
+      ],
+      "timing": "Every 45-60 seconds during dense content",
+      "examples": [
+        "Technical explanation → Cut to brief comedic demonstration",
+        "Complex theory → Animated visualization or documentary B-roll",
+        "Studio talking head → Practical demonstration in field",
+        "Voiceover with graphics → On-screen host demonstration"
+      ],
+      "tools": [
+        "Multiple shooting locations or sets",
+        "Stock footage for location changes",
+        "Music library with varying moods",
+        "Teleprompter for maintaining flow"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents cognitive fatigue during complex content",
+          "con": "If shift feels disconnected, it can confuse narrative flow"
+        },
+        {
+          "pro": "Provides variety and maintains visual interest",
+          "con": "Requires more production planning and setup"
+        }
+      ]
+    },
+    {
+      "name": "Meta-Commentary / Fourth Wall Breaks",
+      "description": "Acknowledge the production process directly to create authenticity and engagement",
+      "implementation": [
+        "Script moments where host addresses viewers about the content structure",
+        "Call out to editor to perform specific actions (zoom, cut, sound effect)",
+        "Acknowledge filming process or mistakes authentically",
+        "Use self-aware humor about content creation tropes",
+        "Break format consciously as a pattern interrupt itself"
+      ],
+      "timing": "Strategic moments, typically 1-3 times per video",
+      "examples": [
+        " 'Editor, zoom in on my face right now for this part'",
+        " 'I know this sounds crazy, but stick with me'",
+        " 'We're going to cut away because you don't need to see 10 minutes of me fixing this'",
+        " 'I was going to edit this out, but it perfectly illustrates the point'"
+      ],
+      "tools": [
+        "Two-camera setup for reaction shots",
+        "Teleprompter for timed delivery",
+        "Sound effects for punctuation",
+        "Editing timeline markers"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Creates authenticity and connection with viewers",
+          "con": "Overuse can feel gimmicky or distracting"
+        },
+        {
+          "pro": "Breaks predictable format automatically",
+          "con": "Requires skilled delivery to feel natural"
+        }
+      ]
+    },
+    {
+      "name": "Nested Loop Architecture",
+      "description": "Structure video as series of daisy-chained questions where each answer raises new curiosity",
+      "implementation": [
+        "Map out 3-5 key questions to answer in video",
+        "Sequence questions so each flows naturally from previous answer",
+        "Use loops to bridge between major sections",
+        "Close smaller loops throughout video",
+        "Save primary loop resolution for climax or near-end",
+        "Create mini-loops for sub-points and examples"
+      ],
+      "timing": "Loop opening at start, sub-loops every 2-3 minutes, primary loop closure at 80-90%",
+      "examples": [
+        "Primary loop: 'What's the secret to X?' → Answers to Y, Z → Secret revealed",
+        "Loop chain: 'Why A fails? → How B works? → What happens with C? → The solution'",
+        "Sub-loops: 'What does X mean?' (answered in 30 seconds) raises 'How do I do it?' "
+      ],
+      "tools": [
+        "Script outline templates with loop markers",
+        "Mind mapping software for loop planning",
+        "Timing tools to balance loop openings and closings"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Eliminates natural exit points throughout video",
+          "con": "Complex to plan and requires tight script writing"
+        },
+        {
+          "pro": "Built-in dopamine hit structure",
+          "con": "If payoff is weak, loses trust with viewer"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "loop_framework": {
+      "primaryLoop": {
+        "question": "Statement of what viewer will learn or solve",
+        "openTimestamp": "0:00-0:30",
+        "closureTimestamp": "80-90% of video",
+        "payoffType": "solution, revelation, transformation"
+      },
+      "secondaryLoops": [
+        {
+          "question": "Sub-question 1",
+          "openTimestamp": "After hook, early section",
+          "closureTimestamp": "40% of video",
+          "bridgesTo": "Next section or loop"
+        }
+      ],
+      "loopTypes": ["knowledge gap", "mystery", "promise", "transformation", "comparison"]
+    },
+    "context_switch_template": {
+      "trigger": "Cognitive load indicator (complexity ≥ 7/10)",
+      "switchType": ["location change", "content type change", "tone shift", "format break"],
+      "duration": "15-60 seconds",
+      "recovery": "Return to main content with refocused viewer"
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

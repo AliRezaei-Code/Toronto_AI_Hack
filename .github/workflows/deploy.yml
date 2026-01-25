@@ -3,18 +3,21 @@
 # ===========================================
 # Builds Docker images for all services and deploys to VM
 #
-# Required GitHub Secrets:
-#   DEPLOY_HOST     - VM IP address or hostname
-#   DEPLOY_USER     - SSH username on VM
-#   DEPLOY_SSH_KEY  - Private SSH key for authentication
-#   OPENAI_API_KEY  - OpenAI API key for backend/mcp-server
+# Required GitHub Secrets (Settings > Secrets and variables > Actions > Secrets):
+#   DEPLOY_HOST            - VM IP address or hostname
+#   DEPLOY_USER            - SSH username on VM
+#   DEPLOY_SSH_KEY         - Private SSH key for authentication
+#   OPENAI_API_KEY         - OpenAI API key
+#   DEEPGRAM_API_KEY       - Deepgram API key
+#   GEMINI_API_KEY         - Google Gemini API key
+#   REPLICATE_API_KEY      - Replicate API key
+#   AWS_ACCESS_KEY_ID      - AWS access key
+#   AWS_SECRET_ACCESS_KEY  - AWS secret key
+#   LIVEKIT_API_KEY        - LiveKit API key
+#   LIVEKIT_API_SECRET     - LiveKit API secret
 #
-# Optional (only needed for PRIVATE repos/packages):
-#   PAT             - GitHub Personal Access Token (repo access)
-#                     Not needed if repo is public and packages inherit visibility
-#
-# Note: GITHUB_TOKEN is used for pushing images during build.
-#       For VM deployment, PAT is only needed if repo/packages are private.
+# Optional:
+#   PAT                    - GitHub Personal Access Token (for private repos)
 #
 # Triggers:
 #   - Push to production branch
@@ -41,14 +44,17 @@ jobs:
       matrix:
         include:
           - service: frontend
-            dockerfile: docker/frontend.Dockerfile
-            context: ./frontend
+            dockerfile: docker-deployment/frontend.Dockerfile
+            context: .
           - service: backend
-            dockerfile: docker/backend.Dockerfile
-            context: ./backend
+            dockerfile: docker-deployment/backend.Dockerfile
+            context: .
           - service: mcp-server
-            dockerfile: docker/mcp-server.Dockerfile
-            context: ./mcp-server
+            dockerfile: docker-deployment/mcp-server.Dockerfile
+            context: .
+          - service: video-processor
+            dockerfile: docker-deployment/video-processor.Dockerfile
+            context: .
 
     steps:
       - name: Checkout repository
@@ -150,16 +156,41 @@ jobs:
               cd "$REPO_DIR"
             fi
 
-            # Create .env file from secrets
+            # Create .env file
             echo "Creating .env file..."
             cat > .env <<EOF
+            # API Keys
             OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            REPLICATE_API_KEY=${{ secrets.REPLICATE_API_KEY }}
+
+            # Service URLs (internal docker network)
             NEXT_PUBLIC_API_URL=http://localhost:8000
-            SHARED_DATA_DIR=/shared-data
+            SERVER_URL=http://localhost:8000
             MCP_SERVER_URL=http://mcp-server:9000
+            VIDEO_PROCESSOR_URL=http://video-processor:8001
+
+            # LiveKit Configuration
+            LIVEKIT_URL=wss://retentio-hqfez291.livekit.cloud
+            LIVEKIT_API_KEY=${{ secrets.LIVEKIT_API_KEY }}
+            LIVEKIT_API_SECRET=${{ secrets.LIVEKIT_API_SECRET }}
+            NEXT_PUBLIC_LIVEKIT_URL=wss://retentio-hqfez291.livekit.cloud
+
+            # AWS Configuration
+            AWS_REGION=us-east-2
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            S3_BUCKET_NAME=retentio
+
+            # Paths
+            SHARED_DATA_DIR=/shared-data
+            RENDERED_SHORTS_DIR=/shared-data/rendered_shorts
+
+            # Docker image config
             IMAGE_PREFIX=${OWNER}
             IMAGE_TAG=latest
-            FRONTEND_PORT=3010
+            FRONTEND_PORT=3000
             EOF
 
             # Login to GitHub Container Registry (only if PAT is provided for private packages)
@@ -183,4 +214,4 @@ jobs:
             echo "========================================"
             echo ""
             echo "Service status:"
-            docker compose -f docker-compose.deployed.yml ps
+            dockercompose -f docker-compose.deployed.yml ps

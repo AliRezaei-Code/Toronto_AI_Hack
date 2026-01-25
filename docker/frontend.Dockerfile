@@ -3,13 +3,16 @@ FROM node:18-alpine AS base
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install -g pnpm
+RUN pnpm install 
 
 COPY . .
-RUN npm run build
+# Skip build for dev mode
+# RUN pnpm run build
+# RUN npm run build
 
 # Default port for Next.js
 ENV PORT=3000
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
