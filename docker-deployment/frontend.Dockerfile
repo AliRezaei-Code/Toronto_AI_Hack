@@ -14,4 +14,4 @@ RUN npm run build -- --no-lint --no-type-check || true
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
