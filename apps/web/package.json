@@ -1,5 +1,5 @@
 {
-  "name": "video-editor-frontend",
+  "name": "@repo/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next .turbo node_modules",
     "remotion:preview": "remotion preview src/remotion/index.ts",
     "remotion:render": "remotion render src/remotion/index.ts VideoEditor out/video.mp4",
     "remotion:render-short": "remotion render src/remotion/index.ts ShortForm out/short.mp4",
