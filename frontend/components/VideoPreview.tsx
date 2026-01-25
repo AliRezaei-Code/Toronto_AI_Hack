@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Pause, Download, Volume2, VolumeX, Maximize2, SkipForward, SkipBack } from 'lucide-react'
+import { emitParticleBurstFromEvent } from '@/lib/particle-events'
 
 interface VideoPreviewProps {
   videoUrl: string
@@ -184,12 +185,18 @@ export function VideoPreview({
           onLoadedMetadata={handleLoadedMetadata}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
-          onClick={togglePlay}
+          onClick={(event) => {
+            emitParticleBurstFromEvent(event, { color: '#60a5fa', intensity: 1.1 })
+            togglePlay()
+          }}
         />
         
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
           <motion.button
-            onClick={togglePlay}
+            onClick={(event) => {
+              emitParticleBurstFromEvent(event, { color: '#7dd3fc', intensity: 1 })
+              togglePlay()
+            }}
             className="p-4 bg-white/20 hover:bg-white/30 rounded-full pointer-events-auto"
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
@@ -216,7 +223,10 @@ export function VideoPreview({
           </motion.button>
           
           <motion.button
-            onClick={togglePlay}
+            onClick={(event) => {
+              emitParticleBurstFromEvent(event, { color: '#38bdf8', intensity: 1.2 })
+              togglePlay()
+            }}
             className="p-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
             title="Play/Pause (Space)"
             whileHover={{ scale: 1.08 }}
