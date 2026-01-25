@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "title": "Vox Style (Explainer Aesthetic)",
+    "category": "Style Guides",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["spatial_dynamics.json", "pacing_rhythm.json", "kinetic_typography.json"]
+  },
+  "summary": "Mixed-media explainer aesthetic using maps, archival footage, paper textures, and lower frame rates to make complex topics visually engaging and authoritative.",
+  "core_principles": [
+    {
+      "principle": "Tactile Visual Language",
+      "description": "Digital assets treated as physical objects with paper grain, folds, and texture",
+      "importance": "high"
+    },
+    {
+      "principle": "3D Map as Narrative Device",
+      "description": "Maps are storytelling elements with virtual camera movement, not mere geography tools",
+      "importance": "high"
+    },
+    {
+      "principle": "Lower Frame Rate Animation",
+      "description": "Animations at 8-12fps for stop-motion, hand-drawn feel that adds character",
+      "importance": "medium"
+    },
+    {
+      "principle": "Credibility Through Visual Evidence",
+      "description": "Use of archival footage, photographs, and data visualizations builds authority",
+      "importance": "high"
+    },
+    {
+      "principle": "Calm, Deliberate Pacing",
+      "description": "Information density prioritized over rapid cuts; viewer has time to process complex ideas",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Paper Texture and Mixed Media Integration",
+      "description": "Treating digital graphics as physical objects with paper grain, folds, and light",
+      "implementation": [
+        "Apply paper texture overlays to graphics",
+        "Add fold lines and edges to map elements",
+        "Use light vignettes and drop shadows for depth",
+        "Treat photos as printed objects with borders",
+        "Analog touches: film grain, light leaks, scan lines",
+        "Color grading: warm, filmic, not sterile",
+        "Mixed media: combine video, photos, graphics on 'pages'",
+        "Paper tear transitions between scenes"
+      ],
+      "timing": "Throughout video for visual consistency",
+      "examples": [
+        "Map with torn edges, fold lines, and paper texture",
+        "Photo as printed clipping with shadows",
+        "Graph on paper background with grain effect"
+      ],
+      "tools": [
+        "After Effects (texture overlays, masking)",
+        "Paper texture assets and overlays",
+        "Color grading for filmic look",
+        "Green screen paper transitions"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Grounds digital content in reality",
+          "con": "Significant production time and asset management"
+        },
+        {
+          "pro": "Creates distinctive, high-value aesthetic",
+          "con": "Complex workflow not suitable for rapid content"
+        }
+      ]
+    },
+    {
+      "name": "3D Map Animations as Storytelling",
+      "description": "Maps with virtual camera movement that tell narrative beyond simple location",
+      "implementation": [
+        "Map as physical object with texture and lighting",
+        "3D camera swoops, rotates, zooms over map",
+        "Animated paths showing movement or change",
+        "Color and light tell story of conflict or movement",
+        "Pop-up labels and markers with smooth animations",
+        "Use GEOlayers 3 for real geographic data",
+        "Ground narrative in spatial reality",
+        "Answer subconscious 'where are we?' for viewers"
+      ],
+      "timing": "10-30 second sequences as narrative needs",
+      "examples": [
+        "Migration story: camera follows route across animated map",
+        "Conflict region: camera rotates to show geography",
+        "History: map changes over time with animations"
+      ],
+      "tools": [
+        "After Effects with GEOlayers 3 plugin",
+        "GEOlayers 3 (real geographic data)",
+        "3D camera tools and expression animation",
+        "OpenStreetMap data integration"
+      ],
+      "pros_cons": [
+        {
+          "pro": "High-value, professional appearance",
+          "con": "Requires GEOlayers and 3D skills"
+        },
+        {
+          "pro": "Narrative power beyond static maps",
+          "con": "Time-intensive production"
+        }
+      ]
+    },
+    {
+      "name": "Lower Frame Rate Animation (Stop-Motion Feel",
+      "description": "Animations rendered at 8-12fps for hand-drawn, human aesthetic",
+      "implementation": [
+        "Render animations at 8-12fps (not standard 24-60fps",
+        "Use 'Posterize Time' effect to reduce frame rate",
+        "Mimics stop-motion or hand-drawn animation",
+        "Adds character and humanity compared to smooth 60fps",
+        "Apply to map animations, graphics, transitions",
+        "Contrast with 24-60fps live-action footage",
+        "Mixed frame rates create stylistic contrast"
+      ],
+      "timing": "Animated sequences throughout",
+      "examples": [
+        "Map animation at 12fps following story",
+        "Graphics pop with stop-motion timing",
+        "Transitions with choppy animation feel"
+      ],
+      "tools": [
+        "After Effects 'Posterize Time' effect",
+        "Frame rate settings in render queue",
+        "Design with frame-aware animations"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Adds character and human touch",
+          "con": "Not suitable for all content types"
+        },
+        {
+          "pro": "Distinctive Vox-style aesthetic",
+          "con": "Requires deliberate animation design"
+        }
+      ]
+    },
+    {
+      "name": "Sleek Minimalist Typography",
+      "description": "Clean, crisp text highlighting key data points without overwhelming",
+      "implementation": [
+        "Clean sans-serif fonts at appropriate sizes",
+        "Highlight key data points with text overlays",
+        "Minimal animations: subtle fades and slides",
+        "Use white text with subtle shadows on dark backgrounds",
+        "Color accenting for emphasis, not full-color text",
+        "Position to guide viewer eye without confusion",
+        "Maintain visual hierarchy information design",
+        "No shouting or kinetic shaking like Hormozi style"
+      ],
+      "timing": "As needed to highlight data and key points",
+      "examples": [
+        "Clean white text highlighting statistic: '72% increase'",
+        "Minimal labels appearing on map points",
+        "Sleek title cards with subtle animations"
+      ],
+      "tools": [
+        "After Effects text tools",
+        "Design-focused typography approach",
+        "Information design principles"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Professional, authoritative appearance",
+          "con": "Less attention-grabbing than high-energy styles"
+        },
+        {
+          "pro": "Supports complex information without distraction",
+          "con": "Requires strong information design skills"
+        }
+      ]
+    },
+    {
+      "name": "Archival Footage and Photo Integration",
+      "description": "Seamlessly integrating historical media with modern explanation for credibility",
+      "implementation": [
+        "Select relevant archival footage or photographs",
+        "Treat archival media with paper texture and borders",
+        "Use archival as evidence, not just B-roll",
+        "Color grading to match palette",
+        "Transitions: dissolve, slide, or paper tear",
+        "3D projection of photos to add movement",
+        "Combine with modern graphics on same 'page'",
+        "Maintain context with captions and annotations"
+      ],
+      "timing": "Throughout explanatory sections",
+      "examples": [
+        "Historical photo with paper texture and fold lines",
+        "Archival footage dissolve with modern explanation",
+        "Timeline animation combining modern and archival"
+      ],
+      "tools": [
+        "After Effects (projection mapping for photos)",
+        "Video effects for texture and color",
+        "Asset libraries for archival footage"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Builds credibility and authority",
+          "con": "Requires sourcing rights-cleared archival content"
+        },
+        {
+          "pro": "Visual variety and historical context",
+          "con": "Time-consuming to integrate seamlessly"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "vox_style_profile": {
+      "target_audience": "educational_news_consumers",
+      "aesthetic": "mixed_media_explainer",
+      "visual_language": "tactile_physical",
+      "information_density": "high_with_processing_time",
+      "characteristics": {
+        "visuals": ["maps", "archival_footage", "paper_textures"],
+        "animation": ["lower_fps", "stop_motion_feel"],
+        "typography": ["clean", "minimalist", "data-focused"],
+        "pacing": ["deliberate", "calm", "informative"]
+      }
+    },
+    "map_animation_attributes": {
+      "treatment": "physical_object_with_texture",
+      "camera": ["swoop", "rotate", "zoom", "pan"],
+      "elements": ["animated_paths", "popping_labels", "color_light_storytelling"],
+      "function": "narrative_beyond_geography",
+      "tools": ["GEOlayers_3", "3D_camera_tracker", "OpenStreetMap_data"]
+    },
+    "mixed_media_elements": {
+      "base_media": ["video_footage", "archival_photos"],
+      "treatments": ["paper_grain", "fold_lines", "vignettes"],
+      "animations": ["lower_fps", "stop_motion_timing"],
+      "transitions": ["paper_tear", "dissolve", "slide"],
+      "color_grade": "warm_filmic_not_sterile"
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

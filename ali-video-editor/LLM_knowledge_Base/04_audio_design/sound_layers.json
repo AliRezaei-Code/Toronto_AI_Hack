@@ -1,0 +1,297 @@
+{
+  "meta": {
+    "title": "Sound Layers and Soundscape Design",
+    "category": "Audio Design",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pattern_interrupts.json", "mixing_techniques.json"]
+  },
+  "summary": "Layered audio architecture that combines dialogue, ambience, SFX, and music to create immersive, retention-driving soundscapes.",
+  "core_principles": [
+    {
+      "principle": "Four-Layer Architecture",
+      "description": "Effective sound design requires dialogue, ambience, SFX, and music working in concert",
+      "importance": "high"
+    },
+    {
+      "principle": "Dialogue as Anchor",
+      "description": "Crisp, EQ'd dialogue is primary information carrier and must cut through mix",
+      "importance": "high"
+    },
+    {
+      "principle": "Ambience as Glue",
+      "description": "Room tone and environmental sounds prevent audio from feeling empty during pauses",
+      "importance": "medium"
+    },
+    {
+      "principle": "SFX as Punctuation",
+      "description": "Timed sound effects provide tactile feedback and make video feel responsive",
+      "importance": "high"
+    },
+    {
+      "principle": "Music as Emotion Director",
+      "description": "Background scores dictate energy and emotional state of the content",
+      "importance": "high"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Dialogue Layer Processing",
+      "description": "Processing spoken audio to maintain clarity as primary information carrier",
+      "implementation": [
+        "Record with quality microphone in treated space",
+        "Apply compression to control dynamics (2:1 to 4:1 ratio)",
+        "Use EQ to enhance intelligibility (boost 2-5kHz)",
+        "Reduce low-mud and high-hiss frequencies",
+        "Apply de-esser to tame sibilance",
+        "Use noise reduction if needed (gentle application)",
+        "Ensure dialogue peaks around -6dB in mix",
+        "Apply subtle saturation for warmth if desired"
+      ],
+      "timing": "Continuous throughout spoken sections",
+      "examples": [
+        "Host讲话: compressed, EQ boosted at 3kHz",
+        "Voiceover: de-essed, noise reduced, sat at -6dB",
+        "Interview: separate processing for each person"
+      ],
+      "tools": [
+        "Adobe Audition (multitrack editor, spectral frequency)",
+        "iZotope RX (noise reduction, de-click)",
+        "Audacity (basic compression, EQ)",
+        "Descript (audio enhancement features)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Clarity essential for communication and retention",
+          "con": "Over-processing can sound artificial"
+        },
+        {
+          "pro": "Professional perception when done right",
+          "con": "Requires good source recording"
+        }
+      ]
+    },
+    {
+      "name": "Ambience Layer Integration",
+      "description": "Environmental sounds that ground content in physical space and fill audio gaps",
+      "implementation": [
+        "Capture room tone during recording (30 seconds of silence)",
+        "Add nature sounds for outdoor scenes (wind, birds, water)",
+        "Include city ambience for urban settings (traffic, distant voices)",
+        "Apply subtle ambience under talking head shots",
+        "Layer multiple ambience elements for depth",
+        "Keep levels low (−30dB to −40dB, not obtrusive)",
+        "Crossfade ambiences with scene changes",
+        "Remove ambience during visual transitions for cleaner cuts"
+      ],
+      "timing": "Continuous, levels vary with content",
+      "examples": [
+        "Studio shot: subtle AC hum, distant city noise",
+        "Outdoor: wind, birds, nature sounds",
+        "Office: ambient office sounds (subtle)"
+      ],
+      "tools": [
+        "Recording devices (capture on-set ambience)",
+        "Ambient sound libraries",
+        "DAW ambient track management",
+        "Fades and automation for smooth blending"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents audio from feeling empty or artificial",
+          "con": "Can compete with dialogue if too loud"
+        },
+        {
+          "pro": "Creates sense of place and immersion",
+          "con": "May require multiple ambience recordings"
+        }
+      ]
+    },
+    {
+      "name": "Foley and SFX Layer",
+      "description": "Specific sound effects synchronized with visual actions to provide tactile feedback",
+      "implementation": [
+        "Whoosh on transitions and camera movements",
+        "Pop on text or image appearances",
+        "Click on mouse movements and UI interactions",
+        "Impact sounds on emphasis moments",
+        "Synchronize SFX timing to frame accuracy",
+        "Match visual impact with audio impact",
+        "Use SFX sparsely but strategically for punctuation",
+        "Layer multiple SFX elements for complex actions"
+      ],
+      "timing": "Synced to specific visual actions",
+      "examples": [
+        "Transition: whoosh sound on cut",
+        "Text pop: sound on word appearance",
+        "Mouse click: click sound synchronized",
+        "Emphasis: thud on bold statement"
+      ],
+      "tools": [
+        "Sound effects libraries (Epidemic Sound, Audiojungle)",
+        "DAW SFX tracks and timing",
+        "Premiere Pro audio sync markers",
+        "After Effects markers tied to audio"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Enhances interactivity and responsiveness",
+          "con": "Overuse becomes distracting"
+        },
+        {
+          "pro": "Gives professional polish and attention to detail",
+          "con": "Time-consuming to time precisely"
+        }
+      ]
+    },
+    {
+      "name": "Music Layer Integration",
+      "description": "Background music that controls energy and emotional tone throughout video",
+      "implementation": [
+        "Select music matching content energy and mood",
+        "Keep music levels below dialogue (−15dB to −20dB average)",
+        "Use music to signal energy shifts and transitions",
+        "Match music peaks to content highlights",
+        "Fade in/out for smooth transitions",
+        "Consider stem editing for detailed control",
+        "Adjust music density by content type (complex sections may need less)",
+        "Use music drops/pauses for emphasis"
+      ],
+      "timing": "Continuous but variable presence",
+      "examples": [
+        "High energy section: upbeat music at −15dB",
+        "Emotional section: melancholy music at −20dB",
+        "Transition: music swell on chapter change",
+        "Emphasis: music drop on key statement"
+      ],
+      "tools": [
+        "Music libraries with mood/energy filters",
+        "DAW music track automation",
+        "Sidechain compression for ducking",
+        "Stem editing (drums, bass, melody separation)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Directs viewer emotion and attention",
+          "con": "Can overwhelm dialogue if poorly balanced"
+        },
+        {
+          "pro": "Professional polish and engagement driver",
+          "con": "Music selection critical to brand alignment"
+        }
+      ]
+    },
+    {
+      "name": "Silence as a Layer",
+      "description": "Strategic use of silence as a powerful auditory pattern interrupt and emphasis tool",
+      "implementation": [
+        "Complete music cut on key revelations jokes",
+        "Hold silence for 1-3 seconds for emphasis",
+        "Use silence after high-energy section for contrast",
+        "Signal vulnerability or seriousness with silence",
+        "Remove ambience briefly for cleaner audio focus",
+        "Return to full mix after silence resolves",
+        "Use silence sparsely for impact (not throughout video)"
+      ],
+      "timing": "1-5 second sections strategically",
+      "examples": [
+        "Key statement: All audio except voice cut → silence → music returns",
+        "Punchline: music drops → joke → silence → music back",
+        "Serious moment: music fades out → spoken words → music returns"
+      ],
+      "tools": [
+        "DAW automation for volume cuts",
+        "Markers for silence points",
+        "Fade automation for smooth in/out"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Powerful emphasis tool, contrasts with sound",
+          "con": "Overuse becomes disruptive"
+        },
+        {
+          "pro": "Signals importance through absence",
+          "con": "May feel abrupt if not executed well"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "sound_layer_architecture": {
+      "primary": {
+        "name": "Dialogue",
+        "function": "information_carrier",
+        "target_level": "−6dB peak",
+        "processing": ["compression", "EQ", "de-essing", "noise_reduction"],
+        "frequency_focus": "2-5kHz (intelligibility"
+      },
+      "secondary": {
+        "name": "Music",
+        "function": "emotion_energy_director",
+        "target_level": "−15dB to −20dB average",
+        "processing": ["ducking", "EQ_pockets", "stem_editing"],
+        "characteristics": "match_mood_energy"
+      },
+      "tertiary": {
+        "name": "SFX_Foley",
+        "function": "tactile_feedback_punctuation",
+        "target_level": "−10dB to −20dB (variable)",
+        "timing": "synced_to_visual_actions",
+        "examples": ["whoosh", "pop", "click", "impact", "thud"]
+      },
+      "background": {
+        "name": "Ambience",
+        "function": "space_grounding_audio_glue",
+        "target_level": "−30dB to −40dB",
+        "processing": ["crossfade_scenes", "subtle_presence"],
+        "examples": ["room_tone", "wind", "birds", "city_hum"]
+      }
+    },
+    "sfx_mapping_table": {
+      "transitions": {
+        "visual": "cut_wipe_fade_dissolve",
+        "audio": "whoosh_swoosh_swish_transition_hit"
+      },
+      "text_graphics": {
+        "visual": "text_pop_in_slides_on",
+        "audio": "pop_click_typewriter_clack"
+      },
+      "ui_interactions": {
+        "visual": "mouse_click_button_press",
+        "audio": "click_tap_button_sound"
+      },
+      "emphasis": {
+        "visual": "punch_in_zoom_bold_text",
+        "audio": "thud_impact_hit_slam"
+      },
+      "movement": {
+        "visual": "object_movement_camera_motion",
+        "audio": "whoosh_swoosh_swish_movement"
+      }
+    },
+    "ambience_soundscape_catalog": {
+      "indoor": {
+        "studio": ["subtle_ac_hum", "room_tone", "equipment_fan"],
+        "office": ["keyboard_clicks", "distant_phones", "ambient_conversation"],
+        "home": ["refrigerator_hum", "street_outside_window_hushed"]
+      },
+      "outdoor": {
+        "nature": ["wind", "birds", "water_stream", "leaves_rustling"],
+        "urban": ["traffic_distant", "sirens_hushed", "street_noise"],
+        "quiet": ["subtle_wind", "ambient_silence_with_presence"]
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "medium"
+    }
+  ]
+}

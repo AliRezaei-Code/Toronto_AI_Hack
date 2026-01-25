@@ -1,0 +1,315 @@
+{
+  "meta": {
+    "title": "Kinetic Typography and Animated Text",
+    "category": "Visual Editing",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pattern_interrupts.json", "visual_cues.json"]
+  },
+  "summary": "Animated text techniques that reinforce audio messages through dual coding and maintain visual stimulation through constant motion.",
+  "core_principles": [
+    {
+      "principle": "Dual Coding Theory",
+      "description": "Syncing text animations with spoken words increases comprehension by engaging visual and auditory processing simultaneously",
+      "importance": "high"
+    },
+    {
+      "principle": "Continuous Motion",
+      "description": "Moving text prevents the eye from becoming dormant, keeping the visual cortex engaged",
+      "importance": "high"
+    },
+    {
+      "principle": "Visual Hierarchy",
+      "description": "Text overlays should be brief, bold, and positioned to guide viewer attention",
+      "importance": "high"
+    },
+    {
+      "principle": "Word-by-Word Pacing",
+      "description": "Display text at the speed of speech to lock viewer attention to the timeline",
+      "importance": "medium"
+    },
+    {
+      "principle": "Safe Zone Awareness",
+      "description": "Position text to avoid UI elements on TikTok/YouTube interfaces",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Alex Hormozi Style Captions",
+      "description": "High-energy, colorful word-by-word captions with pop-ins, shakes, and emojis",
+      "implementation": [
+        "Use bold sans-serif fonts (Montserrat Black, The Bold Font)",
+        "Apply high contrast colors: yellow (#FFFD03), neon green (#00FF00), cyan",
+        "Animate each word or 2-3 word phrase with pop-ins, shakes, or slides",
+        "Add emoji icons to replace abstract words (money = 💰",
+        "Keep captions near center of frame for visibility",
+        "Scale text dynamically based on emphasis",
+        "Add subtle rotation for key words"
+      ],
+      "timing": "Word-by-word or 2-3 word phrases",
+      "examples": [
+        "Text: 'MAKE money' - pops in with shaking effect, green money emoji",
+        "Text: 'STOP watching' - red text shakes, stop sign icon appears",
+        "Text: 'RETENTION' - bold yellow slides from left with bounce"
+      ],
+      "tools": [
+        "CapCut (auto-captions with Hormozi presets)",
+        "Submagic (AI-powered Hormozi-style captions)",
+        "Descript (automatic karaoke generation)",
+        "Premiere Pro (manual keyframing for custom style)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Gamifies listening, high engagement on mobile",
+          "con": "Can feel exhausting or gimmicky if overused"
+        },
+        {
+          "pro": "Reinforces message through dual coding",
+          "con": "Increases production time unless using AI tools"
+        }
+      ]
+    },
+    {
+      "name": "Karaoke Subtitles",
+      "description": "Full sentence display where current word changes color or size as spoken, creating 'bouncing ball' rhythm",
+      "implementation": [
+        "Display complete sentence on screen",
+        "Keyframe text fill or scale to change as words are spoken",
+        "Use different color for active word vs remaining words",
+        "Create smooth bounce or highlight effect on word change",
+        "Position at bottom center (below face if possible)",
+        "Use bold sans-serif fonts",
+        "Sync precisely with speaker's cadence"
+      ],
+      "timing": "Full sentence, word-by-word highlight",
+      "examples": [
+        "Sentence: 'This changes everything' - words turn white → gray → white",
+        "Sentence: 'You need to watch this' - active word scales up 120%",
+        "Sentence: 'The result will shock you' - highlighter effect moves across sentence"
+      ],
+      "tools": [
+        "Descript (automatic karaoke generation)",
+        "Submagic (AI karaoke styling)",
+        "Premiere Pro (manual fill keyframing)",
+        "After Effects (custom bounce expressions)",
+        "Subtitle Edit (karaoke export)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Guides viewer through sentence, reduces reading effort",
+          "con": "Requires precise timing for best effect"
+        },
+        {
+          "pro": "Holds viewer's hand through complex sentences",
+          "con": "May appear as if viewer can't understand audio"
+        }
+      ]
+    },
+    {
+      "name": "Bold Text Overlays",
+      "description": "Brief, punchy, all-caps text overlays for critical takeaways and chapter breaks",
+      "implementation": [
+        "Keep word count minimal (2-7 words max)",
+        "Use bold, all-caps, high-contrast text",
+        "Position center frame for truth bombs, lower third for context",
+        "Add color backgrounds or outlines for contrast",
+        "Use for chapter titles, numbers, or key revelations",
+        "Apply simple pop-in or slide animations",
+        "Maintain visual hierarchy with different sizes/positions"
+      ],
+      "timing": "1-3 seconds per overlay",
+      "examples": [
+        "Center: 'STEP 1' - bold yellow, pops in with scale effect",
+        "Bottom: 'THE SECRET' - white with black outline, slides up",
+        "Center: 'RESULT: +300%' - large bold text, green background"
+      ],
+      "tools": [
+        "Premiere Pro (Essential Graphics panel)",
+        "After Effects (motion graphics templates)",
+        "DaVinci Resolve (Fusion text)",
+        "CapCut (text styles library)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Creates visual structure and emphasis points",
+          "con": "Too many breaks video flow"
+        },
+        {
+          "pro": "Ideal for structure and key takeaways",
+          "con": "Less effective for continuous information flow"
+        }
+      ]
+    },
+    {
+      "name": "Interactive Text (Behind Objects)",
+      "description": "Text that integrates with 3D space, appearing behind people or objects using masking/rotoscoping",
+      "implementation": [
+        "Track footage with camera tracker",
+        "Create text layer in After Effects or compositor",
+        "Use rotoscoping or magic mask to create foreground mask",
+        "Position text behind foreground elements",
+        "Match depth of field with blur if needed",
+        "Use on shots where person moves or gestures",
+        "Create parallax effect by tracking camera movement"
+      ],
+      "timing": "Throughout shot as person moves",
+      "examples": [
+        "Speaker gestures → text appears and stays behind hand",
+        "Person walks → reveals text from behind them",
+        "Product showcase → text floats in 3D space around object"
+      ],
+      "tools": [
+        "After Effects (3D camera tracker, roto brush)",
+        "DaVinci Resolve (Magic Mask, depth map)",
+        "Mocha Pro (tracking and roto)",
+        "CapCut (AI mask for text behind)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Creates high-value, cinematic look",
+          "con": "Significant time investment and skill required"
+        },
+        {
+          "pro": "Builds production value and professionalism",
+          "con": "Challenging with complex backgrounds"
+        }
+      ]
+    },
+    {
+      "name": "Highlight and Extraction",
+      "description": "Virtual highlighters and masking animations to guide attention to specific text or elements",
+      "implementation": [
+        "Display document, article, or text on screen",
+        "Create shape layer for highlighter rectangle",
+        "Animate highlight following sentence being read",
+        "Use bright yellow, green, or pink for highlights",
+        "Add circle or box for key elements",
+        "Animate with smooth ease-in/out",
+        "Track camera movement if document moves"
+      ],
+      "timing": "As each sentence is read",
+      "examples": [
+        "Article → yellow highlight bar slides across each sentence",
+        "List → circles animate around bullet points as mentioned",
+        "Graph → box highlights data section while discussed"
+      ],
+      "tools": [
+        "After Effects (shape animation, expressions)",
+        "Premiere Pro (crop effect on graphic)",
+        "DaVinci Resolve (Inspector shape tools)",
+        "Camtasia (cursor highlighting and annotations)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents feeling overwhelmed by text walls",
+          "con": "Requires additional keyframe work"
+        },
+        {
+          "pro": "Directs viewer eye to important content",
+          "con": "May feel over-produced for simple content"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "hormozi_style_spec": {
+      "font": {
+        "family": "Montserrat Black, The Bold Font, Impact",
+        "weight": "900",
+        "style": "sans-serif"
+      },
+      "colors": {
+        "primary": "#FFFD03",
+        "secondary": "#00FF00",
+        "tertiary": "#00FFFF",
+        "text": "#000000"
+      },
+      "animation": {
+        "entry": ["pop", "slide_left", "slide_right", "scale_up"],
+        "duration": "0.2-0.4s",
+        "effects": ["shake", "bounce", "rotate_+=5"]
+      },
+      "placement": {
+        "position": "bottom_center",
+        "max_width": "90vw",
+        "margin_bottom": "15%"
+      },
+      "emoji_rules": "use for abstract concepts (money, time, success, danger)"
+    },
+    "karaoke_subtitle_structure": {
+      "display_mode": "sentence_full",
+      "active_word": {
+        "color": "#FFFFFF",
+        "scale": "100%",
+        "weight": "bold"
+      },
+      "passive_words": {
+        "color": "#888888",
+        "scale": "90%",
+        "weight": "normal"
+      },
+      "transition": {
+        "type": "scale + color_fill",
+        "duration": "0.1s",
+        "ease": "linear"
+      },
+      "sync_method": "phonetic or word_boundary"
+    },
+    "text_hierarchy_mapping": {
+      "center_frame": {
+        "purpose": "truth_bombs, chapter_titles, reveals",
+        "size": "XL",
+        "duration": "1-3s",
+        "animation": "pop, explode"
+      },
+      "lower_third": {
+        "purpose": "context, names, labels",
+        "size": "M",
+        "duration": "2-4s",
+        "animation": "fade, slide_up"
+      },
+      "overlay": {
+        "purpose": "emphasis, key terms",
+        "size": "L",
+        "duration": "0.5-2s",
+        "animation": "scale_word"
+      },
+      "captions": {
+        "purpose": "continuous audio reinforcement",
+        "size": "S-M",
+        "duration": "continuous",
+        "animation": "word_by_word"
+      }
+    },
+    "safe_zone_boundaries": {
+      "youtube_desktop": {
+        "top": "avoid_top_8%",
+        "bottom": "avoid_bottom_10%",
+        "center": "safe_zone_center"
+      },
+      "youtube_mobile": {
+        "top": "avoid_top_10%",
+        "bottom": "avoid_bottom_20%",
+        "sides": "avoid_edges_5%"
+      },
+      "tiktok": {
+        "top": "avoid_top_15%",
+        "bottom": "avoid_bottom_25%",
+        "sidebar": "avoid_right_15%"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md Table 3.1",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

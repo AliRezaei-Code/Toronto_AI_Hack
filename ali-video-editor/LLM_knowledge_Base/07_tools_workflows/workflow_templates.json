@@ -1,0 +1,355 @@
+{
+  "meta": {
+    "title": "Workflow Templates and Processes",
+    "category": "Tools and Workflows",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": [
+      "software_comparison.json"
+    ]
+  },
+  "summary": "Step-by-step workflow templates for pre-production, editing, and publication optimized for retention-focused content.",
+  "core_principles": [
+    {
+      "principle": "Retention Engineering Starts in Pre-Production",
+      "description": "Script with visual cues sets foundation; editing executes planned structure",
+      "importance": "high"
+    },
+    {
+      "principle": "Efficiency Through Batching",
+      "description": "Group similar tasks (captions, graphics, audio) for workflow optimization",
+      "importance": "medium"
+    },
+    {
+      "principle": "Automation for Sustainability",
+      "description": "Use plugins, templates, and AI tools to enable weekly upload schedules",
+      "importance": "high"
+    },
+    {
+      "principle": "Analytics-Driven Iteration",
+      "description": "Review retention graphs after publication for continuous improvement",
+      "importance": "medium"
+    },
+    {
+      "principle": "Quality Check Before Publication",
+      "description": "Final review checklist ensures technical quality and retention optimization",
+      "importance": "high"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Pre-Production Scripting Workflow",
+      "description": "AV format script with visual cues planned before shooting",
+      "implementation": [
+        "Write script in AV table format (Audio | Visual",
+        "Include specific B-roll shot descriptions with angles and durations",
+        "Add motion design prompts for kinetic typography",
+        "Mark pacing notes for cuts and delivery",
+        "Plan visual change points every 3-5 seconds",
+        "Identify hook content and open loops",
+        "Create shot list and B-roll requirements",
+        "Review script for visual gaps before shooting"
+      ],
+      "timing": "Before filming stage",
+      "examples": [
+        "AV script: 'Boots hit mud' | Low angle shot, rapid cut to drone summit",
+        "Script note: 'Text 50% animates in sync with word retention'",
+        "Pacing mark: '[CUT HERE] between sentence A and B'"
+      ],
+      "tools": [
+        "AV script templates",
+        "Spreadsheet or table format apps",
+        "Shot list creation tools"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents visual gaps, enables planned editing",
+          "con": "Adds time to pre-production phase"
+        },
+        {
+          "pro": "Sets foundation for retention engineering",
+          "con": "Requires visualization skills"
+        }
+      ]
+    },
+    {
+      "name": "Editing Phase Workflow",
+      "description": "Step-by-step process from rough cut to polished retention edit",
+      "implementation": [
+        "Step 1: Rough assembly in order of script",
+        "Step 2: Remove all fluff and dead air (zero-gap cuts)",
+        "Step 3: Apply pacing - vary cuts every 3-10 seconds",
+        "Step 4: Add B-roll and visual changes per script",
+        "Step 5: Insert kinetic typography and overlays",
+        "Step 6: Apply sound design and music stems",
+        "Step 7: Color grade for mood and contrast",
+        "Step 8: Final review for retention optimization"
+      ],
+      "timing": "Main editing phase, hours to days",
+      "examples": [
+        "Timeline with markers every 5s for visual change check",
+        "Rough cut without effects, then add visual layer",
+        "Audio mixed before final color grade"
+      ],
+      "tools": [
+        "NLE (Premiere, Resolve, etc.)",
+        "Audio editing tools",
+        "Motion graphics tools (After Effects)",
+        "Proxy workflow for speed"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Systematic approach prevents overlooking elements",
+          "con": "Requires discipline to follow steps"
+        },
+        {
+          "pro": "Iterative refinement improves quality",
+          "con": "Multiple passes require time investment"
+        }
+      ]
+    },
+    {
+      "name": "Audio Batch Processing Workflow",
+      "description": "Efficient audio processing with grouped tasks for speed",
+      "implementation": [
+        "Batch process: compression, EQ, de-essing for all dialogue",
+        "Apply consistent loudness target (−16 LUFS",
+        "Create music stem library pre-processed",
+        "Build SFX library organized by type",
+        "Apply ducking rules consistently",
+        "Use automation for repetitive tasks",
+        "Process all dialogue first, then music, then SFX",
+        "Final master bus processing"
+      ],
+      "timing": "Integrated throughout editing",
+      "examples": [
+        "Same processing on all interview clips",
+        "Music tracks pre-leveled and EQ'd",
+        "SFX organized and labeled by category"
+      ],
+      "tools": [
+        "DAW (Pro Tools, Audition, Fairlight)",
+        "Preset libraries for dialogue, music, SFX",
+        "Batch file processing tools"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Consistent audio quality across projects",
+          "con": "Initial library setup time investment"
+        },
+        {
+          "pro": "Speed through repeatability",
+          "con": "Requires workflow discipline"
+        }
+      ]
+    },
+    {
+      "name": "Motion Graphics Automation Workflow",
+      "description": "Using templates and plugins to speed kinetic typography and graphics",
+      "implementation": [
+        "Create MOGRT templates for recurring graphic types",
+        "Use Animation Composer for drag-and-drop animations",
+        "Build emoji/icon library with animations",
+        "Create lower third and overlay templates",
+        "Use AE expressions for automated effects",
+        "Batch process similar graphics",
+        "Save custom presets for frequently used effects",
+        "Maintain style guide for consistency"
+      ],
+      "timing": "Parallel with editing phase",
+      "examples": [
+        "MOGRT for text pop-in animation",
+        "Emoji library with consistent styling",
+        "Lower third template with editable text"
+      ],
+      "tools": [
+        "After Effects (MOGRTs, expressions)",
+        "Animation Composer (Mister Horse)",
+        "Template libraries"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Drastically speeds graphics creation",
+          "con": "Initial template creation requires time"
+        },
+        {
+          "pro": "Consistent style across videos",
+          "con": "Templates may limit creative flexibility"
+        }
+      ]
+    },
+    {
+      "name": "Publication and Metadata Workflow",
+      "description": "SEO-optimized publication process with all metadata prepared",
+      "implementation": [
+        "Prepare title using optimization formulas",
+        "Write mini-blog description (200-300 words",
+        "Add timestamps starting at 00:00 (min 3 chapters",
+        "Link hierarchy: resources → recirculation → disclosures → socials",
+        "Upload custom captions (SRT) for SEO",
+        "Add 3-5 relevant hashtags",
+        "Set file permissions and visibility",
+        "Review for compliance (no deceptive practices)"
+      ],
+      "timing": "Before clicking publish",
+      "examples": [
+        "Template description with placeholders",
+        "Timestamp list ready before upload",
+        "Checkbox system for all elements"
+      ],
+      "tools": [
+        "YouTube Studio metadata templates",
+        "SEO checklists",
+        "Analytics tools for post-publication"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Ensures SEO optimization and compliance",
+          "con": "Additional time before publish"
+        },
+        {
+          "pro": "Optimized for algorithmic discoverability",
+          "con": "Requires understanding of SEO best practices"
+        }
+      ]
+    },
+    {
+      "name": "Analytics Review and Iteration Workflow",
+      "description": "Post-publication analysis for continuous improvement",
+      "implementation": [
+        "Review retention graph 24-48 hours after publish",
+        "Identify major dip points - analyze cause",
+        "Note spike points - replicate value in future",
+        "Check CTR metrics in search and suggested feeds",
+        "Review watch time and session time metrics",
+        "Update script templates based on findings",
+        "Adjust pacing or hook structure for underperforming sections",
+        "A/B test titles and thumbnails for optimization"
+      ],
+      "timing": "24-72 hours after publication",
+      "examples": [
+        "Dip at 2:15 due to long pause - cut pause next time",
+        "Spike at 1:30 - repurpose as Short",
+        "CTR below target - test new thumbnail"
+      ],
+      "tools": [
+        "YouTube Studio Analytics",
+        "vidIQ for additional insights",
+        "Retention graph analysis tools"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Data-driven continuous improvement",
+          "con": "Requires time and analytical skills"
+        },
+        {
+          "pro": "Optimizes for algorithm and audience preferences",
+          "con": "May lead to optimization over creativity if unbalanced"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "workflow_sequence": {
+      "pre_production": {
+        "1": "AV script writing with visual cues",
+        "2": "Shot list and B-roll planning",
+        "3": "Hook and open loop identification",
+        "4": "Pacing notes and timing marks",
+        "5": "Visual change point planning"
+      },
+      "production": {
+        "1": "Shoot to script with B-roll coverage",
+        "2": "Capture room tone and SFX options",
+        "3": "Record high-quality audio",
+        "4": "File organization and naming"
+      },
+      "post_production": {
+        "1": "Rough assembly",
+        "2": "Fluff removal and pacing",
+        "3": "B-roll and visual layer",
+        "4": "Kinetic typography and graphics",
+        "5": "Sound design and music",
+        "6": "Color grade",
+        "7": "Quality check"
+      },
+      "publication": {
+        "1": "Title optimization",
+        "2": "Description mini-blog",
+        "3": "Timestamps and metadata",
+        "4": "Captions upload",
+        "5": "SEO checklist review",
+        "6": "Publish"
+      },
+      "post_publication": {
+        "1": "Analytics review (24-72h",
+        "2": "Retention graph analysis",
+        "3": "Optimization for next video",
+        "4": "A/B testing if needed"
+      }
+    },
+    "batch_processing_templates": {
+      "dialogue": {
+        "compression": "2:1_to_4:1_ratio",
+        "EQ": "boost_2-5kHz (presence) + cut below_80Hz",
+        "de_essing": "5-8kHz_sibilance_control",
+        "loudness": "−14_to −16 LUFS integrated",
+        "preset": " Dialogue_Voiceover_Standard"
+      },
+      "music": {
+        "EQ": "cut_1-3kHz (voice_clearance)",
+        "ducking": "−6_to −15dB during dialogue",
+        "stem_editing": "layer_on_demand",
+        "preset": "Music_Undercurrent_Standard"
+      },
+      "motion_graphics": {
+        "lower_thirds": "template_with_editable_text",
+        "text_pop": "MOGRT_with_preset_animation",
+        "emojis": "library_with_consistent_styling",
+        "overlays": "template_collection"
+      }
+    },
+    "quality_check_checklist": {
+      "visual": {
+        "✓": "Visual changes every 3-10 seconds",
+        "✓": "Hook within first 30 seconds",
+        "✓": "No boring sections longer than 15s",
+        "✓": "Text syncs with speech",
+        "✓": "Color grade completed"
+      },
+      "audio": {
+        "✓": "Dialogue clear at −14 LUFS",
+        "✓": "Music ducked during speech",
+        "✓": "No sudden volume spikes",
+        "✓": "SFX timed to visuals",
+        "✓": "Overall loudness at −16 LUFS"
+      },
+      "metadata": {
+        "✓": "Title has primary keyword first",
+        "✓": "Description is 200-300 words",
+        "✓": "Timestamps start at 00:00",
+        "✓": "Captions uploaded",
+        "✓": "Hashtags limited to 3-5"
+      },
+      "compliance": {
+        "✓": "Content matches title promise",
+        "✓": "No tag stuffing (5-8 tags max)",
+        "✓": "Sponsorship disclosed",
+        "✓": "No scam or harmful links",
+        "✓": "Thumbnail accurate"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "SEO_Metadata_Engineering.md",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

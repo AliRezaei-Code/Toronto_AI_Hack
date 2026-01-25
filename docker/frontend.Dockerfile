@@ -7,11 +7,12 @@ RUN npm install -g pnpm
 RUN pnpm install 
 
 COPY . .
-RUN pnpm run build
-RUN npm run build
+# Skip build for dev mode
+# RUN pnpm run build
+# RUN npm run build
 
 # Default port for Next.js
-ENV PORT=3010
-EXPOSE 3010
+ENV PORT=3000
+EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
