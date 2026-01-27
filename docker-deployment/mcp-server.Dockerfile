@@ -42,8 +42,12 @@ COPY mcp-server/http_api.py .
 
 # Set environment variables
 ENV PATH=/app/.local/bin:$PATH
+ENV PYTHONUSERBASE=/app/.local
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONIOENCODING=utf-8
+ENV PYTHONUTF8=1
+ENV LANG=C.UTF-8
 
 # Set proper permissions (now includes .local directory)
 RUN chown -R appuser:appuser /app

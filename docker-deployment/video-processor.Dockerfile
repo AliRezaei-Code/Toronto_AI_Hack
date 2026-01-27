@@ -54,8 +54,12 @@ RUN mkdir -p /tmp/video-processor && \
 
 # Set environment variables
 ENV PATH=/app/.local/bin:$PATH
+ENV PYTHONUSERBASE=/app/.local
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONIOENCODING=utf-8
+ENV PYTHONUTF8=1
+ENV LANG=C.UTF-8
 ENV TEMP_DIR=/tmp/video-processor
 
 # Set proper permissions (now includes .local directory)

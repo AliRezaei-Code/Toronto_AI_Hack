@@ -5,7 +5,7 @@ services:
   web:
     image: ghcr.io/${IMAGE_PREFIX}/frontend:${IMAGE_TAG:-latest}
     ports:
-      - "127.0.0.1:3010:3010"
+      - "127.0.0.1:3000:3000"
     environment:
       # Browser-safe URL (clients call your domain, Caddy routes to backend)
       - NEXT_PUBLIC_API_URL=https://retentio.ca/api
