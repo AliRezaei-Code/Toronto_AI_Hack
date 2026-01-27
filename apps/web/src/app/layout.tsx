@@ -56,8 +56,10 @@ export default function RootLayout({
     <html lang="en" className={`${playfair.variable} ${formula.variable}`}>
       <body className="app-body">
         <div className="app-shell">
-          <ParticleBackground />
-          <div className="app-content">{children}</div>
+          <AuthProvider>
+            <ParticleBackground />
+            <div className="app-content">{children}</div>
+          </AuthProvider>
         </div>
       </body>
     </html>
