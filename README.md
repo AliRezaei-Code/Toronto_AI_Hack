@@ -1,6 +1,15 @@
-# Script-Based Video Editor
+# Rententio — AI-Powered Retention Video Editor
 
-An AI-powered single-page video editor for the HackAI x Stanford hackathon. Upload short video clips, generate transcripts, and edit videos by editing text or using natural language commands.
+> **Transform hours of content into viral clips in minutes, not hours.**
+
+An AI-powered video editor for the HackAI x Stanford hackathon. Upload short video clips, generate transcripts, and edit videos by editing text or using natural language commands.
+
+## 📱 Try It Now
+
+| Platform | Link |
+|----------|------|
+| **Android App** | [Download APK](https://github.com/Chiheb-Bejaoui/https-f8f0628e1371.ngrok-free.app-) |
+| **Web App** | http://localhost:3000 (run locally) |
 
 ## Features
 
@@ -65,6 +74,7 @@ An AI-powered single-page video editor for the HackAI x Stanford hackathon. Uplo
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8000/docs (Swagger UI)
    - MCP Server: http://localhost:9000
+   - **Android App**: [Download APK](https://github.com/Chiheb-Bejaoui/https-f8f0628e1371.ngrok-free.app-)
 
 ## Usage
 

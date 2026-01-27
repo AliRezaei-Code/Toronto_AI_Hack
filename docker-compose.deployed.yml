@@ -40,8 +40,7 @@ services:
 
   mcp-server:
     image: ghcr.io/${IMAGE_PREFIX}/mcp-server:${IMAGE_TAG:-latest}
-    ports:
-      - "127.0.0.1:9000:9000"
+    # No ports exposed - internal service only (accessed via Docker network)
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - SHARED_DATA_DIR=/shared-data
@@ -53,8 +52,7 @@ services:
 
   video-processor:
     image: ghcr.io/${IMAGE_PREFIX}/video-processor:${IMAGE_TAG:-latest}
-    ports:
-      - "127.0.0.1:8001:8001"
+    # No ports exposed - internal service only (accessed via Docker network)
     environment:
       - TEMP_DIR=/tmp/video-processor
     volumes:
