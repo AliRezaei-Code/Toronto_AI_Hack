@@ -18,7 +18,7 @@ import {
 import { createEmptyTranscript, getAllWords } from "@/src/lib/transcript-utils";
 import { WaveformTimeline } from "@/src/components/WaveformTimeline";
 import { emitParticleBurst } from "@/src/lib/particle-events";
-import ProtectedRoute from "@/src/components/ProtectedRoute";
+import { ProtectedRoute } from "@/src/components/ProtectedRoute";
 import { useAuth } from "@/src/contexts/AuthContext";
 
 const LoadingSpinner = () => (

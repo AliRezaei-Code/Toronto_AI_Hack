@@ -1,7 +1,8 @@
-import { initializeApp, getApps } from 'firebase/app';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
+  Auth,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -13,13 +14,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase only if it hasn't been initialized
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// Only initialize Firebase on the client side
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let googleProvider: GoogleAuthProvider | undefined;
 
-// Auth instance
-export const auth = getAuth(app);
+if (typeof window !== 'undefined') {
+  // Client-side only
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
+}
 
-// Auth providers
-export const googleProvider = new GoogleAuthProvider();
-
+export { auth, googleProvider };
 export default app;

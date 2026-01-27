@@ -70,7 +70,8 @@ services:
 
 volumes:
   shared-data:
-    driver: local
+    external: true
+    name: shared-data
   video-processor-temp:
     driver: local
 

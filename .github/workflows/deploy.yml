@@ -226,11 +226,19 @@ jobs:
             # Clean up old Docker resources to prevent storage from filling up
             echo "Cleaning up old Docker resources..."
             docker compose -f docker-compose.deployed.yml down --remove-orphans 2>/dev/null || true
-            docker system prune -af --volumes 2>/dev/null || true
+            docker image prune -af 2>/dev/null || true
 
             # Pull and deploy services
             echo "Pulling latest images..."
             docker compose -f docker-compose.deployed.yml pull
+
+            # Create shared-data volume and initialize with correct permissions
+            echo "Initializing shared-data directories..."
+            docker volume create shared-data 2>/dev/null || true
+            docker run --rm -v shared-data:/data alpine sh -c "
+              mkdir -p /data/uploads /data/processed /data/transcripts /data/rendered_shorts /data/sample-videos/clips /data/sample-videos/transcripts
+              chmod -R 777 /data
+            "
 
             echo "Starting services..."
             docker compose -f docker-compose.deployed.yml up -d

@@ -24,7 +24,7 @@ from typing import List, Dict, Any
 ROOT = Path(__file__).parent
 
 # Ports used by our services
-PORTS_TO_CLEAR = [3000, 8000, 8001, 9000]  # web, backend, video-processor, mcp-server
+PORTS_TO_CLEAR = [ 8000, 8001, 9000]  # web, backend, video-processor, mcp-server
 
 # ANSI colors
 RESET = "\033[0m"

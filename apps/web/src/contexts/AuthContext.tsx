@@ -92,6 +92,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Only subscribe to auth changes on client side
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -101,22 +107,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (!auth) throw new Error("Auth not initialized");
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const signUp = async (email: string, password: string) => {
+    if (!auth) throw new Error("Auth not initialized");
     await createUserWithEmailAndPassword(auth, email, password);
   };
 
   const signInWithGoogle = async () => {
+    if (!auth || !googleProvider) throw new Error("Auth not initialized");
     await signInWithPopup(auth, googleProvider);
   };
 
   const signOut = async () => {
+    if (!auth) throw new Error("Auth not initialized");
     await firebaseSignOut(auth);
   };
 
   const resetPassword = async (email: string) => {
+    if (!auth) throw new Error("Auth not initialized");
     await sendPasswordResetEmail(auth, email);
   };
 
