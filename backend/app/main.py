@@ -3,6 +3,7 @@ import uuid
 import shutil
 import logging
 import asyncio
+import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import List
@@ -1074,14 +1075,16 @@ async def edit_transcript_text(request: TranscriptEditRequest):
     try:
         current_transcript = await state_manager.load_transcript(job_id)
 
-        if not current_transcript or not current_transcript.words:
+        if not current_transcript or not current_transcript.segments:
             raise HTTPException(
                 status_code=400,
                 detail="No transcript available. Script-based editing requires a transcript.",
             )
 
         current_video_path = job_data.get("current_video_path")
+        print("current_video_path", current_video_path)
         if not current_video_path:
+            print("Faield to get current video path")
             raise HTTPException(status_code=400, detail="No video found for this job")
 
         result = await run_agent(
@@ -1103,6 +1106,7 @@ async def edit_transcript_text(request: TranscriptEditRequest):
     except HTTPException:
         raise
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(
             status_code=500, detail=f"Failed to edit transcript: {str(e)}"
         )

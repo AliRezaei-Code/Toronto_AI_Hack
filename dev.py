@@ -37,8 +37,10 @@ MAGENTA = "\033[35m"
 CYAN = "\033[36m"
 
 processes: List[subprocess.Popen] = []
+process_info: List[Dict[str, Any]] = []  # Stores service info for each process
 our_pids: set = set()
 DEV_PY_PID = os.getpid()
+shutting_down = False  # Flag to prevent shutdown during service reloads
 
 
 # =============================================================================
@@ -428,19 +430,28 @@ def get_services(python_cmd: str, pkg_manager: str) -> List[Dict[str, Any]]:
 
 def stream_output(proc: subprocess.Popen, name: str, color: str):
     """Stream subprocess output with colored prefix."""
+    global shutting_down
     try:
         for line in iter(proc.stdout.readline, ""):
             if line:
                 print(f"{color}[{name}]{RESET} {line}", end="")
-    except (ValueError, OSError):
-        pass
+            elif shutting_down:
+                # Expected during shutdown
+                break
+        # Stream closed - this happens during reload or exit
+        if not shutting_down:
+            # Service likely reloading - uvicorn --reload keeps parent alive
+            # so this shouldn't normally happen unless process actually died
+            pass
+    except (ValueError, OSError) as e:
+        if not shutting_down:
+            log_warning(f"{name} output stream closed: {e}")
 
 
 def start_services(services: List[Dict[str, Any]]):
     """Start all services with hot reload."""
     log_header("Starting Services")
 
-    started = []
     for svc in services:
         if not svc["cwd"].exists():
             log_warning(f"Skipping {svc['name']}: directory not found")
@@ -459,8 +470,8 @@ def start_services(services: List[Dict[str, Any]]):
             shell=(os.name == "nt"),
         )
         processes.append(proc)
+        process_info.append(svc)  # Track service info for this process
         our_pids.add(proc.pid)
-        started.append(svc)
 
         thread = threading.Thread(
             target=stream_output,
@@ -472,7 +483,7 @@ def start_services(services: List[Dict[str, Any]]):
     # Print service URLs
     print()
     log_header("Services Ready")
-    for svc in started:
+    for svc in process_info:
         port = svc.get("port", "?")
         if svc["name"] == "web":
             url = f"http://localhost:{port}"
@@ -487,6 +498,13 @@ def start_services(services: List[Dict[str, Any]]):
 
 def shutdown(signum=None, frame=None):
     """Gracefully shutdown all processes."""
+    global shutting_down
+
+    # Prevent multiple shutdown calls (e.g., from signal + KeyboardInterrupt)
+    if shutting_down:
+        return
+    shutting_down = True
+
     log_header("Shutting Down")
 
     if os.name == 'nt':
@@ -588,10 +606,31 @@ def main():
     # Start services
     start_services(services)
 
-    # Keep alive
+    # Keep alive and monitor service health
+    exited_processes: set = set()  # Track processes we've already logged as exited
     try:
-        while True:
-            time.sleep(1)
+        while not shutting_down:
+            time.sleep(2)
+
+            # Check if any services have exited (crash, not reload)
+            # uvicorn --reload keeps parent process alive, so exit means real crash
+            for i, proc in enumerate(processes):
+                if proc.poll() is not None and i not in exited_processes and not shutting_down:
+                    exited_processes.add(i)  # Only log once per process
+                    svc = process_info[i] if i < len(process_info) else None
+                    port = svc.get("port") if svc else None
+
+                    if port and is_port_in_use(port):
+                        # Port still in use = service reloaded, new process took over
+                        # This is normal for uvicorn --reload on Windows with shell=True
+                        log(f"Reloaded (port {port} still active)", svc["color"] if svc else YELLOW, svc["name"] if svc else "?")
+                    else:
+                        # Port not in use = service actually crashed
+                        name = svc["name"] if svc else f"Process {i}"
+                        log_warning(f"{name} exited with code {proc.returncode}")
+                        log_warning(f"Service {name} stopped - other services still running")
+                        # Don't shutdown - let other services continue
+
     except KeyboardInterrupt:
         shutdown()
 
