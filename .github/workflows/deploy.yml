@@ -15,12 +15,12 @@
 #   AWS_SECRET_ACCESS_KEY  - AWS secret key
 #   LIVEKIT_API_KEY        - LiveKit API key
 #   LIVEKIT_API_SECRET     - LiveKit API secret
-#   FIREBASE_API_KEY       - Firebase API key
-#   FIREBASE_AUTH_DOMAIN   - Firebase auth domain
-#   FIREBASE_PROJECT_ID    - Firebase project ID
-#   FIREBASE_STORAGE_BUCKET - Firebase storage bucket
-#   FIREBASE_MESSAGING_SENDER_ID - Firebase messaging sender ID
-#   FIREBASE_APP_ID        - Firebase app ID
+#   NEXT_PUBLIC_FIREBASE_API_KEY - Firebase API key
+#   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN - Firebase auth domain
+#   NEXT_PUBLIC_FIREBASE_PROJECT_ID - Firebase project ID
+#   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET - Firebase storage bucket
+#   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID - Firebase messaging sender ID
+#   NEXT_PUBLIC_FIREBASE_APP_ID - Firebase app ID
 #
 # Optional:
 #   PAT                    - GitHub Personal Access Token (for private repos)
@@ -96,13 +96,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-            NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
-            NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
-            NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-            NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
-            NEXT_PUBLIC_API_URL=http://localhost:8000
+            NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+            NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+            NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+            NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+            NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+            NEXT_PUBLIC_API_URL=https://retentio.ca/api
 
   deploy:
     needs: build
@@ -198,12 +198,12 @@ jobs:
             S3_BUCKET_NAME=retentio
 
             # Firebase Configuration
-            NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-            NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
-            NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
-            NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-            NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+            NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+            NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+            NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+            NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+            NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
 
             # Paths
             SHARED_DATA_DIR=/shared-data
