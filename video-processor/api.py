@@ -32,8 +32,8 @@ app = FastAPI(
 # In-memory job storage (use Redis in production)
 jobs: Dict[str, Dict[str, Any]] = {}
 
-# Configuration
-TEMP_DIR = os.getenv("TEMP_DIR", "/tmp/video-processor")
+# Configuration - use platform-appropriate temp directory
+TEMP_DIR = os.getenv("TEMP_DIR", os.path.join(tempfile.gettempdir(), "video-processor"))
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 
@@ -124,7 +124,7 @@ async def process_face_tracking(
             jobs[task_id]["progress_percent"] = pct
 
         # Run face tracking in thread pool (CPU-bound)
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         tracker = FaceTracker(
             min_detection_confidence=detection_confidence,
             max_faces=max_faces,
@@ -378,7 +378,8 @@ async def delete_face_tracking_task(task_id: str):
 
     # Clean up video file if it's in our temp directory
     video_path = job.get("video_path")
-    if video_path and video_path.startswith(TEMP_DIR):
+    # Normalize paths for cross-platform comparison
+    if video_path and os.path.normpath(video_path).startswith(os.path.normpath(TEMP_DIR)):
         try:
             os.remove(video_path)
         except OSError:
