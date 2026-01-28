@@ -4,6 +4,7 @@ FastAPI wrapper for MCP server tools.
 Exposes MCP tools as HTTP endpoints.
 """
 import os
+import traceback
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -169,7 +170,7 @@ async def render_timeline(request: RenderTimelineRequest):
         result = await handler(request.model_dump())
         return result
     except Exception as e:
-        logger.error(f"Error in render_timeline: {str(e)}")
+        logger.error(f"Error in render_timeline: {str(e)}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

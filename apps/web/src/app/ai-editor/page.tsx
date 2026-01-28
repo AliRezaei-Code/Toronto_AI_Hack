@@ -493,6 +493,7 @@ function HomeContent() {
                   jobId={jobId ?? ""}
                   isProcessing={isProcessing}
                   onTranscriptUpdate={setTranscript}
+                  onVideoUrlUpdate={setVideoUrl}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">

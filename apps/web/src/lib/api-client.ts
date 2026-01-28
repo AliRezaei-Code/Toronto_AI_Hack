@@ -136,21 +136,57 @@ export async function processEdit(
 
 export async function editTranscriptText(
   jobId: string,
-  editedText: string
+  editedText: string,
+  editedWords?: Map<number, string>,  // Optional: word index -> new word text
+  deletedIndices?: Set<number>        // Optional: deleted word indices
 ): Promise<EditResponse> {
+  // Build request body with optional structured data
+  const body: {
+    job_id: string
+    edited_text: string
+    edited_word_indices?: Record<number, string>
+    deleted_word_indices?: number[]
+  } = {
+    job_id: jobId,
+    edited_text: editedText,
+  }
+
+  // Include structured data if provided (enables fast direct processing path)
+  if (editedWords && editedWords.size > 0) {
+    body.edited_word_indices = Object.fromEntries(editedWords)
+  }
+  if (deletedIndices && deletedIndices.size > 0) {
+    body.deleted_word_indices = Array.from(deletedIndices)
+  }
+
+  console.log('[editTranscriptText] Sending request:', {
+    jobId,
+    editedTextLength: editedText.length,
+    hasEditedWords: editedWords ? editedWords.size : 0,
+    deletedIndices: deletedIndices ? Array.from(deletedIndices) : [],
+  })
+
   const response = await fetch(`${API_URL}/api/transcript/${jobId}/edit`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ job_id: jobId, edited_text: editedText }),
+    body: JSON.stringify(body),
   })
 
   if (!response.ok) {
-    throw new Error('Failed to edit transcript')
+    const errorText = await response.text()
+    console.error('[editTranscriptText] Failed:', response.status, errorText)
+    throw new Error(`Failed to edit transcript: ${errorText}`)
   }
 
-  return response.json()
+  const result = await response.json()
+  console.log('[editTranscriptText] Success:', result.message)
+  console.log('[editTranscriptText] New transcript word count:',
+    result.transcript?.clips?.reduce((sum: number, clip: Clip) =>
+      sum + clip.segments.reduce((segSum: number, seg: Segment) => segSum + seg.words.length, 0), 0) || 0
+  )
+  return result
 }
 
 export async function getJobStatus(jobId: string): Promise<{

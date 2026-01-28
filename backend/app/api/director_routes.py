@@ -12,7 +12,7 @@ import os
 import uuid
 import logging
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse
@@ -43,10 +43,10 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/director", tags=["AI Director"])
 
 # In-memory storage for director jobs (replace with database in production)
-director_jobs: dict[str, DirectorJob] = {}
-diarization_results: dict[str, DiarizationResult] = {}
-viral_clips_store: dict[str, ViralClipSelection] = {}
-edl_store: dict[str, EditDecisionList] = {}
+director_jobs: Dict[str, DirectorJob] = {}
+diarization_results: Dict[str, DiarizationResult] = {}
+viral_clips_store: Dict[str, ViralClipSelection] = {}
+edl_store: Dict[str, EditDecisionList] = {}
 
 
 # ============================================================================

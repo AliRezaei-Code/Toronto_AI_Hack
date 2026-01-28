@@ -90,7 +90,6 @@ class StateManager:
             content = await f.read()
         
         data = json.loads(content)
-        print("Transcript data loaded:", data)
         
         # Build hierarchical Pydantic models
         clips = []
@@ -109,7 +108,7 @@ class StateManager:
                 start_offset=clip_data['start_offset'],
                 segments=segments
             ))
-        print("Constructed clips:", clips)
+        
         return Transcript(
             text=data.get('text'),
             duration=data.get('duration'),

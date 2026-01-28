@@ -9,7 +9,7 @@ import os
 import json
 import logging
 import uuid
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union, Tuple
 from datetime import datetime
 
 from openai import AsyncOpenAI
@@ -99,7 +99,7 @@ class ViralClipSelector:
 
     async def select_clips(
         self,
-        transcript: Transcript | DiarizationResult,
+        transcript: Union[Transcript, DiarizationResult],
         job_id: str,
         max_clips: int = 5,
         min_duration: float = 1.0,
@@ -222,8 +222,8 @@ class ViralClipSelector:
         )
 
     def _format_transcript(
-        self, transcript: Transcript | DiarizationResult
-    ) -> tuple[str, str, float]:
+        self, transcript: Union[Transcript, DiarizationResult]
+    ) -> Tuple[str, str, float]:
         """
         Format transcript for LLM analysis with timestamps.
 
@@ -262,7 +262,7 @@ class ViralClipSelector:
 
     def _extract_clip_transcript(
         self,
-        transcript: Transcript | DiarizationResult,
+        transcript: Union[Transcript, DiarizationResult],
         start_time: float,
         end_time: float,
     ) -> str:
@@ -285,7 +285,7 @@ class ViralClipSelector:
 
 
 async def select_viral_clips(
-    transcript: Transcript | DiarizationResult,
+    transcript: Union[Transcript, DiarizationResult],
     job_id: str,
     max_clips: int = 5,
     min_duration: float = 15.0,

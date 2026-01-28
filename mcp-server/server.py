@@ -4,6 +4,7 @@ import sys
 import json
 import logging
 import asyncio
+import traceback
 from typing import Any, List
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -107,6 +108,8 @@ async def generate_transcript(request: TranscriptRequest):
         transcript = await transcription_tool.generate_transcript(request.video_path)
         return {"status": "success", "data": transcript}
     except Exception as e:
+        logger.error(f"[generate_transcript] FAILED - error: {str(e)}", exc_info=True)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/stitch_clips")
@@ -119,6 +122,7 @@ async def stitch_clips(request: StitchRequest):
         return {"status": "success", "data": result}
     except Exception as e:
         logger.error(f"[stitch_clips] FAILED - error: {str(e)}", exc_info=True)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/cut_segment")
@@ -133,6 +137,8 @@ async def cut_segment(request: CutSegmentRequest):
         )
         return {"status": "success", "data": result}
     except Exception as e:
+        logger.error(f"[cut_segment] FAILED - error: {str(e)}", exc_info=True)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/remove_segment")
@@ -146,6 +152,8 @@ async def remove_segment(request: RemoveSegmentRequest):
         )
         return {"status": "success", "data": result}
     except Exception as e:
+        logger.error(f"[remove_segment] FAILED - error: {str(e)}", exc_info=True)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/render_timeline")
@@ -158,6 +166,8 @@ async def render_timeline(request: RenderTimelineRequest):
         )
         return {"status": "success", "data": result}
     except Exception as e:
+        logger.error(f"[render_timeline] FAILED - error: {str(e)}", exc_info=True)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/render_from_clips")
@@ -173,6 +183,7 @@ async def render_from_clips(request: RenderFromClipsRequest):
         return {"status": "success", "data": result}
     except Exception as e:
         logger.error(f"[render_from_clips] FAILED - error: {str(e)}", exc_info=True)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/tool/generate_edit_instructions")
@@ -185,6 +196,8 @@ async def generate_edit_instructions(request: EditInstructionsRequest):
         )
         return {"status": "success", "data": instructions}
     except Exception as e:
+        logger.error(f"[generate_edit_instructions] FAILED - error: {str(e)}", exc_info=True)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

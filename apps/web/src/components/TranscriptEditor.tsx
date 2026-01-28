@@ -27,6 +27,7 @@ interface TranscriptEditorProps {
   jobId: string;
   isProcessing?: boolean;
   onTranscriptUpdate?: (transcript: Transcript) => void;
+  onVideoUrlUpdate?: (videoUrl: string) => void;
 }
 
 export function TranscriptEditor({
@@ -36,6 +37,7 @@ export function TranscriptEditor({
   jobId,
   isProcessing = false,
   onTranscriptUpdate,
+  onVideoUrlUpdate,
 }: TranscriptEditorProps) {
   const [currentWordLocation, setCurrentWordLocation] = useState<{
     clipIndex: number;
@@ -51,6 +53,9 @@ export function TranscriptEditor({
   const [editedWordIndices, setEditedWordIndices] = useState<Set<number>>(
     new Set(),
   );
+  const [deletedWordIndices, setDeletedWordIndices] = useState<Set<number>>(
+    new Set(),
+  );
   const [editedWordIndex, setEditedWordIndex] = useState<number | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -59,7 +64,7 @@ export function TranscriptEditor({
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const baselineWordsRef = useRef<Word[]>([]);
   const historyIndexRef = useRef(-1);
-
+  console.log(transcript);
   // Track current word based on playback time
   useEffect(() => {
     if (!transcript) return;
@@ -85,6 +90,7 @@ export function TranscriptEditor({
       setInlineEditedWords([]);
       setEditedWordIndex(null);
       setEditedWordIndices(new Set());
+      setDeletedWordIndices(new Set());
       setSaveError(null);
     }
   }, [isEditing]);
@@ -124,7 +130,7 @@ export function TranscriptEditor({
   }, [transcript]);
 
   const queueInlineSave = useCallback(
-    (words: Word[], immediate = false) => {
+    (words: Word[], deletedIndices: Set<number>, editedIndices?: Set<number>, immediate = false) => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
         saveTimeoutRef.current = null;
@@ -135,17 +141,58 @@ export function TranscriptEditor({
         setSaveError(null);
 
         try {
-          const newText = words.map((word) => word.word).join(" ");
-          const result = await editTranscriptText(jobId, newText);
+          // Filter out deleted words when creating the text
+          const activeWords = words.filter((_, index) => !deletedIndices.has(index));
+          const newText = activeWords.map((word) => word.word).join(" ");
+
+          console.log('[TranscriptEditor] Saving:', {
+            totalWords: words.length,
+            activeWords: activeWords.length,
+            deletedIndices: Array.from(deletedIndices),
+            editedIndices: editedIndices ? Array.from(editedIndices) : [],
+          });
+
+          // Build edited words map (index -> new word text) for optimization
+          const editedWordsMap = new Map<number, string>();
+          if (editedIndices) {
+            editedIndices.forEach((index) => {
+              if (words[index]) {
+                editedWordsMap.set(index, words[index].word);
+              }
+            });
+          }
+
+          // Pass structured data to API for faster processing
+          const result = await editTranscriptText(
+            jobId,
+            newText,
+            editedWordsMap.size > 0 ? editedWordsMap : undefined,
+            deletedIndices.size > 0 ? deletedIndices : undefined
+          );
+
+          console.log('[TranscriptEditor] Save successful, updating transcript');
+          console.log('[TranscriptEditor] New transcript from API:', {
+            text: result.transcript?.text?.slice(0, 50),
+            wordCount: getAllWords(result.transcript).length,
+          });
+          console.log('[TranscriptEditor] New video URL:', result.video_url);
 
           if (onTranscriptUpdate) {
             onTranscriptUpdate(result.transcript);
           }
 
-          baselineWordsRef.current = words;
-          setInlineEditedWords(words);
+          // Update video URL with cache-busted URL from backend
+          if (onVideoUrlUpdate && result.video_url) {
+            onVideoUrlUpdate(result.video_url);
+          }
+
+          // After successful save, reset to use the new transcript from API
+          // Clear inlineEditedWords so displayWords falls back to the updated transcript prop
+          baselineWordsRef.current = [];
+          setInlineEditedWords([]);
           setEditedWordIndex(null);
           setEditedWordIndices(new Set());
+          setDeletedWordIndices(new Set());
         } catch (error) {
           setSaveError(
             error instanceof Error
@@ -174,11 +221,23 @@ export function TranscriptEditor({
     setIsEditing(true);
     setIsSidebarEdit(false);
     setEditedWordIndex(index);
-    const allWords = getAllWords(transcript);
+    
+    // Preserve existing edits if we're already editing, otherwise use transcript
+    // This prevents losing edits when switching between words
+    const allWords = inlineEditedWords.length > 0
+      ? [...inlineEditedWords]  // Keep current edits (including unsaved ones)
+      : getAllWords(transcript);  // Use transcript if no pending edits
+    
     setInlineEditedWords([...allWords]);
-    setEditedWordIndices(new Set());
-    setEditedText(getFullText(transcript));
-    baselineWordsRef.current = allWords;
+    // Don't reset editedWordIndices or deletedWordIndices - preserve them
+    // setEditedWordIndices(new Set());
+    // setDeletedWordIndices(new Set());
+    setEditedText(allWords.map((word) => word.word).join(" "));
+    
+    // Only update baseline if we don't have one yet or if transcript changed significantly
+    if (baselineWordsRef.current.length === 0) {
+      baselineWordsRef.current = allWords;
+    }
 
     setTimeout(() => {
       inlineInputRef.current?.focus();
@@ -213,7 +272,40 @@ export function TranscriptEditor({
     setEditedWordIndices(updatedEditedIndices);
     setEditedText(updatedWords.map((word) => word.word).join(" "));
 
-    queueInlineSave(updatedWords);
+    queueInlineSave(updatedWords, deletedWordIndices, updatedEditedIndices);
+  };
+
+  const handleDeleteWord = (index: number) => {
+    if (!transcript) return;
+
+    const updatedDeletedIndices = new Set(deletedWordIndices);
+    updatedDeletedIndices.add(index);
+    setDeletedWordIndices(updatedDeletedIndices);
+
+    // Remove from edited indices if it was edited
+    const updatedEditedIndices = new Set(editedWordIndices);
+    updatedEditedIndices.delete(index);
+    setEditedWordIndices(updatedEditedIndices);
+
+    // Auto-save the deletion
+    const allWords = inlineEditedWords.length > 0
+      ? inlineEditedWords
+      : getAllWords(transcript);
+    queueInlineSave(allWords, updatedDeletedIndices, updatedEditedIndices);
+  };
+
+  const handleRestoreWord = (index: number) => {
+    if (!transcript) return;
+
+    const updatedDeletedIndices = new Set(deletedWordIndices);
+    updatedDeletedIndices.delete(index);
+    setDeletedWordIndices(updatedDeletedIndices);
+
+    // Auto-save the restoration
+    const allWords = inlineEditedWords.length > 0
+      ? inlineEditedWords
+      : getAllWords(transcript);
+    queueInlineSave(allWords, updatedDeletedIndices, editedWordIndices);
   };
 
   const handleInlineKeyDown = (
@@ -225,6 +317,29 @@ export function TranscriptEditor({
       setIsSidebarEdit(false);
       setEditedWordIndex(null);
       return;
+    }
+
+    // Backspace or Delete key - delete the word if input is empty
+    if ((event.key === "Backspace" || event.key === "Delete") && !isSidebarEdit) {
+      const input = event.target as HTMLInputElement;
+      if (input.value.trim() === "" || (input.selectionStart === 0 && input.selectionEnd === input.value.length)) {
+        event.preventDefault();
+        handleDeleteWord(index);
+        // Move focus to next word if available
+        if (!transcript) return;
+        const allWords = getAllWords(transcript);
+        const nextIndex = index < allWords.length - 1 ? index + 1 : index - 1;
+        if (nextIndex >= 0 && nextIndex < allWords.length) {
+          setEditedWordIndex(null);
+          setTimeout(() => {
+            const nextWord = document.querySelector(
+              `[data-word-index="${nextIndex}"]`,
+            ) as HTMLElement | null;
+            nextWord?.click();
+          }, 10);
+        }
+        return;
+      }
     }
 
     if (event.key === "Tab") {
@@ -251,7 +366,7 @@ export function TranscriptEditor({
       const wordsToSave = inlineEditedWords.length
         ? inlineEditedWords
         : allWords;
-      queueInlineSave(wordsToSave, true);
+      queueInlineSave(wordsToSave, deletedWordIndices, editedWordIndices, true);
     }
   };
 
@@ -271,6 +386,7 @@ export function TranscriptEditor({
     setEditedWordIndex(null);
     setInlineEditedWords([]);
     setEditedWordIndices(new Set());
+    setDeletedWordIndices(new Set());
   };
 
   const handleSaveEdit = async () => {
@@ -290,6 +406,7 @@ export function TranscriptEditor({
       setEditedWordIndex(null);
       setInlineEditedWords([]);
       setEditedWordIndices(new Set());
+      setDeletedWordIndices(new Set());
     } catch (error) {
       setSaveError(
         error instanceof Error ? error.message : "Failed to save transcript",
@@ -351,6 +468,7 @@ export function TranscriptEditor({
       setEditedWordIndex(null);
       setInlineEditedWords([]);
       setEditedWordIndices(new Set());
+      setDeletedWordIndices(new Set());
     } catch (error) {
       setSaveError(
         error instanceof Error ? error.message : "Failed to apply history",
@@ -380,6 +498,16 @@ export function TranscriptEditor({
       : transcript
         ? getAllWords(transcript)
         : [];
+
+  // Debug: log what's being displayed
+  console.log('[TranscriptEditor] displayWords source:', {
+    isEditing,
+    isSidebarEdit,
+    inlineEditedWordsLength: inlineEditedWords.length,
+    transcriptWordCount: transcript ? getAllWords(transcript).length : 0,
+    displayWordsCount: displayWords.length,
+    usingInlineEdited: isEditing && !isSidebarEdit && inlineEditedWords.length > 0,
+  });
 
   if (isProcessing) {
     return (
@@ -449,7 +577,7 @@ export function TranscriptEditor({
             {isEditing
               ? isSidebarEdit
                 ? "Edit the text below to edit the video"
-                : "Double-click any word to edit. Changes auto-save."
+                : "Double-click to edit, click × to delete, double-click deleted to restore. Changes auto-save."
               : "Click any word to jump to that moment"}
           </p>
         </div>
@@ -576,21 +704,24 @@ export function TranscriptEditor({
                       wordLocation.wordIndex !== currentWordLocation.wordIndex
                     : false;
                 const isBeingEdited = editedWordIndex === index;
+                const isDeleted = deletedWordIndices.has(index);
                 const revealDelay = Math.min(index * 14, 280);
 
                 return (
                   <span
                     key={`${index}-${word.start}`}
-                    className={`inline-block mx-0.5 px-1 rounded transition-all relative word-reveal ${
-                      isBeingEdited
-                        ? "bg-green-600 text-white"
-                        : editedWordIndices.has(index)
-                          ? "bg-yellow-600/80 text-white border border-yellow-400"
-                          : isHighlighted
-                            ? "bg-blue-500 text-white cursor-pointer word-current"
-                            : isNearCurrent
-                              ? "bg-blue-500/30 text-white cursor-pointer"
-                              : "text-gray-300 cursor-pointer hover:bg-gray-700"
+                    className={`inline-flex items-center gap-1 mx-0.5 px-1 rounded transition-all relative word-reveal group ${
+                      isDeleted
+                        ? "bg-red-900/50 text-red-300 line-through opacity-60"
+                        : isBeingEdited
+                          ? "bg-green-600 text-white"
+                          : editedWordIndices.has(index)
+                            ? "bg-yellow-600/80 text-white border border-yellow-400"
+                            : isHighlighted
+                              ? "bg-blue-500 text-white cursor-pointer word-current"
+                              : isNearCurrent
+                                ? "bg-blue-500/30 text-white cursor-pointer"
+                                : "text-gray-300 cursor-pointer hover:bg-gray-700"
                     }`}
                     onClick={(event) => {
                       const burstColor = isBeingEdited
@@ -607,6 +738,12 @@ export function TranscriptEditor({
                       onWordClick(word.start);
                     }}
                     onDoubleClick={(event) => {
+                      if (isDeleted) {
+                        // Double-click deleted word to restore
+                        event.stopPropagation();
+                        handleRestoreWord(index);
+                        return;
+                      }
                       emitParticleBurstFromEvent(event, {
                         color: "#c084fc",
                         intensity: 1.1,
@@ -614,11 +751,15 @@ export function TranscriptEditor({
                       handleStartInlineEdit(index);
                     }}
                     title={`${word.start.toFixed(2)}s - ${word.end.toFixed(2)}s${
-                      isEditing ? " (Double-click to edit word)" : ""
+                      isDeleted
+                        ? " (Double-click to restore)"
+                        : isEditing
+                          ? " (Double-click to edit, or click X to delete)"
+                          : ""
                     }`}
                     style={{ animationDelay: `${revealDelay}ms` }}
                   >
-                    {isBeingEdited ? (
+                    {isBeingEdited && !isDeleted ? (
                       <input
                         ref={index === editedWordIndex ? inlineInputRef : null}
                         type="text"
@@ -639,7 +780,30 @@ export function TranscriptEditor({
                         }}
                       />
                     ) : (
-                      word.word
+                      <span className={isDeleted ? "line-through" : ""}>
+                        {word.word}
+                      </span>
+                    )}
+                    {isEditing && !isBeingEdited && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isDeleted) {
+                            handleRestoreWord(index);
+                          } else {
+                            handleDeleteWord(index);
+                          }
+                        }}
+                        className={`ml-1 opacity-0 group-hover:opacity-100 transition-opacity text-xs px-1 py-0.5 rounded ${
+                          isDeleted
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-red-600 hover:bg-red-700 text-white"
+                        }`}
+                        title={isDeleted ? "Restore word" : "Delete word"}
+                      >
+                        {isDeleted ? "↩" : "×"}
+                      </button>
                     )}
                   </span>
                 );
@@ -668,19 +832,30 @@ export function TranscriptEditor({
                 </p>
               </div>
 
-              {editedWordIndices.size > 0 && (
-                <div className="mt-3 mx-4 flex items-center gap-3 text-sm">
+              {(editedWordIndices.size > 0 || deletedWordIndices.size > 0) && (
+                <div className="mt-3 mx-4 flex items-center gap-3 text-sm flex-wrap">
                   <span className="text-gray-400">Changes:</span>
-                  <span className="flex items-center gap-1">
-                    <span className="w-3 h-3 bg-yellow-600/80 border border-yellow-400 rounded"></span>
-                    <span className="text-gray-300">
-                      Modified ({editedWordIndices.size})
+                  {editedWordIndices.size > 0 && (
+                    <span className="flex items-center gap-1">
+                      <span className="w-3 h-3 bg-yellow-600/80 border border-yellow-400 rounded"></span>
+                      <span className="text-gray-300">
+                        Modified ({editedWordIndices.size})
+                      </span>
                     </span>
-                  </span>
+                  )}
+                  {deletedWordIndices.size > 0 && (
+                    <span className="flex items-center gap-1">
+                      <span className="w-3 h-3 bg-red-600/80 border border-red-400 rounded"></span>
+                      <span className="text-gray-300">
+                        Deleted ({deletedWordIndices.size})
+                      </span>
+                    </span>
+                  )}
                   <motion.button
                     onClick={() => {
                       if (!transcript) return;
                       setEditedWordIndices(new Set());
+                      setDeletedWordIndices(new Set());
                       setInlineEditedWords([...getAllWords(transcript)]);
                     }}
                     disabled={isSaving}

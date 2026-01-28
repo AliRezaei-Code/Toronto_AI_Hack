@@ -35,15 +35,21 @@ def _build_smart_merge_prompt(transcript: Transcript, context: CreatorContext) -
     
     # Build a simplified transcript representation for the LLM
     # Timestamps are LOCAL to each clip (not absolute)
+    # We convert from ABSOLUTE (after build_hierarchical_transcript) back to LOCAL
+    # by subtracting the clip's start_offset
     segments_info = []
     for clip in transcript.clips:
+        clip_offset = clip.start_offset
         for segment in clip.segments:
+            # Convert ABSOLUTE timestamps back to LOCAL (relative to clip start)
+            local_start = segment.start - clip_offset
+            local_end = segment.end - clip_offset
             segments_info.append({
                 "clip_index": clip.clip_index,
                 "text": segment.text,
-                "start": round(segment.start, 2),
-                "end": round(segment.end, 2),
-                "duration": round(segment.end - segment.start, 2)
+                "start": round(local_start, 2),
+                "end": round(local_end, 2),
+                "duration": round(local_end - local_start, 2)
             })
     
     transcript_json = json.dumps(segments_info, indent=2)
@@ -71,6 +77,7 @@ GUIDELINES:
 - Keep segments that add unique value
 - Aim for punchy, engaging flow
 - Strip as much dead space as possible
+- If there is duplicate content make sure to keep the most relevant one and remove the duplicate.
 
 Return ONLY valid JSON (no markdown):
 {{
@@ -194,31 +201,39 @@ def build_transcript_from_segments(
     """
     from app.models import Clip, Segment, Word
     
-    # Create a lookup for original segments by (clip_index, start, end)
+    # Create a lookup for original segments by (clip_index, LOCAL_start, LOCAL_end)
+    # We convert ABSOLUTE timestamps back to LOCAL for matching with LLM output
     original_segments_map = {}
     for clip in original_transcript.clips:
+        clip_offset = clip.start_offset
         for segment in clip.segments:
-            key = (clip.clip_index, round(segment.start, 2), round(segment.end, 2))
+            # Convert ABSOLUTE to LOCAL for the lookup key
+            local_start = round(segment.start - clip_offset, 2)
+            local_end = round(segment.end - clip_offset, 2)
+            key = (clip.clip_index, local_start, local_end)
             original_segments_map[key] = segment
     
     # Build new clips based on kept segments order
     new_clips = []
     current_offset = 0.0
-    
+    total_words_added = 0
+
     for i, kept_seg in enumerate(kept_segments):
         key = (kept_seg.clip_index, round(kept_seg.start, 2), round(kept_seg.end, 2))
-        
+
         if key in original_segments_map:
+            logger.info(f"[build_transcript] Segment {i}: found match for key {key}")
             orig_segment = original_segments_map[key]
-            
+
             # Adjust word timestamps relative to new position
-            segment_start_offset = kept_seg.start
+            # Use orig_segment.start (ABSOLUTE) since word timestamps are also ABSOLUTE
+            segment_start_absolute = orig_segment.start
             new_words = []
             for word in orig_segment.words:
                 new_words.append(Word(
                     word=word.word,
-                    start=current_offset + (word.start - segment_start_offset),
-                    end=current_offset + (word.end - segment_start_offset)
+                    start=current_offset + (word.start - segment_start_absolute),
+                    end=current_offset + (word.end - segment_start_absolute)
                 ))
             
             segment_duration = kept_seg.end - kept_seg.start
@@ -237,9 +252,15 @@ def build_transcript_from_segments(
                 segments=[new_segment]
             )
             new_clips.append(new_clip)
-            
+            total_words_added += len(new_words)
+
             current_offset += segment_duration
-    
+        else:
+            logger.warning(f"[build_transcript] Segment {i}: NO MATCH for key {key}")
+            logger.warning(f"[build_transcript] Available keys: {list(original_segments_map.keys())[:5]}...")
+
+    logger.info(f"[build_transcript] Total: {len(new_clips)} clips, {total_words_added} words, {current_offset:.2f}s duration")
+
     # Build full text
     full_text = ' '.join(
         seg.text for clip in new_clips for seg in clip.segments
