@@ -1,18 +1,22 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import { Play, Edit3, Film, Sparkles } from 'lucide-react';
-import { useAuth } from '@/src/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { ThemeToggle } from '@/src/components/ThemeToggle';
+import Link from "next/link";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+import { Play, Edit3, Film, Sparkles } from "lucide-react";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { ThemeToggle } from "@/src/components/ThemeToggle";
 
 // Dynamically import Vanta component with no SSR
-const VantaBackground = dynamic(() => import('../components/VantaBackground').then(mod => mod.VantaBackground), {
-  ssr: false,
-  loading: () => null
-});
+const VantaBackground = dynamic(
+  () =>
+    import("../components/VantaBackground").then((mod) => mod.VantaBackground),
+  {
+    ssr: false,
+    loading: () => null,
+  },
+);
 
 /**
  * RENTENTIO LANDING PAGE - CREATOR-FOCUSED
@@ -34,9 +38,9 @@ export default function HomePage() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      router.push('/');
+      router.push("/");
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error("Sign out error:", error);
     }
   };
   return (
@@ -49,7 +53,7 @@ export default function HomePage() {
         className="fixed inset-0 opacity-[0.08] pointer-events-none"
         style={{
           backgroundImage: `radial-gradient(circle, rgb(var(--color-grid-dot) / 0.15) 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
+          backgroundSize: "24px 24px",
         }}
         aria-hidden="true"
       />
@@ -58,7 +62,8 @@ export default function HomePage() {
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 10, 0.4) 100%)',
+          background:
+            "radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 10, 0.4) 100%)",
         }}
         aria-hidden="true"
       />
@@ -77,7 +82,9 @@ export default function HomePage() {
                 priority
               />
             </div>
-            <span className="text-xl font-playfair font-semibold tracking-tight">Rententio</span>
+            <span className="text-xl font-playfair font-semibold tracking-tight">
+              Rententio
+            </span>
           </Link>
 
           <nav className="flex items-center gap-8">
@@ -134,7 +141,8 @@ export default function HomePage() {
 
             {/* SUBTEXT */}
             <p className="text-xl md:text-2xl font-playfair italic text-text-secondary-dark max-w-3xl mx-auto mb-8 leading-relaxed tracking-wide">
-              Rententio analyzes your footage and edits for maximum viewer retention.
+              Rententio analyzes your footage and edits for maximum viewer
+              retention.
             </p>
 
             {/* TWO-BUTTON CENTERED LAYOUT */}
@@ -153,7 +161,11 @@ export default function HomePage() {
                     stroke="currentColor"
                     strokeWidth={2.5}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
                 </span>
               </Link>
@@ -170,8 +182,16 @@ export default function HomePage() {
                     stroke="currentColor"
                     strokeWidth={2.5}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   Watch demo
                 </span>
@@ -183,7 +203,7 @@ export default function HomePage() {
               {/* Enhanced gold glow behind mockup */}
               <div
                 className="absolute inset-0 bg-gradient-to-b from-luxury-gold/25 via-luxury-gold/10 to-transparent blur-[100px] -z-10 scale-110 animate-pulse"
-                style={{ animationDuration: '4s' }}
+                style={{ animationDuration: "4s" }}
                 aria-hidden="true"
               />
               <div
@@ -241,36 +261,50 @@ export default function HomePage() {
                           linear-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px),
                           linear-gradient(90deg, rgba(212, 175, 55, 0.15) 1px, transparent 1px)
                         `,
-                        backgroundSize: '40px 40px',
+                        backgroundSize: "40px 40px",
                       }}
                       aria-hidden="true"
                     />
 
                     {/* Scanning line effect */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                    <div
+                      className="absolute inset-0 overflow-hidden pointer-events-none"
+                      aria-hidden="true"
+                    >
                       <div
                         className="absolute w-full h-px bg-gradient-to-r from-transparent via-luxury-gold/40 to-transparent animate-scan"
                         style={{
-                          animation: 'scan 3s linear infinite',
+                          animation: "scan 3s linear infinite",
                         }}
                       />
                     </div>
-
                   </div>
 
                   {/* Stats bar - editor metrics */}
                   <div className="mt-8 grid grid-cols-3 gap-4">
                     <div className="text-center p-5 rounded-xl bg-charcoal/60 border border-divider-dark/30 backdrop-blur-sm">
-                      <div className="text-4xl font-playfair font-bold text-pure-white mb-1">27</div>
-                      <div className="text-xs font-formula font-light text-text-secondary-dark uppercase tracking-button">Cuts Made</div>
+                      <div className="text-4xl font-playfair font-bold text-pure-white mb-1">
+                        27
+                      </div>
+                      <div className="text-xs font-formula font-light text-text-secondary-dark uppercase tracking-button">
+                        Cuts Made
+                      </div>
                     </div>
                     <div className="text-center p-5 rounded-xl bg-charcoal/60 border border-divider-dark/30 backdrop-blur-sm">
-                      <div className="text-4xl font-playfair font-bold text-pure-white mb-1">1.5 hrs</div>
-                      <div className="text-xs font-formula font-light text-text-secondary-dark uppercase tracking-button">Time Saved</div>
+                      <div className="text-4xl font-playfair font-bold text-pure-white mb-1">
+                        1.5 hrs
+                      </div>
+                      <div className="text-xs font-formula font-light text-text-secondary-dark uppercase tracking-button">
+                        Time Saved
+                      </div>
                     </div>
                     <div className="text-center p-5 rounded-xl bg-charcoal/60 border border-divider-dark/30 backdrop-blur-sm">
-                      <div className="text-4xl font-playfair font-bold text-luxury-gold mb-1">+54%</div>
-                      <div className="text-xs font-formula font-light text-text-secondary-dark uppercase tracking-button">Retention</div>
+                      <div className="text-4xl font-playfair font-bold text-luxury-gold mb-1">
+                        +54%
+                      </div>
+                      <div className="text-xs font-formula font-light text-text-secondary-dark uppercase tracking-button">
+                        Retention
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -294,28 +328,41 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* AI Director */}
               <Link
-                href="/login?redirect=/ai-director"
+                href="/login?redirect=/ai-editor"
                 className="group p-8 rounded-2xl bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 backdrop-blur-sm hover:border-luxury-gold/40 transition-all duration-300 hover:shadow-xl hover:shadow-luxury-gold/20"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center group-hover:bg-luxury-gold/20 transition-colors">
                     <Sparkles className="text-luxury-gold" size={24} />
                   </div>
-                  <h3 className="text-xl font-playfair font-semibold text-pure-white">AI Director</h3>
+                  <h3 className="text-xl font-playfair font-semibold text-pure-white">
+                    AI Director
+                  </h3>
                 </div>
                 <p className="text-sm font-formula text-text-secondary-dark mb-6 leading-relaxed">
-                  Turn long videos into viral shorts. AI finds the best moments and crops them perfectly for social media.
+                  Turn raw videos into viral shorts. AI finds the best moments
+                  and crops them perfectly for social media.
                 </p>
                 <div className="inline-flex items-center gap-2 text-sm font-formula font-medium text-luxury-gold group-hover:text-pale-gold transition-colors group-hover:gap-3 duration-300">
                   Start creating
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
                 </div>
               </Link>
 
               {/* Video Editor */}
-              <Link
+              {/*<Link
                 href="/login?redirect=/video-editor"
                 className="group p-8 rounded-2xl bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 backdrop-blur-sm hover:border-luxury-gold/40 transition-all duration-300 hover:shadow-xl hover:shadow-luxury-gold/20"
               >
@@ -323,21 +370,34 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-xl bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center group-hover:bg-luxury-gold/20 transition-colors">
                     <Edit3 className="text-luxury-gold" size={24} />
                   </div>
-                  <h3 className="text-xl font-playfair font-semibold text-pure-white">Video Editor</h3>
+                  <h3 className="text-xl font-playfair font-semibold text-pure-white">
+                    Video Editor
+                  </h3>
                 </div>
                 <p className="text-sm font-formula text-text-secondary-dark mb-6 leading-relaxed">
-                  Professional editing made simple. Add animations, text, and effects to make your videos stand out.
+                  Professional editing made simple. Add animations, text, and
+                  effects to make your videos stand out.
                 </p>
                 <div className="inline-flex items-center gap-2 text-sm font-formula font-medium text-luxury-gold group-hover:text-pale-gold transition-colors group-hover:gap-3 duration-300">
                   Open editor
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
                 </div>
-              </Link>
+              </Link>*/}
 
               {/* Video Player */}
-              <Link
+              {/* <Link
                 href="/login?redirect=/video-player"
                 className="group p-8 rounded-2xl bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 backdrop-blur-sm hover:border-luxury-gold/40 transition-all duration-300 hover:shadow-xl hover:shadow-luxury-gold/20"
               >
@@ -345,18 +405,31 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-xl bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center group-hover:bg-luxury-gold/20 transition-colors">
                     <Play className="text-luxury-gold" size={24} />
                   </div>
-                  <h3 className="text-xl font-playfair font-semibold text-pure-white">Video Player</h3>
+                  <h3 className="text-xl font-playfair font-semibold text-pure-white">
+                    Video Player
+                  </h3>
                 </div>
                 <p className="text-sm font-formula text-text-secondary-dark mb-6 leading-relaxed">
-                  Preview your videos instantly. Works with all formats and looks great on any device.
+                  Preview your videos instantly. Works with all formats and
+                  looks great on any device.
                 </p>
                 <div className="inline-flex items-center gap-2 text-sm font-formula font-medium text-luxury-gold group-hover:text-pale-gold transition-colors group-hover:gap-3 duration-300">
                   Watch videos
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
                 </div>
-              </Link>
+              </Link>*/}
 
               {/* Developer Tools */}
               <div className="group p-8 rounded-2xl bg-gradient-to-br from-charcoal/60 via-rich-black/60 to-charcoal/60 border border-luxury-gold/20 backdrop-blur-sm">
@@ -364,13 +437,18 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-xl bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center">
                     <Film className="text-luxury-gold" size={24} />
                   </div>
-                  <h3 className="text-xl font-playfair font-semibold text-pure-white">Developer API</h3>
+                  <h3 className="text-xl font-playfair font-semibold text-pure-white">
+                    Developer API
+                  </h3>
                 </div>
                 <p className="text-sm font-formula text-text-secondary-dark mb-6 leading-relaxed">
-                  Build your own tools with our video rendering API. Perfect for automation and custom workflows.
+                  Build your own tools with our video rendering API. Perfect for
+                  automation and custom workflows.
                 </p>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-luxury-gold/10 border border-luxury-gold/20">
-                  <code className="text-xs font-mono text-luxury-gold">/api/render</code>
+                  <code className="text-xs font-mono text-luxury-gold">
+                    /api/render
+                  </code>
                 </div>
               </div>
             </div>
@@ -394,8 +472,18 @@ export default function HomePage() {
               <div className="p-8 rounded-2xl bg-gradient-to-br from-charcoal/40 via-rich-black/40 to-charcoal/40 border border-luxury-gold/10 backdrop-blur-sm">
                 <h3 className="text-2xl font-playfair font-semibold text-pure-white mb-6 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-luxury-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                    <svg
+                      className="w-5 h-5 text-luxury-gold"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                      />
                     </svg>
                   </div>
                   Creative Power
@@ -424,8 +512,18 @@ export default function HomePage() {
               <div className="p-8 rounded-2xl bg-gradient-to-br from-charcoal/40 via-rich-black/40 to-charcoal/40 border border-luxury-gold/10 backdrop-blur-sm">
                 <h3 className="text-2xl font-playfair font-semibold text-pure-white mb-6 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-luxury-gold/10 border border-luxury-gold/30 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-luxury-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    <svg
+                      className="w-5 h-5 text-luxury-gold"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                      />
                     </svg>
                   </div>
                   Hassle-Free Tech
@@ -480,10 +578,18 @@ export default function HomePage() {
                 Product
               </div>
               <div className="flex flex-col gap-2 text-sm font-formula text-text-secondary-dark">
-                <Link href="/" className="hover:text-luxury-gold transition-colors">Home</Link>
-                <Link href="/ai-director" className="hover:text-luxury-gold transition-colors">AI Director</Link>
-                <Link href="/video-editor" className="hover:text-luxury-gold transition-colors">Editor</Link>
-                <Link href="/video-player" className="hover:text-luxury-gold transition-colors">Player</Link>
+                <Link
+                  href="/"
+                  className="hover:text-luxury-gold transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/ai-editor"
+                  className="hover:text-luxury-gold transition-colors"
+                >
+                  Clip Generator
+                </Link>
               </div>
             </div>
 
@@ -493,8 +599,18 @@ export default function HomePage() {
                 Legal
               </div>
               <div className="flex flex-col gap-2 text-sm font-formula text-text-secondary-dark">
-                <a href="#" className="hover:text-luxury-gold transition-colors">Terms</a>
-                <a href="#" className="hover:text-luxury-gold transition-colors">Privacy</a>
+                <a
+                  href="#"
+                  className="hover:text-luxury-gold transition-colors"
+                >
+                  Terms
+                </a>
+                <a
+                  href="#"
+                  className="hover:text-luxury-gold transition-colors"
+                >
+                  Privacy
+                </a>
               </div>
             </div>
           </div>
