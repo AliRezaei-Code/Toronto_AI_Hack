@@ -2,7 +2,7 @@ import os
 import json
 import asyncio
 import logging
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 
 from langgraph.graph import StateGraph, END
@@ -10,8 +10,11 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langchain_core.exceptions import LangChainException
 
-from app.models import AgentState, Word, EditInstruction, Transcript
+from app.models import AgentState, Word, EditInstruction, Transcript, CreatorContext, SmartMergeSegment
 from app.state_manager import StateManager
+from app.utils import extract_words_from_transcript, words_to_transcript
+from app.smart_merge import analyze_and_reorder_segments
+from app.context_detector import detect_creator_context
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +42,7 @@ llm = ChatOpenAI(
 )
 
 
-async def call_llm_with_retry(messages: List[any], max_retries: int = 3) -> any:
+async def call_llm_with_retry(messages: List[Any], max_retries: int = 3) -> Any:
     """
     Call LLM with retry logic for transient failures.
     
@@ -87,6 +90,88 @@ async def call_llm_with_retry(messages: List[any], max_retries: int = 3) -> any:
     
     raise Exception(f"LLM call failed after {max_retries} attempts: {last_error}")
 
+def convert_word_indices_to_time_ranges(
+    words: List[Word],
+    word_indices: List[int]
+) -> List[Tuple[float, float]]:
+    """
+    Convert word indices to time ranges for deletion.
+    Groups consecutive word indices into continuous time ranges.
+    
+    Args:
+        words: List of Word objects with timestamps
+        word_indices: List of word indices to delete (0-based)
+    
+    Returns:
+        List of (start, end) time range tuples
+    """
+    if not words or not word_indices:
+        return []
+    
+    # Sort and validate indices
+    sorted_indices = sorted(set(word_indices))
+    valid_indices = [idx for idx in sorted_indices if 0 <= idx < len(words)]
+    
+    if not valid_indices:
+        return []
+    
+    # Group consecutive indices into ranges
+    ranges = []
+    range_start_idx = valid_indices[0]
+    range_start_time = words[range_start_idx].start
+    
+    for i in range(1, len(valid_indices)):
+        # If indices are not consecutive, finalize current range
+        if valid_indices[i] != valid_indices[i-1] + 1:
+            # End time is the end of the last word in the range
+            range_end_time = words[valid_indices[i-1]].end
+            ranges.append((range_start_time, range_end_time))
+            
+            # Start new range
+            range_start_idx = valid_indices[i]
+            range_start_time = words[range_start_idx].start
+    
+    # Don't forget the last range
+    range_end_time = words[valid_indices[-1]].end
+    ranges.append((range_start_time, range_end_time))
+    
+    return ranges
+
+def merge_overlapping_ranges(
+    ranges: List[Tuple[float, float]]
+) -> List[Tuple[float, float]]:
+    """
+    Merge overlapping time ranges and remove duplicates.
+    
+    Args:
+        ranges: List of (start, end) time range tuples
+    
+    Returns:
+        List of merged, non-overlapping time ranges
+    """
+    if not ranges:
+        return []
+    
+    # Sort by start time
+    sorted_ranges = sorted(ranges, key=lambda x: x[0])
+    
+    merged = []
+    current_start, current_end = sorted_ranges[0]
+    
+    for start, end in sorted_ranges[1:]:
+        # If ranges overlap or are adjacent (within 0.1s), merge them
+        if start <= current_end + 0.1:
+            current_end = max(current_end, end)
+        else:
+            # No overlap, finalize current range
+            merged.append((current_start, current_end))
+            current_start, current_end = start, end
+    
+    # Add the last range
+    merged.append((current_start, current_end))
+    
+    return merged
+
 def analyze_query(state: AgentState) -> AgentState:
     """
     Analyze user query to determine edit intent.
@@ -106,12 +191,17 @@ Return a JSON with:
 }"""
 
     try:
+        print("User Query: ", query)
         response = llm.invoke([
             SystemMessage(content=system_prompt),
             HumanMessage(content=query)
         ], timeout=30)
         
-        result_text = response.content.strip()
+        # Handle case where content might be str or list
+        content = response.content
+        if isinstance(content, list):
+            content = " ".join(str(item) for item in content)
+        result_text = str(content).strip()
         
         if result_text.startswith('```json'):
             result_text = result_text[7:-3].strip()
@@ -129,16 +219,16 @@ Return a JSON with:
     
     return state
 
-def fetch_transcript(state: AgentState) -> AgentState:
+async def fetch_transcript(state: AgentState) -> AgentState:
     """
     Fetch current transcript for the job.
     Falls back to basic time-based editing if transcript is unavailable.
     """
     try:
-        transcript = asyncio.run(state_manager.load_transcript(state.job_id))
+        transcript = await state_manager.load_transcript(state.job_id)
         
-        if transcript and transcript.words:
-            state.current_transcript = transcript.words
+        if transcript and transcript.clips:
+            state.current_transcript = extract_words_from_transcript(transcript)
             state.message = 'Transcript loaded successfully'
         else:
             state.current_transcript = None
@@ -183,7 +273,11 @@ Return a JSON object with:
                 HumanMessage(content="Determine the time ranges to edit.")
             ], timeout=90)
             
-            result_text = response.content.strip()
+            # Handle case where content might be str or list
+            content = response.content
+            if isinstance(content, list):
+                content = " ".join(str(item) for item in content)
+            result_text = str(content).strip()
             
             if result_text.startswith('```json'):
                 result_text = result_text[7:-3].strip()
@@ -237,7 +331,11 @@ IMPORTANT:
             SystemMessage(content=system_prompt)
         ], timeout=90)
         
-        result_text = response.content.strip()
+        # Handle case where content might be str or list
+        content = response.content
+        if isinstance(content, list):
+            content = " ".join(str(item) for item in content)
+        result_text = str(content).strip()
         
         if result_text.startswith('```json'):
             result_text = result_text[7:-3].strip()
@@ -249,23 +347,43 @@ IMPORTANT:
         word_indices = analysis.get('words_to_delete', [])
         time_ranges = analysis.get('time_ranges_to_delete', [])
         
-        state.time_ranges_to_delete = [(r[0], r[1]) for r in time_ranges]
-        state.message = analysis.get('reasoning', f'Determined {len(word_indices)} words to remove')
+        # Convert word indices to time ranges for precise word-level deletion
+        word_based_ranges = []
+        if word_indices and state.current_transcript:
+            word_based_ranges = convert_word_indices_to_time_ranges(
+                state.current_transcript, 
+                word_indices
+            )
+            logger.info(f"Converted {len(word_indices)} word indices to {len(word_based_ranges)} time ranges for job {state.job_id}")
+        
+        # Merge word-based ranges with LLM-provided time ranges
+        # Convert LLM time ranges from lists to tuples
+        llm_ranges = [(r[0], r[1]) for r in time_ranges] if time_ranges else []
+        all_time_ranges = llm_ranges + word_based_ranges
+        
+        # Remove duplicates and sort
+        unique_ranges = merge_overlapping_ranges(all_time_ranges)
+        
+        state.time_ranges_to_delete = unique_ranges
+        
+        total_words = len(word_indices) if word_indices else 0
+        total_ranges = len(unique_ranges)
+        state.message = analysis.get('reasoning', f'Determined {total_words} words and {total_ranges} time ranges to remove')
         
     except Exception as e:
         state.message = f'Error determining edits: {str(e)}'
+        logger.error(f"Edit determination error for job {state.job_id}: {e}", exc_info=True)
     
     return state
 
 async def call_mcp_tools(state: AgentState) -> AgentState:
     """
     Call MCP server tools to perform the edits.
+    Now supports both 'cut' and 'keep' instructions:
+    - If edit_instructions is set (smart merge), use those
+    - Otherwise, convert time_ranges_to_delete to 'cut' instructions
     """
     import httpx
-    
-    if not state.time_ranges_to_delete:
-        state.message = 'No edits to perform'
-        return state
     
     mcp_server_url = os.getenv('MCP_SERVER_URL', 'http://localhost:9000')
     
@@ -283,14 +401,19 @@ async def call_mcp_tools(state: AgentState) -> AgentState:
                 state.message = 'Source video not found'
                 return state
             
-            edit_instructions = []
-            
-            for start, end in state.time_ranges_to_delete:
-                edit_instructions.append({
-                    'type': 'cut',
-                    'start': start,
-                    'end': end
-                })
+            # Use edit_instructions if available (smart merge), otherwise use time_ranges_to_delete (cuts)
+            if state.edit_instructions:
+                # Smart merge: use pre-built edit_instructions with 'keep' type
+                edit_instructions = [inst.model_dump() for inst in state.edit_instructions]
+            elif state.time_ranges_to_delete:
+                # Regular edits: convert time_ranges_to_delete to 'cut' instructions
+                edit_instructions = [
+                    {'type': 'cut', 'start': start, 'end': end}
+                    for start, end in state.time_ranges_to_delete
+                ]
+            else:
+                state.message = 'No edits to perform'
+                return state
             
             payload = {
                 'edit_instructions': edit_instructions,
@@ -346,14 +469,15 @@ async def update_state(state: AgentState) -> AgentState:
                     if response.status_code == 200:
                         result = response.json()
                         transcript_data = result.get('data', {})
-                        
-                        new_transcript = Transcript(
-                            text=transcript_data.get('text'),
-                            words=[Word(**w) for w in transcript_data.get('words', [])],
-                            duration=transcript_data.get('duration')
+
+                        words_data = transcript_data.get('words', [])
+                        new_transcript = words_to_transcript(
+                            words=words_data,
+                            text=transcript_data.get('text', ''),
+                            duration=transcript_data.get('duration', 0.0)
                         )
-                        
-                        state.result_transcript = new_transcript.words
+
+                        state.result_transcript = extract_words_from_transcript(new_transcript)
                         await state_manager.save_transcript(state.job_id, new_transcript)
                         state.message = 'Video edited and transcript regenerated successfully'
                     else:
@@ -370,14 +494,75 @@ async def update_state(state: AgentState) -> AgentState:
     
     return state
 
-def create_agent_graph():
+async def determine_smart_merge(state: AgentState) -> AgentState:
+    """
+    Smart merge: Analyze transcript and determine which segments to KEEP and reorder.
+    Reuses the same pattern as determine_edits but outputs 'keep' instructions.
+    """
+    try:
+        # Load full transcript (hierarchical)
+        transcript = await state_manager.load_transcript(state.job_id)
+        
+        if not transcript or not transcript.clips:
+            state.message = 'No transcript available for smart merge'
+            logger.warning(f"No transcript found for smart merge job {state.job_id}")
+            return state
+        
+        # Detect or load creator context
+        try:
+            # Try to load existing context first
+            context = await state_manager.load_context(state.job_id)
+            if not context:
+                # Detect context from transcript
+                context = await detect_creator_context(transcript.text or "")
+                if context:
+                    await state_manager.save_context(state.job_id, context)
+        except Exception as e:
+            logger.warning(f"Context detection failed for job {state.job_id}: {e}, using defaults")
+            context = CreatorContext(
+                industry="general",
+                role="creator",
+                target_audience="general audience",
+                tone="professional",
+                suggested_hook_style="results-driven"
+            )
+        
+        # Use existing smart merge logic
+        merge_result = await analyze_and_reorder_segments(transcript, context)
+        segments = merge_result.get("segments", [])
+        
+        if not segments:
+            state.message = 'Smart merge produced no segments'
+            logger.warning(f"Smart merge produced no segments for job {state.job_id}")
+            return state
+        
+        # Convert SmartMergeSegment to EditInstruction with type='keep'
+        state.edit_instructions = [
+            EditInstruction(
+                type='keep',
+                start=seg.start,
+                end=seg.end
+            )
+            for seg in segments
+        ]
+        
+        state.message = merge_result.get('reasoning', 'Smart merge completed')
+        logger.info(f"Smart merge: {len(segments)} segments to keep for job {state.job_id}")
+        
+    except Exception as e:
+        state.message = f'Error in smart merge: {str(e)}'
+        logger.error(f"Smart merge error for job {state.job_id}: {e}", exc_info=True)
+    
+    return state
+
+def create_agent_graph() -> Any:
     """
     Create the LangGraph agent workflow.
     """
     workflow = StateGraph(AgentState)
     
     workflow.add_node("analyze_query", analyze_query)
-    workflow.add_node("fetch_transcript", fetch_transcript)
+    workflow.add_node("fetch_transcript", lambda s: asyncio.run(fetch_transcript(s)))
     workflow.add_node("determine_edits", determine_edits)
     workflow.add_node("execute_edits", lambda s: asyncio.run(call_mcp_tools(s)))
     workflow.add_node("update_state", lambda s: asyncio.run(update_state(s)))
@@ -393,9 +578,46 @@ def create_agent_graph():
 
 agent = create_agent_graph()
 
-async def run_agent(job_id: str, query: str, current_video_path: str):
+def create_smart_merge_graph() -> Any:
+    """
+    Create the LangGraph workflow for smart merge.
+    Reuses existing infrastructure from agent.py:
+    - fetch_transcript: Load transcript
+    - determine_smart_merge: Analyze and reorder segments
+    - call_mcp_tools: Render video (now supports 'keep' instructions)
+    - update_state: Save state and regenerate transcript
+    """
+    workflow = StateGraph(AgentState)
+    
+    # Reuse existing nodes
+    workflow.add_node("fetch_transcript", lambda s: asyncio.run(fetch_transcript(s)))
+    
+    # New node for smart merge analysis
+    workflow.add_node("determine_smart_merge", lambda s: asyncio.run(determine_smart_merge(s)))
+    
+    # Reuse existing MCP and state nodes
+    workflow.add_node("execute_edits", lambda s: asyncio.run(call_mcp_tools(s)))
+    workflow.add_node("update_state", lambda s: asyncio.run(update_state(s)))
+    
+    workflow.set_entry_point("fetch_transcript")
+    workflow.add_edge("fetch_transcript", "determine_smart_merge")
+    workflow.add_edge("determine_smart_merge", "execute_edits")
+    workflow.add_edge("execute_edits", "update_state")
+    workflow.add_edge("update_state", END)
+    
+    return workflow.compile()
+
+smart_merge_agent = create_smart_merge_graph()
+
+async def run_agent(job_id: str, query: str, current_video_path: str) -> Dict[str, Any]:
     """
     Run the agent for a specific job.
+    
+    Returns:
+        Dict with keys:
+        - video_path: str - Path to the edited video
+        - transcript_words: List[Word] - Updated transcript words
+        - message: str - Status message
     """
     initial_state = AgentState(
         job_id=job_id,
@@ -406,7 +628,32 @@ async def run_agent(job_id: str, query: str, current_video_path: str):
     result_state = await agent.ainvoke(initial_state)
     
     return {
-        'video_path': result_state.result_video_path or current_video_path,
-        'transcript_words': result_state.result_transcript or [],
-        'message': result_state.message
+        'video_path': result_state.get('result_video_path') or current_video_path,
+        'transcript_words': result_state.get('result_transcript') or [],
+        'message': result_state.get('message', '')
+    }
+
+async def run_smart_merge(job_id: str, current_video_path: str) -> Dict[str, Any]:
+    """
+    Run the smart merge workflow for a specific job.
+    Reuses the same infrastructure as run_agent but with smart merge logic.
+    
+    Returns:
+        Dict with keys:
+        - video_path: str - Path to the merged video
+        - transcript_words: List[Word] - Updated transcript words
+        - message: str - Status message
+    """
+    initial_state = AgentState(
+        job_id=job_id,
+        user_query="smart_merge",  # Placeholder, not used in smart merge
+        current_video_path=current_video_path
+    )
+    
+    result_state = await smart_merge_agent.ainvoke(initial_state)
+    
+    return {
+        'video_path': result_state.get('result_video_path') or current_video_path,
+        'transcript_words': result_state.get('result_transcript') or [],
+        'message': result_state.get('message', '')
     }

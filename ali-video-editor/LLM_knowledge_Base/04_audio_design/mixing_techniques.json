@@ -1,0 +1,295 @@
+{
+  "meta": {
+    "title": "Audio Mixing and Balancing Techniques",
+    "category": "Audio Design",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["sound_layers.json"]
+  },
+  "summary": "Mixing techniques that balance layers for clarity, prevent ear fatigue, and ensure dialogue remains intelligible while maintaining engagement.",
+  "core_principles": [
+    {
+      "principle": "Dialogue Primacy",
+      "description": "Dialogue must cut through mix clearly as primary information carrier",
+      "importance": "high"
+    },
+    {
+      "principle": "Frequency Separation",
+      "description": "Carve frequency pockets to prevent layers from competing audibly",
+      "importance": "high"
+    },
+    {
+      "principle": "Dynamic Range Management",
+      "description": "Balance loud and quiet moments to prevent ear fatigue and maintain engagement",
+      "importance": "high"
+    },
+    {
+      "principle": "Ducking for Clarity",
+      "description": "Automatically lower music when dialogue occurs for intelligibility",
+      "importance": "medium"
+    },
+    {
+      "principle": "Headroom and Peaking",
+      "description": "Maintain consistent levels with dialogue peaks at appropriate dB targets",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Audio Ducking",
+      "description": "Automatically lowering music volume when dialogue occurs for clarity",
+      "implementation": [
+        "Use sidechain compression triggered by dialogue track",
+        "Set threshold to engage when speaker begins",
+        "Apply reduction of 6-15dB on music track during dialogue",
+        "Set attack fast (10-50ms) for quick response",
+        "Set release smooth (200-500ms) for natural recovery",
+        "Manual ducking as alternative: keyframe music volume manually",
+        "Ensure music doesn't pump noticeably",
+        "Return to full music level between speaking"
+      ],
+      "timing": "Continuous, triggered by dialogue",
+      "examples": [
+        "Dialogue speaking → music dips −12dB → silence → music returns",
+        "Continuous speaking → music reduced throughout",
+        "Music-heavy section → speaker starts → duck → speaker stops → music back"
+      ],
+      "tools": [
+        "DAW sidechain compression",
+        "Premiere Pro Auto-ducking",
+        "Logic Pro Compressor (sidechain)",
+        "Pro VST ducking plugins"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Ensures dialogue clarity without constant adjustments",
+          "con": "Poor settings cause pumping, unnatural sound"
+        },
+        {
+          "pro": "Automates tedious volume automation",
+          "con": "Requires understanding of compression parameters"
+        }
+      ]
+    },
+    {
+      "name": "EQ Pockets and Frequency Management",
+      "description": "Carving frequency space in music to prevent competition with dialogue frequencies",
+      "implementation": [
+        "Identify dialogue frequency range (mainly 1-4kHz)",
+        "Apply EQ to music: cut 1kHz-3kHz range by 3-6dB",
+        "Create pocket for voice to sit clearly in mix",
+        "Cut music at 200-300Hz (mud region",
+        "Boost presence in music at 5-8kHz for brightness",
+        "Use EQ to manage low end (below 80Hz) to prevent boominess",
+        "Apply EQ differently to different music elements",
+        "Test EQ settings with dialogue playing"
+      ],
+      "timing": "Continuous EQ settings on music track",
+      "examples": [
+        "Music EQ: cut 2-4kHz −5dB for dialogue clarity",
+        "Bass boost 80-120Hz, cut 200-300Hz to reduce mud",
+        "Treble boost 8-10kHz for sparkle in music"
+      ],
+      "tools": [
+        "DAW EQ plugins (parametric, graphic)",
+        "iZotope Neutron (AI-assisted EQ)",
+        "FabFilter Pro-Q (precision EQ)",
+        "Stock EQ in all major DAWs"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Clear dialogue without pumping volume effects",
+          "con": "Poor EQ can make music sound boxy or weak"
+        },
+        {
+          "pro": "Creates space for multiple audio layers",
+          "con": "Requires ear and practice to set correctly"
+        }
+      ]
+    },
+    {
+      "name": "Dynamic Range Management",
+      "description": "Balancing loud and quiet moments to prevent ear fatigue and maintain engagement",
+      "implementation": [
+        "Avoid constant 100% intensity (causes ear fatigue",
+        "Create quiet moments for emphasis (dynamic contrast)",
+        "Use compression to control extreme peaks",
+        "Set target loudness (−16 LUFS for YouTube)",
+        "Allow dynamic range: −24 to −6 LUFS peaks",
+        "Match dialogue loudness to platform standards",
+        "Use mastering limiter to prevent clipping",
+        "Export with appropriate loudness targets"
+      ],
+      "timing": "Overall mix and master processing",
+      "examples": [
+        "Overall loudness: −16 LUFS target",
+        "Music peaks at −12LUFS, dips to −20LUFS between speakers",
+        "Dialogue consistently around −14 to −16 LUFS",
+        "Limit peaks to −0.3dBFS to prevent clipping"
+      ],
+      "tools": [
+        "Loudness meters (EBU R128)",
+        "Compressors (peak, RMS, optical)",
+        "Mastering limiters",
+        "DAW mastering chain"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Professional sound quality, prevents fatigue",
+          "con": "Requires understanding of loudness standards"
+        },
+        {
+          "pro": "Optimized for platform playback consistency",
+          "con": "Over-compression can make sound flat"
+        }
+      ]
+    },
+    {
+      "name": "Dialogue Enhancement Processing",
+      "description": "Processing dialogue for clarity, presence, and professional polish",
+      "implementation": [
+        "Compression: 2:1 to 4:1 ratio to control dynamics",
+        "EQ: boost 2-5kHz for clarity, cut below 80Hz to reduce rumble",
+        "De-esser: tame sibilance at 5-8kHz range",
+        "Subtle saturation: adds warmth and thickens sound",
+        "Noise reduction: apply gently if needed",
+        "Consistent levels: normalize or gain match dialogue",
+        "Presence: slight boost around 3kHz for intelligibility",
+        "Final polish: limiter to prevent peaks above −6dB"
+      ],
+      "timing": "Processing applied continuously to dialogue track",
+      "examples": [
+        "Voiceover: compressor 3:1, EQ boost 3kHz +3dB, de-esser at 6kHz",
+        "Interview recording: noise reduction first, then compression, then EQ",
+        "Studio recording: compression, EQ, minimal saturation"
+      ],
+      "tools": [
+        "Adobe Audition (multitrack, spectral)",
+        "iZotope RX (noise reduction, de-esser)",
+        "Pro Tools (compressor, EQ, saturator)",
+        "Free alternatives: Audacity, OCENA"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Professional clarity and intelligibility",
+          "con": "Over-processing sounds artificial"
+        },
+        {
+          "pro": "Respects viewer's ability to understand content",
+          "con": "Requires good source recording foundation"
+        }
+      ]
+    },
+    {
+      "name": "SFX Balance and Placement",
+      "description": "Mixing sound effects to provide punctuation without overpowering content",
+      "implementation": [
+        "Peak SFX at −10dB to −15dB (depending on importance)",
+        "Use stereo panning for spatial positioning",
+        "Match SFX volume to visual impact magnitude",
+        "Apply EQ to prevent SFX from clashing with dialogue",
+        "Use reverb on SFX for environment matching",
+        "Time SFX precisely to visual actions (frame accuracy)",
+        "Layer multiple SFX elements for complexity",
+        "Automate SFX levels throughout timeline"
+      ],
+      "timing": "Synced to visual actions, levels variable",
+      "examples": [
+        "Text pop: sound at −12dB, center pan",
+        "Whoosh transition: stereo pan left to right, −15dB peak",
+        "Impact sound: −10dB, slight reverb for weight"
+      ],
+      "tools": [
+        "DAW SFX track management",
+        "Audio ducking with SFX as triggers",
+        "EQ plugins for sound design",
+        "Reverb plugins for environment"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Adds professional polish and interactivity",
+          "con": "Overuse distracts from content"
+        },
+        {
+          "pro": "Enhances perceived production value",
+          "con": "Time-consuming to time and balance"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "mix_level_targets": {
+      "youtube_standard": {
+        "dialogue_peak": "−6dBFS",
+        "dialogue_lufs": "−14 to −16 LUFS integrated",
+        "music_average": "−15 to −20 LUFS",
+        "sfx_peak": "−10 to −15 dBFS",
+        "overall_lufs": "−16 LUFS integrated (EBU R128)",
+        "headroom": "−0.3 to −0.1 dBFS (limiter ceiling)"
+      }
+    },
+    "eq_pocket_presets": {
+      "music_for_dialogue": {
+        "cut_1khz_3khz": "-4 to -6dB (clearance for voice)",
+        "cut_200hz_300hz": "-3dB (remove mud)",
+        "boost_5khz_8khz": "+2 to +3dB (brightness)",
+        "cut_below_80hz": "-6dB (reduce low rumble)"
+      },
+      "dialogue_enhancement": {
+        "boost_2khz_5khz": "+2 to +4dB (pres intelligibility)",
+        "cut_below_80hz": "-12dB (remove rumble)",
+        "de_ess_at_5khz_8khz": "adjust for sibilance",
+        "subtle_saturation": "add warmth if needed"
+      }
+    },
+    "ducking_parameters": {
+      "sidechain_compressor": {
+        "threshold": "trigger_on_dialogue_onset",
+        "ratio": "4:1 to 8:1 (aggressive ducking",
+        "attack": "10-50ms (fast_response)",
+        "release": "200-500ms (smooth_recovery)",
+        "makeup_gain": "restore_music_volume",
+        "target_reduction": "-6 to -15dB during speech"
+      },
+      "manual_ducking": {
+        "pre_speech_music": "full_level_-15LUFS",
+        "during_speech_music": "-18 to -30LUFS (varies by density",
+        "after_speech_music": "fade_to_-15LUFS_over_200-500ms"
+      }
+    },
+    "processing_chain_order": {
+      "dialogue_chain": [
+        "noise_reduction",
+        "compression_2_1_to_4_1",
+        "EQ (boost 2-5kHz)",
+        "de-esser (5-8kHz)",
+        "saturation (subtle",
+        "limiter (set to -6dB)"
+      ],
+      "music_chain": [
+        "EQ (pockets for dialogue)",
+        "compression (dynamic control)",
+        "sidechain_ducking_if_needed",
+        "limiter (prevent clipping)"
+      ],
+      "sfx_chain": [
+        "EQ (clarity)",
+        "reverb (environment if needed)",
+        "delay (for spatial effects)",
+        "level_automation"
+      ]
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "medium"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+{
+  "meta": {
+    "title": "Music Stem Editing and Narrative Scoring",
+    "category": "Audio Design",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["sound_layers.json", "mixing_techniques.json"]
+  },
+  "summary": "Advanced music editing techniques using separated stems to score content dynamically, driving narrative through emotional peaks and valleys.",
+  "core_principles": [
+    {
+      "principle": "Dynamic vs Static Scoring",
+      "description": "Music should evolve with narrative, not loop endlessly unchanged",
+      "importance": "high"
+    },
+    {
+      "principle": "Emotion by Instrument Layer",
+      "description": "Different instruments carry different emotional signals; removing or adding layers shifts mood",
+      "importance": "high"
+    },
+    {
+      "principle": "Anticipation through Crescendos",
+      "description": "Musical swells and risers create subconscious anticipation of upcoming reveals",
+      "importance": "medium"
+    },
+    {
+      "principle": "Silence as Emphasis",
+      "description": "Removing music entirely is the loudest signal possible for emphasis or sarcasm",
+      "importance": "high"
+    },
+    {
+      "principle": "Narrative-Driven Music Selection",
+      "description": "Music choice is story element, not just background; each track tells part of the narrative",
+      "importance": "high"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Stem-Based Layer Editing",
+      "description": "Using separated instrumental stems to dynamically adjust music density, emotion, and energy",
+      "implementation": [
+        "Obtain multi-track stems (drums, bass, melody, pads)",
+        "Keep full track for high-energy, peak moments",
+        "Remove drums for lower-energy, somber sections",
+        "Add back drums for rising energy toward climax",
+        "Lower melody volume for emphasis on spoken words",
+        "Boost pads/ambient layers for emotional depth",
+        "Crossfade stems seamlessly for natural evolution",
+        "Use stem separation tools if tracks not already separated"
+      ],
+      "timing": "Throughout video, evolving with narrative",
+      "examples": [
+        "Setup: pads only → Build: bass added → Climax: full track",
+        "Serious moment: drums removed → Emotional: melody solo",
+        "Transition: riser build → Reveal: full track impact"
+      ],
+      "tools": [
+        "iZotope RX (Music Rebalancer, stem separation)",
+        "Spleeter (AI stem separation)",
+        "Lalal.ai (dedicated stem separation service)",
+        "DAW with multi-track editing"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Dynamic scoring impossible with single-track",
+          "con": "Stem separation adds complexity"
+        },
+        {
+          "pro": "Prevents repetitive, looping feel",
+          "con": "Requires skilled timing and judgment"
+        }
+      ]
+    },
+    {
+      "name": "The Drop (Music Elimination)",
+      "description": "Cutting music completely for emphasis, sarcasm, or serious statements",
+      "implementation": [
+        "Identify moments for maximum emphasis or humor",
+        "Cut all music tracks except dialogue at that moment",
+        "Hold silence for 0.5-3 seconds based on need",
+        "Return music with cue for resolution",
+        "Use for sarcasm (drop enhances deadpan delivery)",
+        "Apply to secrets or key revelations",
+        "Dramatic pause for tension before resolution",
+        "Time drop precisely to frame accuracy"
+      ],
+      "timing": "1-5 second cuts strategically",
+      "examples": [
+        "Joke spoken → music drops → laughter ensues",
+        "Serious statement → silence → music returns at resolution",
+        "Sarcastic comment → drop → deadpan → music back"
+      ],
+      "tools": [
+        "DAW automation for volume drops",
+        "Markers to identify drop points",
+        "Fade automation for clean in/out"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Most powerful emphasis tool available",
+          "con": "Overuse becomes disruptive"
+        },
+        {
+          "pro": "Creates anticipation and dramatic impact",
+          "con": "Requires precise timing and judgment"
+        }
+      ]
+    },
+    {
+      "name": "Crescendos and Musical Swells",
+      "description": "Building musical tension through risers and swells before reveals or transitions",
+      "implementation": [
+        "Use riser sounds before major reveals or transitions",
+        "Build energy with increasing tempo or volume",
+        "Layer instruments toward climax (add stems gradually)",
+        "Time swell resolution to match reveal",
+        "Use ascending scales or arpeggios for tension",
+        "Apply before chapter changes or key sections",
+        "Match visual escalation to musical escalation",
+        "Release tension with resolution after reveal"
+      ],
+      "timing": "3-10 seconds leading up to reveal",
+      "examples": [
+        "Explanation → riser buildup → result reveal",
+        "Travel story → music swell → destination reveal",
+        "Problem statement → build to swell → solution introduction"
+      ],
+      "tools": [
+        "Riser sound libraries",
+        "DAW automation for volume and filter sweeps",
+        "Stem editing for layer buildup",
+        "Audio envelope shaping"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Subconscious anticipation keeps viewer watching",
+          "con": "If reveal is weak, anticlimax causes disappointment"
+        },
+        {
+          "pro": "Creates natural narrative flow and energy",
+          "con": "Requires matching visual and audio escalation"
+        }
+      ]
+    },
+    {
+      "name": "Mood Shifts through Key and Texture Changes",
+      "description": "Changing musical key, tempo, or texture to signal story shifts",
+      "implementation": [
+        "Match music key to video mood (major for triumph, minor for conflict)",
+        "Tempo shift for energy changes (slower for seriousness, faster for excitement)",
+        "Texture change for style shifts (electronic to acoustic for tone shift)",
+        "Use bridge sections for chapter transitions",
+        "Apply key changes for emotional elevation",
+        "Match music style to content era or location",
+        "Fade out, fade in, crossfade for smooth changes",
+        "Consider music drop for extreme shifts"
+      ],
+      "timing": "At narrative transitions or energy shifts",
+      "examples": [
+        "Problem phase: minor key, slower → Solution: major key, faster",
+        "Past story: acoustic, nostalgic → Present: modern, electronic",
+        "Tension building: rising tempo → Resolution: peaceful, slower"
+      ],
+      "tools": [
+        "Music libraries with multiple versions (intros, full, outros)",
+        "DAW track management for multiple tracks",
+        "Key detection and matching software",
+        "Crossfade automation"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Signals story shifts without words",
+          "con": "Abrupt changes can be jarring"
+        },
+        {
+          "pro": "Enhances emotional arc and narrative cohesion",
+          "con": " Requires good musical ear for timing and choice"
+        }
+      ]
+    },
+    {
+      "name": "Instrument Emotional Signaling",
+      "description": "Using instrument presence or absence to convey emotional states",
+      "implementation": [
+        "Pads: emotional depth, seriousness, sadness",
+        "Piano: intimacy, melancholy, reflection",
+        "Strings: drama, emotion, elegance",
+        "Synths: modernity, energy, tension",
+        "Drums: energy, drive, forward motion",
+        "Bass: foundation, seriousness, weight",
+        "Remove instruments to lower energy, add to increase",
+        "Crossfade instruments for smooth transitions"
+      ],
+      "timing": "Layer changes aligned with narrative",
+      "examples": [
+        "Emotional moment: pads + piano, no drums",
+        "High energy: drums + bass + melody",
+        "Tension building: synth riser, sparse elements",
+        "Resolution: full orchestral or full band"
+      ],
+      "tools": [
+        "Stem editing for instrument control",
+        "Music library browsing by mood/instrument",
+        "DAW mixing and automation",
+        "EQ automation for instrument presence"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Communicates emotion subtlety and effectively",
+          "con": " Requires audience musical literacy for full effect"
+        },
+        {
+          "pro": "Non-verbal emotional guidance",
+          "con": "Dependent on quality of source music"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "stem_layer_functions": {
+      "drums_percussion": {
+        "emotional_signal": "energy_drive_tempo",
+        "presence": "high_energy_climax_build",
+        "absence": "lower_energy_somber_intimate",
+        "volume_control": "0-100%"
+      },
+      "bass": {
+        "emotional_signal": "foundation_weight_seriousness",
+        "presence": "grounding_emotional_weight",
+        "absence": "lighter_airier_feel",
+        "frequency_focus": "40-120Hz"
+      },
+      "melody": {
+        "emotional_signal": "principal_idea_emotional_core",
+        "presence": "main_thematic_expression",
+        "absence": "background_texture_only",
+        "control": "volume_automation_for_ducking"
+      },
+      "pads_harmony": {
+        "emotional_signal": "atmosphere_emotion_depth",
+        "presence": "emotional_scenes_somatic_moments",
+        "absence": "stripped_down_direct",
+        "characteristics": "sustained_ambient"
+      },
+      "fx_texture": {
+        "emotional_signal": "style_character_texture",
+        "presence": "specific_mood_coloring",
+        "absence": "clean_direct_sound",
+        "examples": ["synth", "acoustic", "electronic", "orchestral"]
+      }
+    },
+    "music_emotion_key_mapping": {
+      "major_key": {
+        "emotion": "hopeful_triumphant_positive",
+        "use_case": "success_resolution_happiness",
+        "examples": ["C major", "G major", "F major"]
+      },
+      "minor_key": {
+        "emotion": "serious_conflict_melancholy",
+        "use_case": "problem_statement_tension_sadness",
+        "examples": ["A minor", "E minor", "D minor"]
+      },
+      "descending_keys": {
+        "emotion": "settling_resolution_conclusion",
+        "use_case": "endings_transitions_downward"
+      },
+      "ascending_keys": {
+        "emotion": "building_hope_rising_tension",
+        "use_case": "buildups_hope_builders"
+      }
+    },
+    "crescendo_build_structure": {
+      "stage_1_setup": {
+        "duration": "0-3s",
+        "elements": "subtle_riser_or_rhythmic_build",
+        "energy": "low_increasing"
+      },
+      "stage_2_build": {
+        "duration": "3-7s",
+        "elements": "add_layers_increase_tempo_volume",
+        "energy": "medium_ascending"
+      },
+      "stage_3_peak": {
+        "duration": "0-1s",
+        "elements": "maximum_energy_full_track",
+        "energy": "high_maximum"
+      },
+      "stage_4_release": {
+        "duration": "0.5-2s",
+        "elements": "drop_or_fade_to_next_section",
+        "energy": "variable_resolution"
+      }
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "medium"
+    }
+  ]
+}

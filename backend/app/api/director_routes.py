@@ -12,7 +12,7 @@ import os
 import uuid
 import logging
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse
@@ -43,10 +43,10 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/director", tags=["AI Director"])
 
 # In-memory storage for director jobs (replace with database in production)
-director_jobs: dict[str, DirectorJob] = {}
-diarization_results: dict[str, DiarizationResult] = {}
-viral_clips_store: dict[str, ViralClipSelection] = {}
-edl_store: dict[str, EditDecisionList] = {}
+director_jobs: Dict[str, DirectorJob] = {}
+diarization_results: Dict[str, DiarizationResult] = {}
+viral_clips_store: Dict[str, ViralClipSelection] = {}
+edl_store: Dict[str, EditDecisionList] = {}
 
 
 # ============================================================================
@@ -62,7 +62,7 @@ async def upload_for_ai_director(
     caption_style: CaptionStyle = CaptionStyle.HORMOZI,
     target_platform: Platform = Platform.TIKTOK,
     max_clips: int = 5,
-    min_clip_duration: float = 30.0,
+    min_clip_duration: float = 15.0,
     max_clip_duration: float = 90.0,
     remove_fillers: bool = True,
 ):
@@ -128,7 +128,7 @@ async def process_director_job(
     job_id: str,
     video_path: str,
     max_clips: int = 5,
-    min_duration: float = 30.0,
+    min_duration: float = 15.0,
     max_duration: float = 90.0,
     remove_fillers: bool = True,
 ):

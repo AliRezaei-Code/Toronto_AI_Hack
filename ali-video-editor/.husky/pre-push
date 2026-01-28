@@ -1,0 +1,59 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-push checks..."
+echo ""
+
+# Track start time
+start_time=$(date +%s)
+
+# 1. Lint Check - Fail on errors only, allow warnings
+echo "📝 Running lint check (errors only)..."
+if npm run lint:ci; then
+  echo "✅ Lint check passed"
+else
+  echo ""
+  echo "❌ Lint failed with errors. Push aborted."
+  echo "   Fix linting errors before pushing."
+  echo ""
+  exit 1
+fi
+echo ""
+
+# 2. TypeScript Type Check - Must pass with zero errors
+echo "🔷 Running TypeScript type check..."
+if npm run typecheck; then
+  echo "✅ Type check passed"
+else
+  echo ""
+  echo "❌ Type check failed. Push aborted."
+  echo "   Fix TypeScript errors before pushing."
+  echo "   Run 'npm run typecheck' to see details."
+  echo ""
+  exit 1
+fi
+echo ""
+
+# 3. Build Check - Must complete successfully
+echo "🏗️ Running production build..."
+if npm run build; then
+  echo "✅ Build successful"
+else
+  echo ""
+  echo "❌ Build failed. Push aborted."
+  echo "   Fix build errors before pushing."
+  echo ""
+  exit 1
+fi
+echo ""
+
+# Calculate and display elapsed time
+end_time=$(date +%s)
+elapsed=$((end_time - start_time))
+minutes=$((elapsed / 60))
+seconds=$((elapsed % 60))
+
+echo "✅ All pre-push checks passed successfully!"
+echo "⏱️  Total time: ${minutes}m ${seconds}s"
+echo ""
+echo "Proceeding with push..."

@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 120 8% 6%;
+    --foreground: 0 0% 98%;
+    --card: 120 8% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 120 8% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 84 74% 45%;
+    --primary-foreground: 0 0% 7%;
+    --secondary: 120 6% 14%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 120 6% 14%;
+    --muted-foreground: 120 4% 60%;
+    --accent: 120 6% 14%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 120 6% 16%;
+    --input: 120 6% 16%;
+    --ring: 84 74% 45%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: radial-gradient(circle at top, rgba(132, 204, 22, 0.12), transparent 55%);
+  }
+}
+
+@layer utilities {
+  .bg-blue-400 {
+    background-color: rgb(163 230 53) !important;
+  }
+  .bg-blue-500 {
+    background-color: rgb(132 204 22) !important;
+  }
+  .bg-blue-600 {
+    background-color: rgb(101 163 13) !important;
+  }
+  .bg-blue-700 {
+    background-color: rgb(77 124 15) !important;
+  }
+  .bg-blue-800 {
+    background-color: rgb(63 98 18) !important;
+  }
+  .text-blue-400 {
+    color: rgb(163 230 53) !important;
+  }
+  .text-blue-500 {
+    color: rgb(132 204 22) !important;
+  }
+  .text-blue-600 {
+    color: rgb(101 163 13) !important;
+  }
+  .text-blue-700 {
+    color: rgb(77 124 15) !important;
+  }
+  .border-blue-400 {
+    border-color: rgb(163 230 53) !important;
+  }
+  .border-blue-500 {
+    border-color: rgb(132 204 22) !important;
+  }
+  .border-blue-600 {
+    border-color: rgb(101 163 13) !important;
+  }
+  .ring-blue-500 {
+    --tw-ring-color: rgb(132 204 22) !important;
+  }
+  .from-blue-500 {
+    --tw-gradient-from: rgb(132 204 22) !important;
+  }
+  .from-blue-600 {
+    --tw-gradient-from: rgb(101 163 13) !important;
+  }
+  .to-blue-500 {
+    --tw-gradient-to: rgb(132 204 22) !important;
+  }
+  .to-blue-600 {
+    --tw-gradient-to: rgb(101 163 13) !important;
+  }
+  .from-purple-600 {
+    --tw-gradient-from: rgb(132 204 22) !important;
+  }
+  .to-purple-600 {
+    --tw-gradient-to: rgb(101 163 13) !important;
+  }
+  .to-purple-700 {
+    --tw-gradient-to: rgb(77 124 15) !important;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Thin scrollbar utilities */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(55, 65, 81, 0.5);
+    border-radius: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(107, 114, 128, 0.8);
+    border-radius: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 163, 175, 0.9);
+  }
+}

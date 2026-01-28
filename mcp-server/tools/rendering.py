@@ -135,9 +135,57 @@ class RenderingTool:
         """
         if not edit_instructions:
             raise ValueError("No edit instructions provided")
-
+        print("Edit Instructions:", edit_instructions)
         keep_segments = [e for e in edit_instructions if e['type'] == 'keep']
         cut_segments = [e for e in edit_instructions if e['type'] == 'cut']
+
+        # Convert cut instructions to keep instructions if needed
+        if not keep_segments and cut_segments:
+            # Get video duration
+            video_duration = await self._get_video_duration(source_video)
+            
+            # Sort and merge overlapping cut segments
+            sorted_cuts = sorted(cut_segments, key=lambda x: x['start'])
+            merged_cuts = []
+            if sorted_cuts:
+                current_start = sorted_cuts[0]['start']
+                current_end = sorted_cuts[0]['end']
+                
+                for cut in sorted_cuts[1:]:
+                    if cut['start'] <= current_end:
+                        # Merge overlapping or adjacent cuts
+                        current_end = max(current_end, cut['end'])
+                    else:
+                        # Finalize current cut range
+                        merged_cuts.append((current_start, current_end))
+                        current_start = cut['start']
+                        current_end = cut['end']
+                merged_cuts.append((current_start, current_end))
+            
+            # Create keep segments for everything NOT in the cut ranges
+            keep_segments = []
+            last_end = 0.0
+            
+            for cut_start, cut_end in merged_cuts:
+                if last_end < cut_start:
+                    # There's a gap before this cut - keep it
+                    keep_segments.append({
+                        'type': 'keep',
+                        'start': last_end,
+                        'end': cut_start
+                    })
+                last_end = max(last_end, cut_end)
+            
+            # Keep everything after the last cut
+            if last_end < video_duration:
+                keep_segments.append({
+                    'type': 'keep',
+                    'start': last_end,
+                    'end': video_duration
+                })
+            
+            if not keep_segments:
+                raise ValueError("No segments to keep in timeline after converting cuts")
 
         if not keep_segments:
             raise ValueError("No segments to keep in timeline")

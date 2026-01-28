@@ -80,8 +80,9 @@ class StateManager:
         Load hierarchical transcript from JSON file.
         Structure: Transcript -> Clips -> Segments -> Words
         """
+        print("Loading transcript for job_id:", job_id)
         transcript_file = self.state_dir / f"{job_id}_transcript.json"
-        
+        print("Transcript file path:", transcript_file.absolute())
         if not transcript_file.exists():
             return None
         
@@ -128,7 +129,7 @@ class StateManager:
         Load creator context from JSON file.
         """
         context_file = self.state_dir / f"{job_id}_context.json"
-        
+        print("Loading context from:", context_file.absolute())
         if not context_file.exists():
             return None
         

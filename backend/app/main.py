@@ -3,18 +3,17 @@ import uuid
 import shutil
 import logging
 import asyncio
+import traceback
+import json
+import time
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Dict, Any, Union
+from glob import glob
 from dotenv import load_dotenv
 
 # Load .env from project root
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
-import json
-from datetime import datetime
-from pathlib import Path
-from typing import List
-from glob import glob
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,9 +43,11 @@ from app.models import (
     SmartMergeResponse,
 )
 from app.state_manager import StateManager
-from app.agent import run_agent
+from app.agent import run_agent, convert_word_indices_to_time_ranges, merge_overlapping_ranges
+from app.utils import extract_words_from_transcript
 from app.context_detector import detect_creator_context
 from app.smart_merge import analyze_and_reorder_segments, build_transcript_from_segments
+from app.utils import words_to_transcript
 from utils.validator import VideoValidator
 from utils.segmentation import segment_clip_into_phrases, build_hierarchical_transcript
 
@@ -294,8 +295,8 @@ async def upload_videos(
     clip_0: UploadFile = File(..., description="First video clip (required)"),
     clip_1: UploadFile = File(..., description="Second video clip (required)"),
     clip_2: UploadFile = File(..., description="Third video clip (required)"),
-    clip_3: UploadFile | None = File(None, description="Fourth video clip (optional)"),
-    clip_4: UploadFile | None = File(None, description="Fifth video clip (optional)"),
+    clip_3: Optional[UploadFile] = File(None, description="Fourth video clip (optional)"),
+    clip_4: Optional[UploadFile] = File(None, description="Fifth video clip (optional)"),
 ):
     """
     Upload 3-5 video clips for processing.
@@ -314,7 +315,7 @@ async def upload_videos(
     clips = [clip_0, clip_1, clip_2, clip_3, clip_4]
     files = [f for f in clips if f is not None]
 
-    if len(files) < 0 or len(files) > 10:
+    if len(files) < 3 or len(files) > 5:
         raise HTTPException(
             status_code=400, detail="Please upload between 3 and 5 video clips"
         )
@@ -468,8 +469,8 @@ async def start_demo(background_tasks: BackgroundTasks):
 
 
 async def process_uploads(
-    job_id: str, clip_paths: List[str], preset_transcript_path: str | None = None
-):
+    job_id: str, clip_paths: List[str], preset_transcript_path: Optional[str] = None
+) -> None:
     """
     Process uploaded clips: transcribe, segment, smart merge, render directly from clips.
 
@@ -523,7 +524,8 @@ async def process_uploads(
 
                 # Segment THIS clip immediately (fast, CPU-only)
                 # Timestamps stay LOCAL to each clip
-                segments = segment_clip_into_phrases(words, min_pause_seconds=0.5)
+                # Uses improved segmentation: pause detection (0.3s), sentence boundaries, max duration (8s)
+                segments = segment_clip_into_phrases(words, min_pause_seconds=0.3, max_segment_duration=8.0)
                 logger.info(
                     f"[process_uploads] Clip {i}: {len(words)} words, {len(segments)} segments"
                 )
@@ -555,12 +557,24 @@ async def process_uploads(
 
                 segments = []
                 for seg in cd.get("segments", []):
+                    # Convert word dicts to Word objects
+                    word_objects = []
+                    for w in seg.get("words", []):
+                        if isinstance(w, dict):
+                            word_objects.append(Word(
+                                word=w.get("word", ""),
+                                start=float(w.get("start", 0.0)),
+                                end=float(w.get("end", 0.0))
+                            ))
+                        elif isinstance(w, Word):
+                            word_objects.append(w)
+                    
                     segments.append(
                         Segment(
-                            text=seg["text"],
-                            start=seg["start"],  # LOCAL timestamp
-                            end=seg["end"],  # LOCAL timestamp
-                            words=[Word(**w) for w in seg.get("words", [])],
+                            text=seg.get("text", ""),
+                            start=float(seg.get("start", 0.0)),  # LOCAL timestamp
+                            end=float(seg.get("end", 0.0)),  # LOCAL timestamp
+                            words=word_objects,
                         )
                     )
 
@@ -771,7 +785,7 @@ async def get_video(job_id: str):
     Returns the video file as an MP4 stream.
     """
     job_data = await state_manager.load_job(job_id)
-    print("job_data", job_data)
+
     if not job_data or job_data["status"] != "completed":
         raise HTTPException(status_code=404, detail="Video not found")
 
@@ -855,13 +869,17 @@ async def process_agent_query(request: AgentQueryRequest):
         result = await run_agent(
             job_id=job_id, query=query, current_video_path=current_video_path
         )
+        transcript_words = result.get("transcript_words", [])
+        updated_transcript_message = result.get("message", "")
 
-        updated_transcript = Transcript(
-            words=[Word(**w) for w in result["transcript_words"]]
+        updated_transcript = words_to_transcript(
+            words=transcript_words,
+            text=updated_transcript_message,
+            duration=0.0
         )
 
         return EditResponse(
-            video_url=f"/api/video/{job_id}",
+            video_url=f"{server_url}/api/video/{job_id}",
             transcript=updated_transcript,
             message=result["message"],
         )
@@ -941,22 +959,23 @@ async def smart_merge(request: SmartMergeRequest):
         logger.info(f"[smart_merge] Starting LLM analysis for job {job_id}")
         merge_result = await analyze_and_reorder_segments(transcript, creator_context)
 
-        if not merge_result["edit_instructions"]:
+        segments = merge_result.get("segments", [])
+        if not segments:
             raise HTTPException(
                 status_code=500, detail="Smart merge produced no segments"
             )
 
         # Call MCP server to render the reordered timeline
         logger.info(
-            f"[smart_merge] Rendering {len(merge_result['edit_instructions'])} segments"
+            f"[smart_merge] Rendering {len(segments)} segments"
         )
         async with httpx.AsyncClient(timeout=300) as client:
             render_response = await client.post(
                 f"{MCP_SERVER_URL}/tool/render_timeline",
                 json={
                     "edit_instructions": [
-                        {"type": inst.type, "start": inst.start, "end": inst.end}
-                        for inst in merge_result["edit_instructions"]
+                        {"type": "keep", "start": seg.start, "end": seg.end}
+                        for seg in segments
                     ],
                     "source_video": current_video_path,
                 },
@@ -1059,9 +1078,14 @@ async def edit_transcript_text(request: TranscriptEditRequest):
     This enables script-based editing where text changes affect the video.
     Simply provide the edited transcript text, and the video will be
     re-cut to match the new text.
+
+    Optimization: If edited_word_indices or deleted_word_indices are provided,
+    uses direct processing path (no LLM needed) for faster edits.
     """
     job_id = request.job_id
     edited_text = request.edited_text
+    edited_word_indices = request.edited_word_indices
+    deleted_word_indices = request.deleted_word_indices
 
     job_data = await state_manager.load_job(job_id)
 
@@ -1074,28 +1098,153 @@ async def edit_transcript_text(request: TranscriptEditRequest):
     try:
         current_transcript = await state_manager.load_transcript(job_id)
 
-        if not current_transcript or not current_transcript.words:
+        if not current_transcript or not current_transcript.text:
             raise HTTPException(
                 status_code=400,
                 detail="No transcript available. Script-based editing requires a transcript.",
             )
 
         current_video_path = job_data.get("current_video_path")
+        logger.info(f"[edit_transcript_text] current_video_path: {current_video_path}")
         if not current_video_path:
+            logger.error("[edit_transcript_text] Failed to get current video path")
             raise HTTPException(status_code=400, detail="No video found for this job")
 
+        # OPTIMIZATION: Direct processing path when structured data is provided
+        if deleted_word_indices is not None and len(deleted_word_indices) > 0:
+            logger.info(f"[edit_transcript_text] Using DIRECT processing path for job {job_id}")
+            logger.info(f"[edit_transcript_text] Deleted indices: {deleted_word_indices}")
+
+            # Extract all words from transcript
+            all_words = extract_words_from_transcript(current_transcript)
+
+            if not all_words:
+                raise HTTPException(status_code=400, detail="No words in transcript to edit")
+
+            # Convert deleted word indices to time ranges
+            time_ranges_to_delete = convert_word_indices_to_time_ranges(
+                all_words,
+                deleted_word_indices
+            )
+            time_ranges_to_delete = merge_overlapping_ranges(time_ranges_to_delete)
+            logger.info(f"[edit_transcript_text] Converted {len(deleted_word_indices)} deleted words to {len(time_ranges_to_delete)} time ranges")
+
+            # Call MCP server to render timeline with cuts
+            edit_instructions = [
+                {'type': 'cut', 'start': start, 'end': end}
+                for start, end in time_ranges_to_delete
+            ]
+
+            async with httpx.AsyncClient(timeout=300) as client:
+                render_response = await client.post(
+                    f'{MCP_SERVER_URL}/tool/render_timeline',
+                    json={
+                        'edit_instructions': edit_instructions,
+                        'source_video': current_video_path
+                    }
+                )
+
+                if render_response.status_code != 200:
+                    logger.error(f"[edit_transcript_text] Render failed: {render_response.text}")
+                    raise HTTPException(status_code=500, detail=f"Video render failed: {render_response.text}")
+
+                render_result = render_response.json()
+                new_video_path = render_result['data']['output_path']
+                logger.info(f"[edit_transcript_text] Video rendered: {new_video_path}")
+
+                # Update job with new video path
+                job_data['current_video_path'] = new_video_path
+                await state_manager.save_job(job_id, job_data)
+
+                # Regenerate transcript from edited video
+                try:
+                    transcript_response = await client.post(
+                        f'{MCP_SERVER_URL}/tool/generate_transcript',
+                        json={'video_path': new_video_path},
+                        timeout=180
+                    )
+
+                    if transcript_response.status_code == 200:
+                        transcript_data = transcript_response.json().get('data', {})
+                        words_data = transcript_data.get('words', [])
+
+                        logger.info(f"[edit_transcript_text] Regenerated transcript: {len(words_data)} words")
+                        logger.info(f"[edit_transcript_text] New text: {transcript_data.get('text', '')[:100]}...")
+                        logger.info(f"[edit_transcript_text] Original had {len(all_words)} words")
+
+                        updated_transcript = words_to_transcript(
+                            words=words_data,
+                            text=transcript_data.get('text', edited_text),
+                            duration=transcript_data.get('duration', 0.0)
+                        )
+                        await state_manager.save_transcript(job_id, updated_transcript)
+
+                        # Add timestamp to bust browser cache
+                        cache_bust = int(time.time())
+                        return EditResponse(
+                            video_url=f"{server_url}/api/video/{job_id}?t={cache_bust}",
+                            transcript=updated_transcript,
+                            message=f"Successfully deleted {len(deleted_word_indices)} words"
+                        )
+                    else:
+                        logger.warning(f"[edit_transcript_text] Transcript regeneration failed")
+                except Exception as e:
+                    logger.warning(f"[edit_transcript_text] Transcript regeneration error: {e}")
+
+                # Fallback: return success with edited text
+                updated_transcript = Transcript(
+                    text=edited_text,
+                    duration=current_transcript.duration,
+                    clips=[]  # Empty clips as video changed
+                )
+                cache_bust = int(time.time())
+                return EditResponse(
+                    video_url=f"{server_url}/api/video/{job_id}?t={cache_bust}",
+                    transcript=updated_transcript,
+                    message=f"Successfully deleted {len(deleted_word_indices)} words (transcript will refresh)"
+                )
+
+        # FALLBACK: Use agent-based processing (original behavior)
+        logger.info(f"[edit_transcript_text] Using AGENT processing path for job {job_id}")
         result = await run_agent(
             job_id=job_id,
             query=f"Edit transcript to match: {edited_text}",
             current_video_path=current_video_path,
         )
+        result_words = result.get("transcript_words", [])
+        result_text = result.get("message", "")
 
-        updated_transcript = Transcript(
-            words=[Word(**w) for w in result["transcript_words"]]
-        )
+        # If transcript regeneration failed, fall back to original transcript structure
+        # but with the edited text. This ensures we always return a valid transcript.
+        if not result_words:
+            logger.warning(f"[edit_transcript_text] No transcript words returned for job {job_id}, using original transcript structure with edited text")
+            # Use the original transcript structure but replace the text
+            updated_transcript = Transcript(
+                text=edited_text,
+                duration=current_transcript.duration,
+                clips=current_transcript.clips  # Keep original structure
+            )
+        else:
+            # Calculate duration from words if available
+            result_duration = 0.0
+            if isinstance(result_words[0], dict):
+                result_duration = sum(
+                    (float(w.get("end", 0.0)) - float(w.get("start", 0.0))) for w in result_words
+                )
+            elif isinstance(result_words[0], Word):
+                # Word objects
+                result_duration = sum(
+                    (w.end - w.start) for w in result_words
+                )
+
+            updated_transcript = words_to_transcript(
+                words=result_words,
+                text=edited_text,  # Use the user-provided edited text
+                duration=result_duration if result_duration > 0 else (current_transcript.duration or 0.0)
+            )
 
         return EditResponse(
-            video_url=f"/api/video/{job_id}",
+            video_url=f"{server_url}/api/video/{job_id}",
             transcript=updated_transcript,
             message=result["message"],
         )
@@ -1103,6 +1252,7 @@ async def edit_transcript_text(request: TranscriptEditRequest):
     except HTTPException:
         raise
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(
             status_code=500, detail=f"Failed to edit transcript: {str(e)}"
         )

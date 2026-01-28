@@ -12,7 +12,7 @@ import os
 import json
 import logging
 import asyncio
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, Any, List, Tuple, Union
 from pathlib import Path
 
 import httpx
@@ -415,7 +415,7 @@ class WhisperFallbackService:
         )
 
 
-async def get_transcription_service() -> DeepgramService | WhisperFallbackService:
+async def get_transcription_service() -> Union[DeepgramService, WhisperFallbackService]:
     """
     Factory function to get the appropriate transcription service.
     Uses Deepgram if API key is configured, otherwise falls back to Whisper.

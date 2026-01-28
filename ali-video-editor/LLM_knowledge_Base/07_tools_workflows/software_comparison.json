@@ -1,0 +1,300 @@
+{
+  "meta": {
+    "title": "Software Comparison for Retention Editing",
+    "category": "Tools and Workflows",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": []
+  },
+  "summary": "Comparison of NLE and software tools optimized for editing retention-focused video content with automation and workflow features.",
+  "core_principles": [
+    {
+      "principle": "NLE Selection Matches Workflow",
+      "description": "Choose software based on content type, turnaround needs, and integration requirements",
+      "importance": "high"
+    },
+    {
+      "principle": "Proxy Workflows for Speed",
+      "description": "Low-resolution copies prevent lag with many layers of 4K video and effects",
+      "importance": "high"
+    },
+    {
+      "principle": "Ecosystem Integration",
+      "description": "Dynamic linking between NLEs and motion graphics tools speeds iteration",
+      "importance": "medium"
+    },
+    {
+      "principle": "Automation Over Manual",
+      "description": "Plugins and AI tools automate repetitive tasks for sustainable weekly upload schedules",
+      "importance": "high"
+    },
+    {
+      "principle": "Mobile-First vs Desktop-First",
+      "description": "Tool choice affects target platform optimization capabilities",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Adobe Premiere Pro",
+      "description": "Industry standard NLE with After Effects Dynamic Link and extensive plugin ecosystem",
+      "implementation": [
+        "Use for long-form narrative and complex audio mixing",
+        "Dynamic Link to After Effects for motion graphics updates",
+        "MOGRTs (Motion Graphics Templates) for reusable elements",
+        "J/L Cut tools with audio waveform visualization",
+        "Essential Graphics panel for text and overlays",
+        "Auto-ducking feature for automated audio balance",
+        "Integration with Photoshop and Illustrator",
+        "Extensive third-party plugin support"
+      ],
+      "timing": "Used for entire editing workflow",
+      "examples": [
+        "Documentary with extensive narration and B-roll",
+        "Educational content with complex motion graphics",
+        "Multi-layered audio mixing projects"
+      ],
+      "tools": [
+        "Adobe Creative Cloud (Premiere Pro, After Effects, Photoshop)",
+        "MOGRT libraries",
+        "Third-party plugins (Red Giant, Noise Industries)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Industry standard, extensive ecosystem, Dynamic Link to After Effects",
+          "con": "Subscription cost, steeper learning curve"
+        },
+        {
+          "pro": "Best for complex, professional workflows",
+          "con": "Can feel overkill for simple short-form content"
+        }
+      ]
+    },
+    {
+      "name": "DaVinci Resolve",
+      "description": "Integrated all-in-one NLE with editing, color, VFX, and audio in single application",
+      "implementation": [
+        "Use Cut Page for fast turnaround edits",
+        "Magic Mask for placing text behind objects automatically",
+        "Integrated color grading with professional tools",
+        "Fusion for VFX without switching applications",
+        "Fairlight for high-end audio mixing",
+        "Dynamic Zoom tool for instant Ken Burns effects",
+        "Object Removal tool for cleanup",
+        "Free version available with most features"
+      ],
+      "timing": "Used for entire workflow from edit to grade",
+      "examples": [
+        "Fast-paced editing with quick turnaround",
+        "Projects requiring advanced color grading",
+        "VFX-heavy content without leaving software"
+      ],
+      "tools": [
+        "DaVinci Resolve (Free or Studio)",
+        "Built-in VFX, color, and audio tools",
+        "Third-party OpenFX plugins"
+      ],
+      "pros_cons": [
+        {
+          "pro": "All-in-one integration, free version powerful, excellent color tools",
+          "con": "Steeper learning curve across all features"
+        },
+        {
+          "pro": "Cut Page optimized for speed",
+          "con": "Plugin ecosystem smaller than Premiere"
+        }
+      ]
+    },
+    {
+      "name": "After Effects",
+      "description": "High-end motion graphics, kinetic typography, and visual effects for professional polish",
+      "implementation": [
+        "Use for kinetic typography with advanced animations",
+        "Map animations with GEOlayers 3 for real geographic data",
+        "3D camera tracking and projection mapping",
+        "Rotoscoping for object masking and cutouts",
+        "Complex transitions and glitch effects",
+        "Wiggle, Inertial Bounce, and 3D text effects",
+        "Dynamic Link with Premiere for seamless workflow",
+        "Automation with expressions and scripts"
+      ],
+      "timing": "Used for motion graphics and VFX sections",
+      "examples": [
+        "Professional kinetic typography sequences",
+        "3D map animations with camera movement",
+        "Complex transitions and visual effects"
+      ],
+      "tools": [
+        "After Effects with expression languages",
+        "GEOlayers 3 plugin for maps",
+        "Mister Horse Animation Composer",
+        "Red Giant Universe collection"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Most powerful for motion graphics and VFX",
+          "con": "Not used for full video editing (too slow for that)"
+        },
+        {
+          "pro": "Industry standard for high-end graphics",
+          "con": "Steep learning curve, complex interface"
+        }
+      ]
+    },
+    {
+      "name": "CapCut Desktop",
+      "description": "Fast, social-media-first editing tool with viral effects, auto-captions, and Hormozi-style presets",
+      "implementation": [
+        "Use for rapid short-form content creation",
+        "Auto-captions with Hormozi-style presets built-in",
+        "Trending effects library updated frequently",
+        "Paper tear and mixed media presets",
+        "Travel route animations for maps",
+        "Stock music and SFX library included",
+        "Speed optimization for mobile-first editing",
+        "Daily content creation workflows"
+      ],
+      "timing": "Used for rapid vertical/short-form content",
+      "examples": [
+        "TikTok-style vertical videos",
+        "YouTube Shorts with auto-captions",
+        "Daily vlog or quick-tip content"
+      ],
+      "tools": [
+        "CapCut Desktop (free or Pro)",
+        "Built-in effects and transitions",
+        "Auto-captioning AI"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Fastest for short-form, built-in viral effects, free tier",
+          "con": "Less control than pro NLEs, limited export options"
+        },
+        {
+          "pro": "Optimized for social-first content",
+          "con": "Not suitable for complex long-form projects"
+        }
+      ]
+    },
+    {
+      "name": "Proxy Workflow",
+      "description": "Using low-resolution footage copies for snappy timeline performance",
+      "implementation": [
+        "Create proxy files: 720p or 1080p at lower bitrate",
+        "Edit using proxy files for smooth playback",
+        "Reconnect to high-res footage for export",
+        "Essential for 4K+ video with many layers",
+        "Reduces lag while fine-tuning cuts to milliseconds",
+        "Maintains timeline snappy for productivity",
+        "Most NLEs have built-in proxy generation",
+        "Sustainable for weekly upload schedules"
+      ],
+      "timing": "Set up during footage ingestion",
+      "examples": [
+        "4K documentary project with layered audio and effects",
+        "Complex edit with many graphics and composites",
+        "Long-form content requiring frame-accurate cuts"
+      ],
+      "tools": [
+        "NLE built-in proxy tools (Premiere, Resolve)",
+        "Media Encoder batch transcoding",
+        "Fast storage for proxy files"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Prevents timeline lag, enables frame-accurate editing",
+          "con": "Requires initial proxy generation time"
+        },
+        {
+          "pro": "Makes complex projects feasible",
+          "con": "Storage requirements for double footage set"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "software_comparison_table": [
+      {
+      "software": "Adobe Premiere Pro",
+      "best_for": "Long-form narrative, complex audio mixing",
+      "key_features": [
+        "MOGRTs (Motion Graphics Templates)",
+        "J/L Cuts with waveform visualization",
+        "Dynamic Link to After Effects",
+        "Extensive plugin ecosystem"
+      ],
+      "strengths": ["industry_standard", "professional_ecosystem"],
+      "considerations": ["subscription_cost", "steeper_learning_curve"]
+    },
+    {
+      "software": "DaVinci Resolve",
+      "best_for": "Color grading, fast turnaround, all-in-one workflows",
+      "key_features": [
+        "Magic Mask (text behind objects)",
+        "Dynamic Zoom (Ken Burns)",
+        "Cut Page for speed",
+        "Integrated color, VFX, audio tools"
+      ],
+      "strengths": ["all_in_one_integration", "free_version_powerful"],
+      "considerations": ["steeper_learning_curve", "smaller_plugin_ecosystem"]
+    },
+    {
+      "software": "After Effects",
+      "best_for": "High-end motion graphics, VFX, kinetic typography",
+      "key_features": [
+        "Kinetic Typography tools",
+        "Map Animations (GEOlayers)",
+        "3D camera tracking",
+        "Rotoscoping and masking"
+      ],
+      "strengths": ["industry_standard_graphics", "most_powerful_VFX"],
+      "considerations": ["not_for_full_editing", "complex_interface"]
+    },
+    {
+      "software": "CapCut Desktop",
+      "best_for": "Speed, Social Media, Hormozi-style captions",
+      "key_features": [
+        "Auto-Captions with Hormozi presets",
+        "Trending Effects library",
+        "Paper Tear presets",
+        "Travel Route animations"
+      ],
+      "strengths": ["fastest_short_form", "built_in_viral_features", "free_tier"],
+      "considerations": ["limited_control", "not_for_complex_projects"]
+    }
+    ],
+    "workflow_comparison": {
+      "professional_long_form": {
+      "primary": "Premiere Pro or DaVinci Resolve",
+      "motion_graphics": "After Effects (Dynamic Link)",
+      "color_grading": "DaVinci Resolve (Resolve workflow)",
+      "audio_mixing": "Pro Tools or Fairlight (Resolve)",
+      "proxy_workflow": "required_for_4K"
+    },
+    "rapid_turnaround": {
+      "primary": "CapCut or DaVinci Cut Page",
+      "captions": "CapCapCap, Submagic, or built-in auto",
+      "effects": "Presets and built-in libraries",
+      "export": "Platform-optimized presets"
+    },
+    "visual_heavy_documentary": {
+      "primary": "DaVinci Resolve (all-in-one)",
+      "3D_elements": "After Effects or Blender",
+      "maps": "After Effects with GEOlayers 3",
+      "color": "DaVinci Resolve color tools"
+    }
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Visual_Retention.md Table 9.1",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

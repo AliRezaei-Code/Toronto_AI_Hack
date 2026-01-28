@@ -1,0 +1,297 @@
+{
+  "meta": {
+    "title": "Title Optimization Formulas",
+    "category": "SEO Metadata",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["retention_psychology.json"]
+  },
+  "summary": "Title engineering strategies that balance keyword relevance with psychological triggers to maximize click-through rates while maintaining search visibility.",
+  "core_principles": [
+    {
+      "principle": "Keyword Front-Loading",
+      "description": "Primary target keyword must appear within first 5 words for algorithmic weight and mobile visibility",
+      "importance": "high"
+    },
+    {
+      "principle": "60-70 Character Optimal Length",
+      "description": "Maximizes display on mobile and desktop without truncation",
+      "importance": "medium"
+    },
+    {
+      "principle": "Psychological Triggers",
+      "description": "Power words trigger curiosity, urgency, or authority to boost CTR",
+      "importance": "high"
+    },
+    {
+      "principle": "SEO-Hook Balance",
+      "description": "Titles must satisfy both search algorithms (keywords) and human psychology (clicks)",
+      "importance": "high"
+    },
+    {
+      "principle": "Content Promise Alignment",
+      "description": "Title promise must be delivered in first 30 seconds to avoid clickbait penalties",
+      "importance": "high"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "SEO-Hook Hybrid Formula",
+      "description": "Clear demarcation between keyword Search Half and emotional Hook Half with separators",
+      "implementation": [
+        "Structure: [Search Keyword] [Separator] [Hook/Promise]",
+        "Separators: pipe (|), colon (:), or dash (-)",
+        "Search Half: literal, descriptive text for indexing",
+        "Hook Half: benefit promise, curiosity, or urgency",
+        "Example: 'YouTube SEO Guide 2025 | How to Double Your Views'",
+        "Enables ranking for keyword while driving CTR with promise"
+      ],
+      "timing": "N/A (pre-publication)",
+      "examples": [
+        "YouTube SEO Guide 2025 | How to Double Your Views",
+        "Video Editing Tutorial | Master Cuts in 10 Minutes",
+        "Dog Training Tips | Stop Barking Fast"
+      ],
+      "tools": [
+        "YouTube Studio (title length counter)",
+        "vidIQ (title analyzer)",
+        "TubeBuddy (title optimization)",
+        "Hootsuite AI Title Generator"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Balances searchability and clickability",
+          "con": "Can feel formulaic if used repeatedly"
+        },
+        {
+          "pro": "Clear for algorithms and humans alike",
+          "con": "Requires writing two distinct parts effectively"
+        }
+      ]
+    },
+    {
+      "name": "Multi-Trigger Formula",
+      "description": "Combines numerical data with psychological power words for highly competitive niches",
+      "implementation": [
+        "Structure: [Number] + [Power Word] + [Power Word] + [Keyword]",
+        "Number: provides structure (brain likes lists)",
+        "First Power Word: reduces risk or appeals to result-speed",
+        "Second Power Word: emotional trigger or urgency",
+        "Keyword: primary search term",
+        "Example: '5 Proven Strategies to Instantly Boost YouTube CTR'"
+      ],
+      "timing": "N/A (pre-publication)",
+      "examples": [
+        "5 Proven Strategies to Instantly Boost YouTube CTR",
+        "3 Simple Tips to Double Your Engagement Today",
+        "7 Hidden Secrets for Fast Audience Growth"
+      ],
+      "tools": [
+        "Manual composition with power word reference",
+        "vidIQ (power word suggestions)",
+        "AI brainstorming for power word combinations"
+      ],
+      "pros_cons": [
+        {
+          "pro": "High CTR potential in competitive niches",
+          "con": "Can feel sensationalist if overdone"
+        },
+        {
+          "pro": "Multiple psychological triggers working together",
+          "con": "Requires careful word selection to maintain credibility"
+        }
+      ]
+    },
+    {
+      "name": "Curiosity Gap Formula",
+      "description": "Leverages human need to resolve ambiguity through question-and-hint structure",
+      "implementation": [
+        "Structure: [Question?] + [Promise/Hint]",
+        "Question: qualifies audience, establishes need",
+        "Hint: promises resolution, creates gap",
+        "Mechanism: gap between what viewer knows and wants to know",
+        "Example: 'Want to Double Your Traffic? Here's How'",
+        "Works by creating desire for closure"
+      ],
+      "timing": "N/A (pre-publication)",
+      "examples": [
+        "Want to Double Your Traffic? Here's How",
+        "Struggling with Video Edits? Try This Trick",
+        "Why Your Views Are Low (And How to Fix It)"
+      ],
+      "tools": [
+        "Manual composition",
+        "Question formulation frameworks",
+        "A/B testing for effectiveness"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Effective for establishing relevance with audience",
+          "con": "Question must feel authentic, not rhetorical"
+        },
+        {
+          "pro": "Creates natural curiosity and desire for answer",
+          "con": "Some audiences distrust question-based titles"
+        }
+      ]
+    },
+    {
+      "name": "Power Word Integration",
+      "description": "Strategic use of psychological trigger words across five categories",
+      "implementation": [
+        "Urgency/Freshness: '2025,' 'New,' 'Update,' 'Urgent'",
+        "Authority/Proof: 'Proven,' 'Official,' 'Guide,' 'Case Study'",
+        "Exclusivity: 'Secret,' 'Hidden,' 'What They Don't Tell You'",
+        "Negativity/Warning: 'Stop,' 'Don't,' 'Avoid,' 'Worst Mistake'",
+        "Simplicity: 'Easy,' 'Fast,' 'Simple,' 'For Beginners'",
+        "For tech/finance: use '2025,' 'New' to signal relevance",
+        "For education: use 'Proven,' 'Guide' for reliability",
+        "Negative framing often outperforms positive"
+      ],
+      "timing": "N/A (pre-publication)",
+      "examples": [
+        "2025 SEO Update (Urgency)",
+        "Proven Strategy That Works (Authority)",
+        "The Secret They Don't Tell You (Exclusivity)",
+        "Stop Losing Views (Negative/Warning)",
+        "Easy 5-Minute Fix (Simplicity)"
+      ],
+      "tools": [
+        "Power word reference lists",
+        "vidIQ (power word suggestions)",
+        "Manual brainstorming with category targeting"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Psychologically triggers higher CTR",
+          "con": "Overuse creates desensitization"
+        },
+        {
+          "pro": "Each category targets different motivations",
+          "con": "Must match word to audience and content type"
+        }
+      ]
+    },
+    {
+      "name": "AI-Driven Title Optimization",
+      "description": "AI tools for title generation with predictive scoring and multi-agent workflows",
+      "implementation": [
+        "Use YouTube Studio Inspiration Tab for ideation",
+        "Generate dozens of variations from single keyword",
+        "Apply negative prompting ('avoid clickbait,' 'avoid passive voice'",
+        "Use predictive scoring for projected CTR assessment",
+        "Multi-agent workflow: AI generates, critic critiques, refine polishes",
+        "Human oversight essential for brand voice alignment",
+        "Use AI for volume, human for selection"
+      ],
+      "timing": "N/A (pre-publication, iterative)",
+      "examples": [
+        "Generate 20 variations, select best fit",
+        "Test different angles (Fear-based vs Benefit-based",
+        "Refine with prompts to avoid sensationalism"
+      ],
+      "tools": [
+        "YouTube Studio Inspiration Tab",
+        "vidIQ AI Title Generator",
+        "Hootsuite AI Title Generator",
+        "Custom LLM workflows"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Volume generation with data-backed scoring",
+          "con": "AI often defaults to generic/sensationalist phrasing"
+        },
+        {
+          "pro": "Predictive analysis based on historical data",
+          "con": "Requires human judgment for final selection"
+        }
+      ]
+    },
+    {
+      "name": "A/B Testing Title Iteration",
+      "description": "YouTube native test tool to compare up to three titles/thumbnails for performance",
+      "implementation": [
+        "Upload 2-3 different title and thumbnail combinations",
+        "System rotates among viewers to gather data",
+        "Test drastically different angles (Fear vs Benefit, not minor wording",
+        "Monitor results after 24-48 hours",
+        "Post-publication optimization: underperforming videos can be revived with title change",
+        "Algorithm re-tests with new audiences after change",
+        "Use retention data to validate title effectiveness"
+      ],
+      "timing": "During upload (initial test) or after publication (optimization)",
+      "examples": [
+        "Test A: 'Stop Losing Views' (Fear) vs Test B: 'Get More Views' (Benefit)",
+        "Test different emphasis angles or promises",
+        "Revive underperforming video with better title after 24h"
+      ],
+      "tools": [
+        "YouTube Studio Test & Compare tool",
+        "Analytics to measure CTR and watch time",
+        "Retention graphs for validation"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Data-driven optimization with real audience testing",
+          "con": "Requires significant sample size for statistical significance"
+        },
+        {
+          "pro": "Can revive underperforming videos",
+          "con": "Multiple changes in short period can confuse algorithm"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "title_checklist": {
+      "character_count": {
+        "optimal": "60-70 characters",
+        "maximum": "100 characters",
+        "mobile_truncation": "after 50-60 characters"
+      },
+      "keyword_placement": {
+        "ideal": "first 1-5 words",
+        "acceptable": "first half",
+        "poor": "last 5 words"
+      },
+      "components": {
+        "primary_keyword": "required",
+        "psychological_trigger": "required (one+ power word",
+        "structural_formula": "recommended (SEO-Hook or Multi-Trigger",
+        "accuracy": "mandatory (title must be delivered in video)"
+      }
+    },
+    "power_word_categories": {
+      "urgency_freshness": ["2025", "2026", "New", "Update", "Urgent", "Latest", "Breaking"],
+      "authority_proof": ["Proven", "Official", "Guide", "Case Study", "Expert", "Verified"],
+      "exclusivity": [
+        "Secret",
+        "Hidden",
+        "What They Don't Tell You",
+        "Exclusive",
+        "Behind the Scenes"
+      ],
+      "negativity_warning": ["Stop", "Don't", "Avoid", "Worst Mistake", "Never", "Warning"],
+      "simplicity": ["Easy", "Fast", "Simple", "For Beginners", "Quick", "5-Minute"]
+    },
+    "title_formula_templates": {
+      "seo_hook_hybrid": "[Search Keyword] [|] [Hook/Promise]",
+      "multi_trigger": "[Number] [Power Word 1] [Power Word 2] [Keyword]",
+      "curiosity_gap": "[Question?] [Promise/Hint]",
+      "negative_framing": "[Negative Word] [Keyword] [Benefit]",
+      "listicle": "[Number] [Ways/Tips/Strategies] to [Benefit]"
+    }
+  },
+  "references": [
+    {
+      "source": "SEO_Metadata_Engineering.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "SEO_Metadata_Engineering.md Table 1",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

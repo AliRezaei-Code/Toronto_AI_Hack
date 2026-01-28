@@ -1,0 +1,310 @@
+{
+  "meta": {
+    "title": "Transitions and Cut Techniques",
+    "category": "Visual Editing",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pattern_interrupts.json", "spatial_dynamics.json"]
+  },
+  "summary": "Advanced transition techniques that maintain flow, create seamless connections, and provide invisible or jarring cuts as narrative tools.",
+  "core_principles": [
+    {
+      "principle": "Flow State Maintenance",
+      "description": "Transitions should propel viewer forward without jarring immersion breaks",
+      "importance": "high"
+    },
+    {
+      "principle": "Narrative Motivation",
+      "description": "Every transition must serve narrative function (time pass, location change, energy shift",
+      "importance": "high"
+    },
+    {
+      "principle": "Visual Connection",
+      "description": "Match cuts and invisible cuts create subconscious satisfaction through pattern completion",
+      "importance": "medium"
+    },
+    {
+      "principle": "Energy Signaling",
+      "description": "Transition style should match energy of content (smooth for emotion, jarring for comedy)",
+      "importance": "medium"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Match Cut",
+      "description": "Cut between shots where composition, action, or audio matches perfectly creating visual rhyme",
+      "implementation": [
+        "Identify matching elements in adjacent shots (shape, motion, position)",
+        "Graphic Match: match shapes (wheel → ring, square → screen)",
+        "Action Match: match movement direction and velocity",
+        "Audio Match: use sound bridge (J-Cut) to prime brain",
+        "Align timing with beat or word for impact",
+        "Use for connecting related concepts or parallel actions",
+        "Test multiple match points for strongest connection"
+      ],
+      "timing": "Instant, single frame cut",
+      "examples": [
+        "Spinning car wheel → Spinning record player",
+        "Person punches camera → Door slams shut",
+        "Sun rising → Lightbulb flickering on"
+      ],
+      "tools": [
+        "Premiere Pro (J-Cut, manual alignment)",
+        "DaVinci Resolve (split editing)",
+        "Final Cut Pro (audio waveform matching)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Satisfies pattern recognition, creates subconscious satisfaction",
+          "con": "Finding good matches requires planning and creative eye"
+        },
+        {
+          "pro": "Preserves kinetic energy across cut",
+          "con": "Can feel forced if match is weak"
+        }
+      ]
+    },
+    {
+      "name": "Invisible Cut",
+      "description": "Camouflaged edit points creating illusion of continuous unbroken take",
+      "implementation": [
+        "Whip Pan: rapid camera motion at end of shot A and start of shot B",
+        "Masking: cut behind passing object (person, tree, wall)",
+        "Flash Frame: bright flash or whiteout at cut point",
+        "Dark Mask: cut on wipe to black or fade transition",
+        "Match position and movement in both shots",
+        "Use motion blur to obscure cut in whip pans",
+        "Test playback for invisible result"
+      ],
+      "timing": "Instant, hidden at transition moment",
+      "examples": [
+        "Walking past tree behind branch → new location",
+        "Camera whip-pan right → new scene at pan end",
+        "Flash from camera → cut to next scene in flash"
+      ],
+      "tools": [
+        "DaVinci Resolve (Motion Blur, Mask transitions)",
+        "Premiere Pro (Transition presets, masking)",
+        "After Effects (Masking, matte effects)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Maintains deep immersion, feels cinematic",
+          "con": "Requires careful planning and execution"
+        },
+        {
+          "pro": "Perfect Loop: connects end to beginning for Shorts/TikTok",
+          "con": "Limited to compatible shots with motion opportunities"
+        }
+      ]
+    },
+    {
+      "name": "J-Cut (Audio Lead)",
+      "description": "Audio from next clip begins before video cuts, priming brain for transition",
+      "implementation": [
+        "Overlap audio from clip B over end of clip A",
+        "Cut audio 0.5-2 seconds before visual cut",
+        "Use for dialogue, interviews, or scene transitions",
+        "Creates curiosity as viewer hears source and wants to see it",
+        "Adjust overlap timing to match emotional tone",
+        "Combine with audio fade for smooth transition",
+        "Use extensively for narrative flow"
+      ],
+      "timing": "Audio 0.5-2s before visual cut",
+      "examples": [
+        "Speaker A talking → hear speaker B voice → cut to speaker B",
+        "Scene in room → hear outside sounds → cut to exterior",
+        "Person running → hear train approaching → cut to train"
+      ],
+      "tools": [
+        "Premiere Pro (Razor tool, audio waveform overlay)",
+        "DaVinci Resolve (split editing, audio timeline)",
+        "Final Cut Pro (audio skimmer, magnetic timeline)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Primes brain for change, creates natural flow",
+          "con": "Requires careful timing with content"
+        },
+        {
+          "pro": "Pulls viewer across cut with curiosity",
+          "con": "Audio overlap can be problematic in some contexts"
+        }
+      ]
+    },
+    {
+      "name": "L-Cut (Video Lead)",
+      "description": "Video cuts to next clip while audio from previous continues, good for reactions",
+      "implementation": [
+        "Cut video to clip B while clip A audio continues",
+        "Show reaction shot while hearing original conversation",
+        "Cut visuals 0.5-2 seconds before audio",
+        "Use for emotional continuity and reaction shots",
+        "Maintain audio context while changing visual perspective",
+        "Adjust timing based on reaction relevance",
+        "Apply to b-roll over dialogue"
+      ],
+      "timing": "Video 0.5-2s before audio cut",
+      "examples": [
+        "Person tells joke → cut to audience laughing while laugh continues",
+        "Speaker makes point → cut to relevant b-roll while speech continues",
+        "Character reveals something → cut to reaction face"
+      ],
+      "tools": [
+        "Premiere Pro (link/unlink, video-only cuts)",
+        "DaVinci Resolve (split editing, track separation)",
+        "Final Cut Pro (connected storyline)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Maintains emotional continuity through visual change",
+          "con": "May confuse if visual change is unrelated"
+        },
+        {
+          "pro": "Excellent for reaction shots and b-roll integration",
+          "con": "Requires understanding of narrative flow"
+        }
+      ]
+    },
+    {
+      "name": "Glitch and Digital Transitions",
+      "description": "Simulated digital corruption effects (pixelation, RGB split, data moshing) for tech or fast-paced content",
+      "implementation": [
+        "Apply at cut point between scenes",
+        "Use pixelation, RGB splitting, chromatic aberration",
+        "Last 3-5 frames or frames before and after cut",
+        "Signals topic or channel change",
+        "Match aesthetic to genre (tech, gaming, digital)",
+        "Adjust intensity for content tone",
+        "Combine with audio glitch SFX for full effect"
+      ],
+      "timing": "3-5 frames at transition",
+      "examples": [
+        "Tutorial segment → glitch → next section",
+        "Gaming highlight → RGB split → transition",
+        "Tik reveal → pixelation fade → result"
+      ],
+      "tools": [
+        "After Effects (Displacement Map, RGB Split effects)",
+        "Red Giant Universe (Glitch plugins)",
+        "Premiere Pro (Glitch presets, effect controls)",
+        "DaVinci Resolve (OpenFX glitch effects)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Strong pattern interrupt, fits tech aesthetic",
+          "con": "Can distract from content if overused"
+        },
+        {
+          "pro": "Signals change clearly and dramatically",
+          "con": "May feel dated if not done tastefully"
+        }
+      ]
+    },
+    {
+      "name": "Paper Tear Transition",
+      "description": "Paper tear effect where scene rips away like paper to reveal next scene",
+      "implementation": [
+        "Use green screen paper tear assets",
+        "Place tear video over cut point between scenes",
+        "Align tear motion with transition timing",
+        "Add paper texture and sound effects",
+        "Variation: tape pull, page turn, crumpled ball",
+        "Part of mixed media aesthetic",
+        "Adjust speed for energy (fast for comedy, slow for mystery)"
+      ],
+      "timing": "1-2 second animation",
+      "examples": [
+        "Scene A → paper tears away → Scene B",
+        "Explainer segment → page turn → next topic",
+        "Conclusion → crumple paper → outro"
+      ],
+      "tools": [
+        "After Effects (masking, paper assets)",
+        "Green screen paper tear overlays",
+        "CapCut (paper tear presets)",
+        "DaVinci Resolve (layer compositing)"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Adds tactile quality, fits mixed media style",
+          "con": "Requires assets and compositing work"
+        },
+        {
+          "pro": "Creative departure from standard fades/cuts",
+          "con": "Can feel gimmicky if overused"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "match_cut_types": {
+      "graphic_match": {
+        "description": "Match shapes or visual elements",
+        "examples": ["circle → circle", "vertical line → vertical line", "red object → red object"],
+        "effect": "Visual pattern recognition satisfaction"
+      },
+      "action_match": {
+        "description": "Match movement direction and velocity",
+        "examples": ["left → left", "up → up", "fast → fast", "rotation → rotation"],
+        "effect": "Kinetic energy preservation"
+      },
+      "audio_match": {
+        "description": "Sound bridge across cut",
+        "examples": ["sound continues", "same pitch", "matching rhythm"],
+        "effect": "Primes brain for change, seamless bridge"
+      }
+    },
+    "invisible_cut_methods": {
+      "whip_pan": {
+        "technique": "Fast camera motion creates blur at cut",
+        "direction": "Same direction in both shots",
+        "speed": "Fast enough for motion blur",
+        "use_case": "Action, travel, fast movement"
+      },
+      "passing_object": {
+        "technique": "Cut behind object filling screen",
+        "objects": ["person", "tree", "wall", "pole", "pillar"],
+        "duration": "Full frame occlusion",
+        "use_case": "Indoor, outdoor, any location with objects"
+      },
+      "flash_frame": {
+        "technique": "Bright white flash at cut point",
+        "duration": "2-5 frames",
+        "intensity": "Full or partial whiteout",
+        "use_case": "Flash photography, bright light transitions"
+      },
+      "dark_mask": {
+        "technique": "Fade to black or dark mask",
+        "duration": "5-10 frames",
+        "type": ["fade", "wipe", "expand"],
+        "use_case": "Scene changes, time passages"
+      }
+    },
+    "glitch_transition_parameters": {
+      "effects": [
+        "pixelation",
+        "rgb_split",
+        "chromatic_aberration",
+        "digital_noise",
+        "signal_loss",
+        "distortion"
+      ],
+      "duration": "3-5_frames_per_side",
+      "intensity": "adjust_based_on_content",
+      "audio_accompaniment": ["glitch_static", "digital_error", "signal_drop"]
+    }
+  },
+  "references": [
+    {
+      "source": "Visual_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "medium"
+    }
+  ]
+}

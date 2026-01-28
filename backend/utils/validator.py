@@ -77,7 +77,8 @@ class VideoValidator:
         # Check duration and metadata if ffprobe is available
         if check_duration and self.ffprobe_available:
             try:
-                duration, height = self._get_video_metadata(file_path)
+                height,duration = self._get_video_metadata(file_path)
+                print(f"Video duration: {duration:.1f}s, height: {height}px")
                 
                 if duration > self.MAX_DURATION:
                     return (False, f"Video too long: {duration:.1f}s (maximum: {self.MAX_DURATION}s)")
@@ -126,7 +127,7 @@ class VideoValidator:
         
         return (all_valid, errors)
     
-    def _get_video_metadata(self, file_path: str) -> Tuple[float, int]:
+    def _get_video_metadata(self, file_path: str) -> Tuple[float, float]:
         """
         Extract video duration and height using ffprobe.
         
@@ -163,7 +164,8 @@ class VideoValidator:
         
         try:
             duration = float(lines[0])
-            height = int(lines[1])
+            height = float(lines[1])
+        
             return (duration, height)
         except (ValueError, IndexError) as e:
             raise Exception(f"Unable to parse metadata: {str(e)}")

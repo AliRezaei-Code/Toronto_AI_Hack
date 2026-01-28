@@ -1,16 +1,14 @@
 version: '3.8'
 
-# Production docker-compose for deployed services
-# Uses pre-built images from GitHub Container Registry (ghcr.io)
-# Environment variables: IMAGE_PREFIX, IMAGE_TAG (default: latest)
-
 services:
-  frontend:
+  # Web frontend (Next.js + Remotion)
+  web:
     image: ghcr.io/${IMAGE_PREFIX}/frontend:${IMAGE_TAG:-latest}
     ports:
-      - "${FRONTEND_PORT:-3010}:3000"
+      - "127.0.0.1:3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      # Browser-safe URL (clients call your domain, Caddy routes to backend)
+      - NEXT_PUBLIC_API_URL=https://retentio.ca/api
     volumes:
       - shared-data:/shared-data
     depends_on:
@@ -22,23 +20,27 @@ services:
   backend:
     image: ghcr.io/${IMAGE_PREFIX}/backend:${IMAGE_TAG:-latest}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DEEPGRAM_API_KEY=${DEEPGRAM_API_KEY}
       - SHARED_DATA_DIR=/shared-data
       - MCP_SERVER_URL=http://mcp-server:9000
+      - VIDEO_PROCESSOR_URL=http://video-processor:8001
+      - REMOTION_PROJECT_PATH=/apps/web
+      - RENDERED_SHORTS_DIR=/shared-data/rendered_shorts
     volumes:
       - shared-data:/shared-data
     depends_on:
       - mcp-server
+      - video-processor
     networks:
       - video-editor-network
     restart: unless-stopped
 
   mcp-server:
     image: ghcr.io/${IMAGE_PREFIX}/mcp-server:${IMAGE_TAG:-latest}
-    ports:
-      - "9000:9000"
+    # No ports exposed - internal service only (accessed via Docker network)
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - SHARED_DATA_DIR=/shared-data
@@ -48,8 +50,29 @@ services:
       - video-editor-network
     restart: unless-stopped
 
+  video-processor:
+    image: ghcr.io/${IMAGE_PREFIX}/video-processor:${IMAGE_TAG:-latest}
+    # No ports exposed - internal service only (accessed via Docker network)
+    environment:
+      - TEMP_DIR=/tmp/video-processor
+    volumes:
+      - shared-data:/shared-data
+      - video-processor-temp:/tmp/video-processor
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - video-editor-network
+    restart: unless-stopped
+
 volumes:
   shared-data:
+    external: true
+    name: shared-data
+  video-processor-temp:
     driver: local
 
 networks:

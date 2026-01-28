@@ -1,0 +1,317 @@
+{
+  "meta": {
+    "title": "Visual Cues and Script Directives",
+    "category": "Scripting",
+    "version": "1.0",
+    "lastUpdated": "2026-01-23",
+    "dependencies": ["pattern_interrupts.json", "spatial_dynamics.json"]
+  },
+  "summary": "Script-level visual specifications that dictate visual changes, motion graphics, and pacing to enable dynamic retention editing.",
+  "core_principles": [
+    {
+      "principle": "Visual Gap Prevention",
+      "description": "Script must include visual directions for every section to prevent static talking-head shots that cause retention drops",
+      "importance": "high"
+    },
+    {
+      "principle": "B-Roll Specificity",
+      "description": "Visual instructions must be detailed about camera angles, pacing, and shot types rather than vague descriptions",
+      "importance": "high"
+    },
+    {
+      "principle": "Motion Design Planning",
+      "description": "Kinetic typography and graphics should be scripted to sync precisely with spoken content for dual coding",
+      "importance": "medium"
+    },
+    {
+      "principle": "Pacing Notation",
+      "description": "Use punctuation and script markup to indicate natural cut points and delivery emphasis",
+      "importance": "medium"
+    },
+    {
+      "principle": "3-Second Visual Change",
+      "description": "Visual state should change every 3-5 seconds through cuts, zooms, overlays, or graphics",
+      "importance": "high"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "B-Roll Injection Directives",
+      "description": "Specific, detailed visual instructions for illustrative footage that syncs with narrative content",
+      "implementation": [
+        "Replace generic descriptions ('Host talks about X') with specific shot lists",
+        "Include camera angles: 'low angle', 'drone shot', 'close-up', 'wide shot'",
+        "Specify shot duration: 'rapid 1.5-second cut', 'slow 4-second pan'",
+        "Match visual rhythm to verbal rhythm (fast-paced speech = rapid cuts)",
+        "Plan B-roll for every 10-20 seconds of A-roll dialogue",
+        "Note color grading intent for B-roll integration"
+      ],
+      "timing": "Every 10-20 seconds throughout video",
+      "examples": [
+        " 'B-roll: Low angle shot of boots hitting mud, RAPID CUT to drone shot of summit'",
+        " 'Cut to: Close-up of hands typing, reveal screen, zoom out to show workspace'",
+        " 'B-roll montage: 4 shots in 6 seconds - product, reaction, result process'",
+        " 'Insert: Slow motion 2-second shot of water droplet hitting surface'"
+      ],
+      "tools": [
+        "Storyboarding software",
+        "Shot list templates",
+        "AV script format templates",
+        "Production planning apps"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Ensures visual variety prevents monotony",
+          "con": "Requires pre-visualization and planning time"
+        },
+        {
+          "pro": "Matches visual pacing to narrative flow",
+          "con": "Adds complexity to scriptwriting process"
+        }
+      ]
+    },
+    {
+      "name": "Motion Design Prompts",
+      "description": "Script explicit instructions for kinetic typography, data visualization, and animated graphics",
+      "implementation": [
+        "Specify text animation timing: 'animates in sync with word X'",
+        "Define animation style: 'pop on', 'slide from left', 'typewriter', 'scale up'",
+        "Call out data visualizations: 'bar chart shows growth', 'pie chart with labeled segments'",
+        "Request specific text attributes: 'bold yellow text', 'white outline stroke', 'shaking effect'",
+        "Plan graphic appearance and disappearance timing",
+        "Specify color coding for visual hierarchy"
+      ],
+      "timing": "As needed to support key information or emphasis",
+      "examples": [
+        " 'Text on screen: 50% RETENTION - animates in sync with word retention, bold red'",
+        " 'Kinetic typography: 3 bullet points stagger in as narrator speaks them'",
+        " 'Data viz: Line chart rises from 0 to 100 as narrator describes growth'",
+        " 'Overlay text: 'PRO TIP' in yellow banner with drop shadow'"
+      ],
+      "tools": [
+        "Motion graphics libraries",
+        "After Effects templates",
+        "Kinetic typography plugins",
+        "Design reference guides"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Reinforces message through dual coding (audio + visual)",
+          "con": "Increases production timeline and complexity"
+        },
+        {
+          "pro": "Provides engaging visuals for audio-only viewers",
+          "con": "Overuse can create visual clutter"
+        }
+      ]
+    },
+    {
+      "name": "Pacing Notation in Scripts",
+      "description": "Use punctuation, formatting, and marks to guide speaker delivery and editor cut points",
+      "implementation": [
+        "Use commas for short pauses (0.5-1 second)",
+        "Use ellipses for dramatic pauses (2+ seconds)",
+        "Bold or italicize key words for emphasis",
+        "Use ALL CAPS for shouted or emphasized delivery",
+        "Mark sections for SPEED UP or SLOW DOWN",
+        "Add [PAUSE], [BEAT], or musical cues",
+        "Use [CUT HERE] or [TRANSITION] markers for editor",
+        "Note where to hold for visual emphasis"
+      ],
+      "timing": "Continuous throughout script",
+      "examples": [
+        " 'This technique works... [PAUSE 2s] ...every single time.'",
+        " 'You need to MASTER [CUT] this skill [SPEED UP] or you'll fail'",
+        " 'But here's what I DISCOVERED [ZOOM]...'",
+        " 'The result? [BEAT] 300% more retention.'"
+      ],
+      "tools": [
+        "Script templates with formatting guidelines",
+        "Teleprompter software with formatting support",
+        "Script annotation tools"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Provides natural cut points for editor",
+          "con": "Requires disciplined script writing"
+        },
+        {
+          "pro": "Guides speaker delivery and pacing",
+          "con": "Over-notation can make script harder to read aloud"
+        }
+      ]
+    },
+    {
+      "name": "Visual Change Frequency Planning",
+      "description": "Plan visual state changes at regular intervals to reset viewer attention",
+      "implementation": [
+        "Mark visual change points every 3-5 seconds in script",
+        "Vary change types: hard cut, punch-in, overlay, zoom, B-roll, graphic",
+        "Use harder resets (full-screen graphics) every 30-60 seconds",
+        "Plan subtle motion (dynamic zoom) for static shots",
+        "Note when visual complexity needs to decrease for clarity",
+        "Coordinate changes with content emphasis points"
+      ],
+      "timing": "Every 3-5 seconds minimum, varying change type",
+      "examples": [
+        "Narrate complex topic → [B-ROLL INSERT] demonstration → [OVERLAY] summary text",
+        "Static shot → [DYNAMIC ZOOM] throughout → [PUNCH-IN] on key word",
+        "Dialogue section → [FULL-SCREEN GRAPHIC] data show → return to dialogue",
+        "Long explanation → break into [4 VISUAL SECTIONS] with text headers"
+      ],
+      "tools": [
+        "Script templates with visual change checkpoints",
+        "Timeline planning software",
+        "Beat mapping tools"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Guarantees visual stimulation prevents disengagement",
+          "con": "Can feel chaotic if not varied appropriately"
+        },
+        {
+          "pro": "Creates predictable rhythm viewers can follow",
+          "con": "Requires constant visual planning and assets"
+        }
+      ]
+    },
+    {
+      "name": "AV Script Format",
+      "description": "Two-column format separating auditory content from visual directives for comprehensive pre-production planning",
+      "implementation": [
+        "Left column: Voiceover, dialogue, sound cues",
+        "Right column: Visual shots, graphics, camera moves, text overlays",
+        "Align timing so each audio line has paired visual direction",
+        "Identify 'visual gaps' where no visual change is planned",
+        "Fill gaps with B-roll, graphics, or camera movement",
+        "Add third column for notes (timing, effects, transitions)",
+        "Use for complex explainers, documentaries, tutorials"
+      ],
+      "timing": "Entire script, line-by-line alignment",
+      "examples": [
+        "Audio: 'The mountains rise dramatically' | Visual: Drone shot of mountain range, slow flyover",
+        "Audio: 'This setting is hidden' | Visual: Close-up of hidden setting UI, zoom in animation",
+        "Audio: 'Three options exist' | Visual: Text overlay: 1, 2, 3 in boxes"
+      ],
+      "tools": [
+        "AV script templates",
+        "Spreadsheet or table format apps",
+        "Scriptwriting software with multi-column support"
+      ],
+      "pros_cons": [
+        {
+          "pro": "Forces comprehensive visual planning, reveals gaps",
+          "con": "More time-consuming than standard prose scripts"
+        },
+        {
+          "pro": "Clear communication between writer, director, and editor",
+          "con": "May feel restrictive for certain content types"
+        }
+      ]
+    }
+  ],
+  "data_structures": {
+    "b_roll_directive_template": {
+      "context": "What is being described or discussed",
+      "shotType": [
+        "close-up",
+        "medium",
+        "wide",
+        "detail",
+        "detail_macro",
+        "drone",
+        "tracking",
+        "POV"
+      ],
+      "angle": ["low", "high", "eye-level", "dutch", "over-the-shoulder"],
+      "movement": ["static", "pan", "tilt", "zoom", "tracking", "handheld", "stable"],
+      "duration": "seconds (e.g., '1.5s', '3-4s', '6s+')",
+      "transition": ["cut", "fade", "dissolve", "whip", "zoom in", "zoom out"],
+      "colorNote": "Grading or look note (optional)"
+    },
+    "motion_design_prompt_schema": {
+      "triggerWord": "Spoken word that triggers animation",
+      "textContent": "String to display",
+      "animationStyle": [
+        "pop",
+        "slide_left",
+        "slide_right",
+        "scale_up",
+        "typewriter",
+        "reveal",
+        "shake"
+      ],
+      "duration": "animation duration in seconds",
+      "timing": "sync_with_word or offset",
+      "style": {
+        "font": "font family reference",
+        "size": "relative scale (small, medium, large, XL)",
+        "color": "hex or named color",
+        "attributes": ["bold", "outline", "shadow", "fill"]
+      },
+      "exit": ["fade out", "slide away", "explode", "shrink", "stay"]
+    },
+    "pacing_notation_key": {
+      "comma": "short pause (0.5-1s)",
+      "ellipsis": "dramatic pause (2s+)",
+      "period": "minor pause (0.3-0.5s)",
+      "BOLD_WORD": "emphasis on delivery",
+      "ALL CAPS": "shouted or loud delivery",
+      "[PAUSE Xs]": "hold for X seconds",
+      "[SPEED UP]": "increase speaking pace",
+      "[SLOW DOWN]": "decrease speaking pace",
+      "[CUT]": "ideal edit point",
+      "[ZOOM]": "camera zoom or punch-in",
+      "[BEAT]": "dramatic moment hold"
+    },
+    "visual_change_frequency_plan": {
+      "minInterval": 3,
+      "maxInterval": 5,
+      "targetAverage": 4,
+      "changeTypes": [
+        {
+          "type": "hard_cut",
+          "frequency": "every 5-10s (dialogue)",
+          "impact": "high"
+        },
+        {
+          "type": "punch_in",
+          "frequency": "as needed for emphasis",
+          "impact": "moderate"
+        },
+        {
+          "type": "overlay",
+          "frequency": "as needed for context",
+          "impact": "high"
+        },
+        {
+          "type": "dynamic_zoom",
+          "frequency": "continuous on static shots",
+          "impact": "low/subconscious"
+        },
+        {
+          "type": "b_roll",
+          "frequency": "every 10-20s",
+          "impact": "high"
+        }
+      ]
+    }
+  },
+  "references": [
+    {
+      "source": "Script_Retention.md",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Script_Retention.md Table 1",
+      "url": "internal",
+      "relevance": "high"
+    },
+    {
+      "source": "Script_Retention.md Table 2",
+      "url": "internal",
+      "relevance": "high"
+    }
+  ]
+}

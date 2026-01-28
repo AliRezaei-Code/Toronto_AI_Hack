@@ -15,7 +15,6 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=@repo/web",
-    "dev:mobile": "turbo run dev --filter=@repo/mobile",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules",
@@ -30,5 +29,11 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^18.3.27",
+      "@types/react-dom": "^18.3.7"
+    }
   }
 }
